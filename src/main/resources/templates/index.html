@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html class="h-100" xmlns:th="http://www.thymeleaf.org" data-bs-theme="dark">
+<html class="h-100" xmlns:th="http://www.thymeleaf.org">
 
 <head>
     <th:block th:replace="fragments/head :: header"/>
@@ -18,7 +18,7 @@
 
 </head>
 
-<body class="d-flex flex-column h-100">
+<body class="d-flex flex-column h-100" data-bs-theme="dark">
     <header th:replace="fragments/nav.html :: nav('deportes')"></header>
 
     <main class="flex-shrink-0">

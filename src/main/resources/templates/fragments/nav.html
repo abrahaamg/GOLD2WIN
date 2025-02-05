@@ -28,13 +28,13 @@
                             <li class="nav-item mx-3" th:classappend="${active == 'deportes'} ? 'active'">
                                 <a class="nav-link" th:href="@{/}">Todos los deportes</a>
                             </li>
-                            <li class="nav-item mx-3">
-                                <a class="nav-link" th:classappend="${active != null and active == 'apuestas'} ? 'active'" th:href="@{/}">Mis apuestas</a>
+                            <li class="nav-item mx-3 "th:classappend="${active == 'apuestas'} ? 'active'">
+                                <a class="nav-link"  th:href="@{/}">Mis apuestas</a>
                             </li>
-                            <li class="nav-item mx-3">
-                                <a class="nav-link" th:classappend="${active != null and active == 'ingresar'} ? 'active'" th:href="@{/}">Ingresar</a>
+                            <li class="nav-item mx-3" th:classappend="${active == 'ingresar'} ? 'active'">
+                                <a class="nav-link"  th:href="@{/}">Ingresar</a>
                             </li>
-                            <li class="nav-item mx-3" th:classappend="${active != null and active == 'chats'} ? 'active'">
+                            <li class="nav-item mx-3" th:classappend="${active == 'chats'} ? 'active'">
                                 <a class="nav-link" th:href="@{/}">Chats</a>
                             </li>
                         </th:block>
