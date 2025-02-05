@@ -3,11 +3,37 @@
 #navPrincipal{
     background-color: #6A0DAD;
     box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.3);
+    padding: 0;
     height: 70px;
 }
 
 #logoNav{
-    width: 200px;
-    height: 35px;
-    margin: 17px;
+    width: 150px;
+    height: 26px;
+    margin: 0 , 17px, 17px ,17px;
+}
+
+
+#navbarOpciones a{
+    color: white;
+    font-size: 14px;
+}
+
+#navbarOpciones li{
+    display: flex;
+    height: 70px;
+    align-items: center;
+}
+
+#navbarOpciones .nav-item.active a{
+    color: #FFD700;
+}
+
+#navbarOpciones a:hover{
+    color: #FFD700;
+}
+
+#navbarOpciones .nav-item.active{
+    color: #FFD700;
+    border-bottom: 2px solid #FFD700; /* Línea inferior */
 }
