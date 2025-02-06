@@ -28,14 +28,17 @@
                             <li class="nav-item mx-3" th:classappend="${active == 'deportes'} ? 'active'">
                                 <a class="nav-link" th:href="@{/}">Todos los deportes</a>
                             </li>
-                            <li class="nav-item mx-3 "th:classappend="${active == 'apuestas'} ? 'active'">
+                            <li class="nav-item mx-3 " th:if="${session?.u?.hasRole('USER')}" th:classappend="${active == 'apuestas'} ? 'active'">
                                 <a class="nav-link"  th:href="@{/}">Mis apuestas</a>
                             </li>
-                            <li class="nav-item mx-3" th:classappend="${active == 'ingresar'} ? 'active'">
+                            <li class="nav-item mx-3" th:if="${session?.u?.hasRole('USER')}" th:classappend="${active == 'ingresar'} ? 'active'">
                                 <a class="nav-link"  th:href="@{/}">Ingresar</a>
                             </li>
-                            <li class="nav-item mx-3" th:classappend="${active == 'chats'} ? 'active'">
+                            <li class="nav-item mx-3" th:if="${session?.u?.hasRole('USER')}" th:classappend="${active == 'chats'} ? 'active'">
                                 <a class="nav-link" th:href="@{/}">Chats</a>
+                            </li>
+                            <li class="nav-item mx-3" th:if="${session?.u?.hasRole('ADMIN')}" th:classappend="${active == 'administrar'} ? 'active'">
+                                <a class="nav-link"  th:href="@{/admin/}">Administrar</a>
                             </li>
                         </th:block>
                     </ul>
@@ -43,13 +46,6 @@
                 <div class="collapse navbar-collapse flex-grow-0" id="navbarSupportedContent">
                     <ul class="navbar-nav">
                         <th:block th:if="${session.u}">
-                            <li class="nav-item mx-3">
-                                <a class="nav-link" th:if="${session.u.hasRole('USER')}" th:href="@{/admin/}">Administrar</a>
-                            </li>
-                            <li class="nav-item mx-3">
-                                <a class="nav-link" th:if="${session.u != null}" th:href="@{/ingresar}">Ingresar</a>
-                            </li>
-
                             <li class="nav-item mx-2">
                                 <a class="nav-link" th:href="@{/user/{id}(id=${session.u.id})}">
                                     <img class="iwthumb rounded" th:src="@{/user/{id}/pic(id=${session.u.id})}">
