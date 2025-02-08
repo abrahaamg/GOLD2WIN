@@ -11,17 +11,14 @@
     <header th:fragment="nav(active)">
         <nav class="navbar navbar-expand-lg" id = "navPrincipal">
             <div class="container-fluid">
-                <button th:class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarOpciones" aria-controls="navbarOpciones" aria-expanded="false" aria-label="Toggle navigation">
+                <button th:class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarOpciones" aria-controls="#navbarOpciones" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <!-- nombre del sitio; es un enlace que lleva a la página ppal -->
-                <a class="navbar-brand me-auto" th:href="@{/}" href="/" >
+                <a class="navbar-brand mx-auto mx-lg-0 me-lg-auto" th:href="@{/}" href="/" >
                     <img th:src="@{/img/logo.svg}" alt="logo G2W" width="150" height="28" class="d-inline-block align-text-top " id = "logoNav">
                 </a>
-                <!-- menu hamburguesa si no cabe todo -->
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
+                <!-- opciones de navegación -->
                 <div class="collapse navbar-collapse mx-auto" id="navbarOpciones">
                     <ul class="navbar-nav mx-auto">
                         <th:block th:if="true">
@@ -43,7 +40,7 @@
                         </th:block>
                     </ul>
                 </div>
-                <div class="collapse navbar-collapse flex-grow-0" id="navbarSupportedContent">
+                <div class="flex-grow-0" id="navbarSupportedContent">
                     <ul class="navbar-nav">
                         <th:block th:if="${session.u}">
                             <li class="nav-item mx-2">
@@ -64,29 +61,8 @@
                             </li>
                         </th:block>
                         <th:block th:unless="${session.u}">
-                            <li class="nav-item mx-2">
-                                <a class="nav-link" th:href="@{/login}" href="/login">Login</a>
-                            </li>
-                            <!--/*
-                                Esto es un comentario "thymeleaf" - no se verá en el HTML
-                                El bloque de "debug" sólo está activado si application.properties tiene debug a "true"
-                                    (ver StartupConfig.java para ver cómo se lee de la configuración
-                                    y luego se escribe a ${application.debug})
-                            */-->
-                            <li class="nav-item debug align-self-center" th:if="${application.debug}">
-                                <form class="d-flex" th:action="@{/login}" method="post">
-                                    <input type="hidden" name="username" value="a">
-                                    <input type="hidden" name="password" value="aa">
-                                    <button type="submit" class="btn btn-outline-danger btn-sm">a</button>
-                                </form>
-                            </li>
-                            <li class="nav-item debug align-self-center" th:if="${application.debug}">
-                                <form class="d-flex" th:action="@{/login}" method="post">
-                                    <input type="hidden" name="username" value="b">
-                                    <input type="hidden" name="password" value="aa">
-                                    <button type="submit" class="btn btn-outline-danger btn-sm">b</button>
-                                </form>
-                            </li>
+                            <li class="nav-item d-none d-lg-block"><a href="#" class="botonOvalado nav-link">Registrarse</a></li>
+                            <li class="nav-item"><a th:href="@{/login}" class="botonOvalado nav-link" id="loginButon">Iniciar sesión</a></li>
                         </th:block>
                     </ul>
                 </div>

@@ -13,6 +13,38 @@
     margin: 0 , 17px, 17px ,17px;
 }
 
+#navbarSupportedContent .botonOvalado:hover{
+    color: #FFD700;
+    border-color: #FFD700;
+}
+
+#navbarSupportedContent .botonOvalado:active{
+    color: #FFD700;
+    border-color: #FFD700;
+}
+
+#loginButon{
+    height: 36px;
+    width: 98px;
+}
+
+.botonOvalado {
+    border-radius: 20px;
+    padding: 7px 28px;
+    background-color: transparent;
+    color: white;
+    font-weight: bold;
+    font-size: 13px;
+    border: 1px solid white;
+    margin: 0 10px;
+    text-align: center;
+}
+
+/*para que mantenga el color en blanco sino se*/
+#navbarSupportedContent a:visited {
+    color: white; 
+}
+
 #navbarOpciones a{
     color: white;
     font-size: 14px;
@@ -43,4 +75,9 @@
 
 #navbarOpciones a:hover{
     color: #FFD700;
+}
+
+/*Estilos extra login*/
+#debugUsersBar{
+    margin: 10px 0 0 0;
 }
