@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html class="h-100" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <th:block th:replace="fragments/head :: header" />
+    <title> INGRESO </title>
+</head>
+
+<body class="d-flex flex-column h-100">
+    <header th:replace="fragments/nav.html :: nav"></header>
+
+    <!-- Contenedor principal donde centramos el contenido -->
+    <div class="container-fluid d-flex justify-content-start align-items-center h-100">
+        <!-- Sidebar que estará alineado a la izquierda -->
+        <nav id="sidebar" class="col-md-3 col-lg-2 d-md-block bg-light">
+            <div class="position-sticky">
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link" th:if="${session.u.hasRole('USER')}" th:href="@{/user/ingresar}">Ingresar</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:if="${session.u.hasRole('USER')}" th:href="@{/user/ingresar}">Retirar</a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+
+        <!-- Contenido principal al lado derecho del sidebar -->
+        <div class="col-md-9 col-lg-10 p-4">
+            <h2>LO PARTES BOY</h2>
+            <!-- Puedes agregar aquí el contenido adicional que necesites -->
+        </div>
+    </div>
+
+    <th:block th:replace="fragments/footer.html :: footer" />
+
+    <script th:src="@{/js/ajax-demo.js}"></script>
+</body>
+
+</html>
