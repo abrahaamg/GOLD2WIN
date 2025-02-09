@@ -13,36 +13,52 @@
     margin: 0 , 17px, 17px ,17px;
 }
 
-#navbarSupportedContent .botonOvalado:hover{
+#navbarSupportedContent{
+    max-height: 70px;
+    min-height: 70px;
+}
+
+#iconoAjustes:hover{
     color: #FFD700;
-    border-color: #FFD700;
+}
+#iconoAjustes{
+    color: white;
 }
 
-#navbarSupportedContent .botonOvalado:active{
-    color: #FFD700;
-    border-color: #FFD700;
+.botonIcono{
+    outline: none;
+    background-color: transparent;
 }
 
-#loginButon{
-    height: 36px;
-    width: 98px;
-}
-
-.botonOvalado {
+/*para que mantenga el color en blanco cuando ya se ha seleccionado 
+(aumenta la especifidad para sobreescribir el comportamiento de .botoOvalado:visited)*/
+a.botonOvalado.nav-link{
     border-radius: 20px;
     padding: 7px 28px;
     background-color: transparent;
     color: white;
-    font-weight: bold;
     font-size: 13px;
     border: 1px solid white;
     margin: 0 10px;
     text-align: center;
 }
 
-/*para que mantenga el color en blanco sino se*/
-#navbarSupportedContent a:visited {
-    color: white; 
+a.botonOvalado.nav-link:hover{
+    color: #FFD700;
+    border-color: #FFD700;
+}
+
+#navbarSupportedContent .active a.botonOvalado.nav-link{
+    color: #FFD700;
+    border-color: #FFD700;
+}
+
+#navbarSupportedContent ul{
+    display: flex;
+    flex-direction: row; /* Alineación horizontal de los elementos */
+    list-style: none;    /* Elimina los puntos de las listas */
+    padding-left: 0;
+    margin-bottom: 0;
 }
 
 #navbarOpciones a{
@@ -80,4 +96,46 @@
 /*Estilos extra login*/
 #debugUsersBar{
     margin: 10px 0 0 0;
+}
+
+#usuarioNav{
+    display: inline-block;
+    user-select: none;
+    color: white;
+    font-size: 16px;
+    vertical-align: bottom;
+    
+}
+
+#usuarioNav:hover{
+    color: #FFD700;
+}
+
+#menuUsuario{
+    position: absolute;
+    background-color: #312A40;
+    top: 55px;
+    right: -7px;
+    width: 240px;
+    border-radius: 10px;
+    padding: 10px 5px;
+}
+
+#menuUsuario a:visited,
+#menuUsuario a{
+    color: #c2bcd3;
+    font-size: 14px;
+    background-color: transparent;
+    text-decoration: none;
+    padding: 7px 15px;
+}
+
+#menuUsuario a:hover{
+    color: white;
+    background-color: transparent;
+}
+
+.separadorDesplegable{
+    border-top: 1px solid #c2bcd3;
+    margin: 5px 10px;
 }

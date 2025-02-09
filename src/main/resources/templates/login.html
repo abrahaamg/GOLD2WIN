@@ -7,7 +7,7 @@
 </head>
 
 <body class="d-flex flex-column h-100">
-    <header th:replace="fragments/nav.html :: nav(null)"></header>
+    <header th:replace="fragments/nav.html :: nav('login')"></header>
 
     <main class="flex-shrink-0">
         <div class="container">
@@ -28,13 +28,13 @@
             </form>
             <div class = "d-flex flex-grow-0" id="debugUsersBar">
                 <form class="d-flex" th:action="@{/login}" method="post">
-                    <input type="hidden" name="username" value="b">
+                    <input type="hidden" name="username" value="Jose Luis">
                     <input type="hidden" name="password" value="aa">
                     <button type="submit" class="btn btn-outline-danger btn-sm">b</button>
                 </form>
 
                 <form class="d-flex" th:action="@{/login}" method="post">
-                    <input type="hidden" name="username" value="a">
+                    <input type="hidden" name="username" value="Ramon">
                     <input type="hidden" name="password" value="aa">
                     <button type="submit" class="btn btn-outline-danger btn-sm">a</button>
                 </form>
