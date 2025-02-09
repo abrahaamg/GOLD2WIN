@@ -111,18 +111,23 @@ a.botonOvalado.nav-link:hover{
     color: #FFD700;
 }
 
-#menuUsuario{
+/*ESTILOS DEL DESPLEGABLE DE USUARIO*/
+.desplegableNavbar{
     position: absolute;
     background-color: #312A40;
     top: 55px;
     right: -7px;
     width: 240px;
     border-radius: 10px;
+}
+
+/*si no pongo el pading en el cuerpo la transición al cerrar es mas brusca*/
+.cuerpoDespNav{
     padding: 10px 5px;
 }
 
-#menuUsuario a:visited,
-#menuUsuario a{
+.desplegableNavbar .despUsItem:visited,
+.desplegableNavbar .despUsItem{
     color: #c2bcd3;
     font-size: 14px;
     background-color: transparent;
@@ -130,9 +135,21 @@ a.botonOvalado.nav-link:hover{
     padding: 7px 15px;
 }
 
-#menuUsuario a:hover{
+.desplegableNavbar .despUsItem:hover{
     color: white;
     background-color: transparent;
+}
+
+.cuerpoDespNav button{
+    color: inherit; /*hereda el color del padre*/
+    font-size: 14px;
+    background-color: transparent;
+    text-decoration: none;
+    border: none;
+    padding: 0px 0px;
+    display: block;
+    width: 100%;
+    text-align: left;
 }
 
 .separadorDesplegable{
