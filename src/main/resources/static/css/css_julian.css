@@ -311,3 +311,47 @@ a.botonOvalado.nav-link:hover{
 .grupoSecciones{
     margin: 0 0 10px 0;
 }
+
+/*ESTILOS PARA LOS EVENTOS Y LA LISTA DE EVENTOS*/
+.listaEventos{
+    overflow-y: auto;
+    height: 100%;
+    width: 100%;
+    padding: 0px 15px 0 15px;
+    box-sizing: border-box;
+}
+
+.caja-etiquetas {
+    margin-top: 12px;
+    font-size: 13px;
+    width: 100%;
+    display: flex;
+    overflow-x: auto;
+}
+
+.caja-etiquetas::-webkit-scrollbar {
+    height: 7px;
+}
+
+.etiquetaEvento{
+    background-color: var(--bs-tertiary-color);
+    border-radius: 10px;
+    padding: 0px 5px;
+    margin-left: 3px;
+}
+
+.Evento{
+    width: 100%;
+    min-width: 150px;
+    max-height: 90px;
+    margin: 15px 0px;
+    border-radius: 10px;
+}
+
+.Evento:hover{
+    filter: brightness(0.8); /* oscurece el color */
+}
+
+[data-bs-theme="dark"] .Evento:hover{
+    filter: brightness(1.2); /* Aclarar el color */
+}
