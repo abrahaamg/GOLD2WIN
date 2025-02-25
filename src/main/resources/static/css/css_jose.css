@@ -1,1 +1,21 @@
 /* usa este fichero para personalizar tus vistas */
+#nav-pills .nav-item {
+    margin: 5px;
+}
+
+#nav-pills .nav-link {
+    color: var(--bs-secondary-color);
+    border-radius: 30px;
+    padding: 2px 4px;
+    font-size: 13px;
+}
+
+#nav-pills .nav-link:hover {
+    color: var(--bs-body-color);
+}
+
+#nav-pills .nav-item.active .nav-link {
+    color: var(--bs-body-bg);
+    background-color: #8A2BE2;
+    font-weight: bold;
+}

@@ -39,3 +39,115 @@ document.querySelectorAll(".colsCuotasVerificadasInc").forEach(cell => {
     }
     });
 });
+
+document.getElementById("botonSiguienteCrearApuesta").addEventListener("click", () => {
+    console.log("entra");
+    var elementos1 = document.querySelectorAll('.vision-creatuApuesta-1');
+    var elementos2 = document.querySelectorAll('.vision-creatuApuesta-2');
+
+    var titulo = document.getElementById('tituloModal');
+    var formula = document.getElementById('formulaModal');
+
+    if(titulo.checkValidity() && formula.checkValidity()){
+        elementos1.forEach(function(elemento) {
+            elemento.classList.add('desaparece');
+        });
+
+        elementos2.forEach(function(elemento) {
+            elemento.classList.remove('desaparece');
+        });
+
+       document.getElementById("botonRetrocederCrearApuesta").classList.remove('invisible');
+    }
+
+});
+
+//Efectos al hacer apuesta
+document.getElementById("apostarForm").addEventListener("submit", function(event) {
+    event.preventDefault();
+    let cantidad = document.getElementById("cantidad").value;
+    let tipoApuesta = document.getElementById("tipoApuesta").value;
+
+    document.getElementById("ocultador-formulario").classList.add("invisible");
+    let check = document.getElementById("confirmacionApuesta");
+    check.classList.remove("invisible");
+    check.style.animation = "fadeIn 0.5s ease-in-out";
+
+    setTimeout(() => {
+        location.reload();  // Recarga la página
+    }, 1000);
+    /*
+    fetch("/apostar", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({cantidad, tipoApuesta})
+    })
+    .then(response => {
+        if (!response.ok) {
+            return response.json().then(error => { throw new Error(error.error); });
+        }
+        return response.json();
+    })
+    .then(data => {
+        // Si la apuesta es exitosa, mostrar el ícono de éxito
+        alert(data.mensaje);
+        var modal = bootstrap.Modal.getInstance(document.getElementById('miModal'));
+        modal.hide(); // Cierra el modal manualmente
+        document.getElementById("cantidad").classList.remove("is-invalid");
+        document.getElementById("cantidad").classList.add("is-valid");  // Marca como válida
+    })
+    .catch(error => {
+        // Si hay un error (ej. saldo insuficiente), marcar el campo en rojo
+        document.getElementById("cantidad").classList.add("is-invalid");
+        document.getElementById("cantidadError").textContent = error.message;  // Mostrar el error
+    });
+    */
+});
+
+document.getElementById("crearApuestaForm").addEventListener("submit", function(event) {
+    event.preventDefault();
+
+    const titulo = document.getElementById("tituloModal").value;
+    const formula = document.getElementById("formulaModal").value;
+    const cantidad = document.getElementById("cantidadModal2").value;
+    const tipoApuesta = document.getElementById("tipoApuestaModal2").value;
+
+    document.getElementById("ocultador-formulario2").classList.add("invisible");
+    let check = document.getElementById("confirmacionApuesta2");
+    check.classList.remove("invisible");
+    check.style.animation = "fadeIn 0.5s ease-in-out";
+
+    setTimeout(() => {
+        location.reload();  // Recarga la página
+    }, 1000);
+    /*
+    fetch("/apostar", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({cantidad, tipoApuesta})
+    })
+    .then(response => {
+        if (!response.ok) {
+            return response.json().then(error => { throw new Error(error.error); });
+        }
+        return response.json();
+    })
+    .then(data => {
+        // Si la apuesta es exitosa, mostrar el ícono de éxito
+        alert(data.mensaje);
+        var modal = bootstrap.Modal.getInstance(document.getElementById('miModal'));
+        modal.hide(); // Cierra el modal manualmente
+        document.getElementById("cantidad").classList.remove("is-invalid");
+        document.getElementById("cantidad").classList.add("is-valid");  // Marca como válida
+    })
+    .catch(error => {
+        // Si hay un error (ej. saldo insuficiente), marcar el campo en rojo
+        document.getElementById("cantidad").classList.add("is-invalid");
+        document.getElementById("cantidadError").textContent = error.message;  // Mostrar el error
+    });
+    */
+});

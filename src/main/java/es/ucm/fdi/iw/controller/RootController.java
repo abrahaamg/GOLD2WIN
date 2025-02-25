@@ -1,11 +1,16 @@
 package es.ucm.fdi.iw.controller;
 
+import javax.servlet.http.HttpSession;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+
+import es.ucm.fdi.iw.model.User;
+import es.ucm.fdi.iw.model.User.Role;
 
 
 /**
@@ -36,18 +41,58 @@ public class RootController {
         return "crearApuesta";
     }
 
-    @GetMapping("/verificarEvento")
+    @GetMapping("/admin")
+    public String admin(Model model){
+        return "admin";
+    }
+
+    @GetMapping("/admin/verificarEvento")
     public String verificarEvento(Model model){
         return "verificarEvento";
     }
 
-    @GetMapping("/tablaReportes")
-    public String tablaReportes(Model model){
-        return "tablaReportes";
+
+    @GetMapping("/cartera/ingresar")
+    public String ingresar(Model model, HttpSession session) {
+        User user = (User) session.getAttribute("u");
+        if (user == null || !user.hasRole(Role.USER)) {
+            return "redirect:/login";  // Redirige si no es un usuario autenticado
+        }
+        return "ingresar";
     }
 
-    @GetMapping("/reporteConcreto")
-    public String reporteConcreto(Model model){
-        return "reporteConcreto";
+	@GetMapping("/cartera/retirar")
+	public String retirar(Model model) {
+    	return "retirar";
+	}
+
+    @GetMapping("/cartera/ingreso")
+	public String ingreso(Model model) {
+    	return "ingreso";
+	}
+
+	@GetMapping("/cartera/ingresar/paypal")
+	public String paypal(Model model) {
+    	return "paypal";
+	}
+
+	@GetMapping("/cartera/ingresar/tarjeta")
+	public String tarjeta(Model model) {
+    	return "tarjeta";
+	}
+
+    @GetMapping("/misApuestas/todas")
+    public String todasMisApuestas(Model model){
+        return "misApuestas-todas";
+    }
+
+    @GetMapping("/misApuestas/determinadas")
+    public String apuestasDeterminadas(Model model){
+        return "misApuestas-determinadas";
+    }
+
+    @GetMapping("/misApuestas/pendientes")
+    public String apuestasPendientes(Model model){
+        return "misApuestas-pendientes";
     }
 }

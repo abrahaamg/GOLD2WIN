@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html class="h-100" xmlns:th="http://www.thymeleaf.org" data-bs-theme="dark">
+<head>
+    <th:block th:replace="fragments/head :: header"/>
+    <title>CARTERA</title>
+</head>
+
+<body class="d-flex flex-column h-100">
+    <header th:replace="fragments/nav.html :: nav('ingresar')"></header>
+
+    <div class="d-flex justify-content-center align-items-center" style="min-height: 100vh;">
+        <div class="saldo-box">
+            <div class="saldo-header">SALDO:      0€</div>
+            <div class="divider"></div>
+
+            <div class="dropdown">
+                <a class="btn btn-secondary dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    SELECCIONA UN MÉTODO
+                </a>
+                <ul class="dropdown-menu">
+                    <li class="dropdown-item">
+                        <a class="dropdown-item" th:if="${session.u.hasRole('USER')}" 
+                           th:href="@{/cartera/ingresar/paypal}">PayPal</a>
+                    </li>
+                    <li class="dropdown-item">
+                        <a class="dropdown-item" th:if="${session.u.hasRole('USER')}" 
+                           th:href="@{/cartera/ingresar/tarjeta}">Tarjeta de crédito/débito</a>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="btn-container mt-3">
+                <a th:if="${session.u.hasRole('USER')}" th:href="@{/cartera/ingreso}" class="btn boton-dinamico d-flex align-items-center justify-content-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-box-arrow-in-down me-2" viewBox="0 0 16 16">
+                        <path fill-rule="evenodd" d="M3.5 6a.5.5 0 0 0-.5.5v8a.5.5 0 0 0 .5.5h9a.5.5 0 0 0 .5-.5v-8a.5.5 0 0 0-.5-.5h-2a.5.5 0 0 1 0-1h2A1.5 1.5 0 0 1 14 6.5v8a1.5 1.5 0 0 1-1.5 1.5h-9A1.5 1.5 0 0 1 2 14.5v-8A1.5 1.5 0 0 1 3.5 5h2a.5.5 0 0 1 0 1z"/>
+                        <path fill-rule="evenodd" d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708z"/>
+                    </svg>
+                    <span>Ingresar</span>
+                </a>
+                
+
+                <a th:if="${session.u.hasRole('USER')}" th:href="@{/cartera/retirar}" class="btn boton-dinamico d-flex align-items-center justify-content-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-box-arrow-in-down me-2" viewBox="0 0 16 16">
+                        <path fill-rule="evenodd" d="M3.5 6a.5.5 0 0 0-.5.5v8a.5.5 0 0 0 .5.5h9a.5.5 0 0 0 .5-.5v-8a.5.5 0 0 0-.5-.5h-2a.5.5 0 0 1 0-1h2A1.5 1.5 0 0 1 14 6.5v8a1.5 1.5 0 0 1-1.5 1.5h-9A1.5 1.5 0 0 1 2 14.5v-8A1.5 1.5 0 0 1 3.5 5h2a.5.5 0 0 1 0 1z"/>
+                        <path fill-rule="evenodd" d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708z"/>
+                    </svg>
+                    <span>Retirar</span>
+                </a>
+                
+            </div>
+        </div>
+    </div>
+
+    <th:block th:replace="fragments/footer.html :: footer"/>
+</body>
+</html>

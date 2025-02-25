@@ -1,27 +1,86 @@
 /* usa este fichero para personalizar tus vistas */
 
-.iwthumb {
-    height: 32px;
-    width: 32px;
+.bettingBox{
+    background-color: #f0f0f048; /* Color de fondo */
+    /*border: 2px solid #000000; /* Borde */
+    border-radius: 10px; /* Bordes redondeados */
+    /*padding: 5px; /* Espaciado interno */
+    font-family: Arial, sans-serif; /* Fuente */
+    margin: 50px 200px 0px 200px;
+}
+/*width: 800; /* Ancho de la caja */
+/*height: 10px; /* Alto de la caja */
+.headRowBettingBox{
+    padding: 10px 15px 10px 15px; /* Espaciado interno */
+    margin: 0px;
+    border-top: none;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    display: flex; /* Activa flexbox */
+    justify-content: space-between; /* Alinea elementos a los extremos */
+    align-items: center; /* Centra los elementos verticalmente */
 }
 
-.errTable tr>td:first-child {
-    min-width: 200px;
-    max-width: 200px;
-    word-break: break-all;
+.headRowBettingBoxLeftElement{
+    color:#41a838;
     font-weight: bold;
-    color: gray;
+    font-size: large;
 }
 
-.errTable td {
-    vertical-align: top;
-    border-top: 1px solid gray;
-    border-bottom: 1px solid gray;
+.headRowBettingBoxRightElement{
+    padding: 5px;
+    background-color: #f0f0f048;
+    font-weight: normal;
+    font-size: medium;
 }
 
-img.preview {
-    object-fit: cover;
-    width: 10%;
-    height: 100px;
-    border-radius: 10px;
+.infoRowBettingBox{
+    padding: 10px 15px 10px 15px; /* Espaciado interno */
+    margin: 0px;
+    border-top: 1px solid #000000;
+}
+
+.footerRowBettingBox{
+    padding: 10px 15px 5px 15px; /* Espaciado interno */
+    margin: 0px;
+    border-top: 1px solid #000000;
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+    display: flex; /* Activa flexbox */
+    justify-content: space-between; /* Alinea elementos a los extremos */
+    align-items: center; /* Centra los elementos verticalmente */
+}
+
+.footerRowBettingBoxRightElement{
+    padding: 5px;
+    background-color: #f0f0f048;
+    font-weight: normal;
+    font-size: medium;
+}
+
+.btn-custom:hover{
+    color: #f0f0f048 !important;
+    border-color: none;
+    outline: none;
+    box-shadow: none;
+}
+
+.btn-custom:active{
+    color: none; /* Color personalizado (naranja) */
+    border-color: none;
+    outline: none;
+    box-shadow: none;
+}
+
+.btn-custom:focus{
+    color: none; /* Color personalizado (naranja) */
+    border-color: none;
+    outline: none;
+    box-shadow: none;
+}
+
+#mensajeDesplegable {
+    display: block;
+    padding: 0px 0px 0px 10px;
+    font-size: small;
 }

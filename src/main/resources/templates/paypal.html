@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html class="h-100" xmlns:th="http://www.thymeleaf.org" data-bs-theme="dark">
+
+<head>
+    <th:block th:replace="fragments/head :: header" />
+    <title>INICIAR SESION PAYPAL</title>
+</head>
+
+<body class="d-flex flex-column h-100">
+
+    <header th:replace="fragments/nav.html :: nav('ingresar')"></header>
+    
+    <div class="login-container">
+        <form class="login-form" action="/login" method="post">
+            <img src="/img/paypal.png" alt="PayPal logo" style="width: 130px; height: 90px; display: block; 
+            margin-left: auto; margin-right: auto;">
+
+
+            <div class="mb-3">
+                <label for="email" class="form-label">Correo electrónico</label>
+                <input type="email" class="form-control" id="email" name="email" placeholder="Ingrese su correo" required>
+            </div>
+
+            <div class="mb-3">
+                <label for="password" class="form-label">Contraseña</label>
+                <input type="password" class="form-control" id="password" name="password" placeholder="Ingrese su contraseña" required>
+            </div>
+
+            <button type="submit" class="btn btn-paypal">Iniciar Sesión</button>
+
+            <div class="form-text">
+    <!-- Hay que poner el olvidaste tu contraseña?? -->
+                <a href="#">¿Olvidaste tu contraseña?</a>
+            </div>
+        </form>
+    </div>
+
+    <th:block th:replace="fragments/footer.html :: footer" />
+
+    <!-- Script Thymeleaf -->
+    <script th:src="@{/js/ajax-demo.js}"></script>
+
+</body>
+
+</html>

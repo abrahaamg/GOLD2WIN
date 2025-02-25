@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html class="h-100" xmlns:th="http://www.thymeleaf.org" data-bs-theme="dark">
+
+<head>
+    <th:block th:replace="fragments/head :: header" />
+    <title>INTRODUCIR TARJETA</title>
+</head>
+
+<body class="d-flex flex-column h-100">
+
+    <header th:replace="fragments/nav.html :: nav('ingresar')"></header>
+    
+    <div class="login-container">
+        <form class="login-form" action="/login" method="post">
+            <img src="/img/redsys.png" alt="RedSys logo" style="width: 170px; height: 70px; display: block; 
+            margin-left: auto; margin-right: auto;">
+
+
+            <div class="mb-3">
+                <label for="numtarjeta" class="form-label">Número de tarjeta</label>
+                <input type="text" id="tarjeta" name="tarjeta" pattern="[0-9]{16}" maxlength="16" placeholder="Número de tarjeta" required>
+            </div>
+
+            <div class="mb-3">
+                <label for="fechacaducidad" class="form-label">Fecha de caducidad</label>
+                <input type="month" class="form-control" id="fechacaducidad" name="fechacaducidad" placeholder="MM/AAAA" required>
+            </div>
+
+            <div class="mb-3">
+                <label for="cvv" class="form-label">CVV</label>
+                <input type="number" id="cvv" name="cvv" pattern="[0-9]{3}" maxlength="3" placeholder="CVV" required>
+            </div>
+
+            <button type="submit" class="btn btn-tarjeta">Confirmar</button>
+
+        </form>
+    </div>
+
+    <th:block th:replace="fragments/footer.html :: footer" />
+
+    <!-- Script Thymeleaf -->
+    <script th:src="@{/js/ajax-demo.js}"></script>
+
+</body>
+
+</html>

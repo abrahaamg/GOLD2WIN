@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html class="h-100" xmlns:th="http://www.thymeleaf.org" data-bs-theme="dark">
+
+<head>
+    <th:block th:replace="fragments/head :: header"/>
+    <title>IW: Welcome</title>
+
+    <style>
+        .gold-text {
+            color: rgb(255, 217, 0);
+            font-weight: bold;
+            font-family: Cambria;
+        }
+        .no-space {
+            letter-spacing: 0;
+        }
+    </style>
+
+</head>
+
+<body class="d-flex flex-column h-100">
+    <header th:replace="fragments/nav.html :: nav('apuestas')"></header>
+
+    <main class="flex-shrink-0">
+        <div class="container">
+            <div th:replace="fragments/menuApuestas.html :: navMisApuestas('pendientes')"></div>
+
+            <div th:replace="fragments/betting-box.html :: betting-box"></div>
+            
+              
+        </div>
+    </main>
+
+    <th:block th:replace="fragments/footer.html :: footer" />
+        
+</body>
+
+</html>

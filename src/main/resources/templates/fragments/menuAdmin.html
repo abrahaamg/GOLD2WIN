@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html class="h-100" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Menu Admin</title>
+</head>
+<body class="d-flex flex-column h-100">
+    <div th:fragment="navAdmin(active)">
+        <ul class="nav nav-pills" id="nav-pills">
+            <li class="nav-item" th:class="${active == 'verificarEvento'} ? 'nav-item active' : 'nav-item'">
+                <a class="nav-link" th:href="${active == 'verificarEvento'} ? '#' : @{/admin/verificarEvento}">Verificar Evento</a>
+            </li>
+        </ul>
+    </div>
+</body>
+</html>

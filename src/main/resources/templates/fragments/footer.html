@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" data-bs-theme="dark">
 
 <head>
     <title>Footer fragment - rest is empty</title>
@@ -7,7 +7,7 @@
 
 <body>
     <!-- ver https://getbootstrap.com/docs/5.0/examples/sticky-footer-navbar/ -->
-    <footer th:fragment="footer" class="footer mt-auto py-3 bg-light">
+    <footer th:fragment="footer" class="footer mt-auto py-3">
         <div class="container">
             <span class="text-muted">Aplicación de plantilla de IW 2022-23. Accede a la última versión (y propón mejoras, es
             <a href="https://www.apache.org/licenses/LICENSE-2.0" />código abierto</a>) en el
@@ -22,6 +22,8 @@
 
         <!-- Otros scripts de interacción, aquí -->
         <script th:src="@{/js/interacciones.js}" src="js/interacciones.js"></script>
+        <script th:src="@{/js/giro-flecha-desplegable.js}" src="js/giro-flecha-desplegable.js"></script>
+
     </footer>
 </body>
 

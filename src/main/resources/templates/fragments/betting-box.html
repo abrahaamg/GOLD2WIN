@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html class="h-100" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <title>Betting-box fragment - rest is empty</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div th:fragment="betting-box">
+        <div class="bettingBox">
+            <div class="headRowBettingBox" type="button" data-bs-toggle="collapse" data-bs-target="#miDesplegable1" aria-expanded="false" aria-controls="miDesplegable1">
+                <div class="left d-flex align-items-center justify-content-between">
+                    <div class="headRowBettingBoxLeftElement">50,00€</div>
+                    <div id="mensajeDesplegable">MALLORCA-VILLARREAL</div>
+                </div>
+                <div class="right d-flex align-items-center justify-content-between">
+                    <div class="headRowBettingBoxRightElement">Perdida</div>
+                    <!-- Botón para abrir el desplegable -->
+                    <button class="btn btn-custom" type="button" data-bs-toggle="collapse" data-bs-target="#miDesplegable1" aria-expanded="false" aria-controls="miDesplegable1" id="toggleButton">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-down-circle-fill" viewBox="0 0 16 16" id="arrowIcon">
+                            <path id="arrowPath" d="M3.204 5h9.592L8 10.481zm-.753.659 4.796 5.48a1 1 0 0 0 1.506 0l4.796-5.48c.566-.647.106-1.659-.753-1.659H3.204a1 1 0 0 0-.753 1.659"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            <div class="collapse" id="miDesplegable1">
+                <div class="infoRowBettingBox">
+                    <p><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="red" class="bi bi-x-circle-fill" viewBox="0 0 16 16">
+                        <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0M5.354 4.646a.5.5 0 1 0-.708.708L7.293 8l-2.647 2.646a.5.5 0 0 0 .708.708L8 8.707l2.646 2.647a.5.5 0 0 0 .708-.708L8.707 8l2.647-2.646a.5.5 0 0 0-.708-.708L8 7.293z"/>
+                    </svg>
+                     CREAR APUESTA >> 12000.5</p>
+                    <p>MALLORCA-VILLARREAL</p>
+                    <p> gana villarreal-más de 0.5 remates a puerta-108 corners o más</p>
+                </div>
+                <div class="footerRowBettingBox">
+                    <div class="left">
+                        <p>Imp:<br>
+                            50,00€</p>
+                    </div>
+                    <div class="mid">
+                        <p>Ganancias<br>
+                            0,00€</p>
+                    </div>
+                    <div class="right footerRowBettingBoxRightElement">Ganancias 0,00€</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+
+

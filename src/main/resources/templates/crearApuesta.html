@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html class="h-100" xmlns:th="http://www.thymeleaf.org">
+<html class="h-100" xmlns:th="http://www.thymeleaf.org" data-bs-theme="dark">
 
 <head>
     <th:block th:replace="fragments/head :: header"/>
@@ -9,294 +9,369 @@
     
 </head>
 
-<body class="d-flex flex-column h-100" data-bs-theme="dark">
+<body class="d-flex flex-column h-100">
     
     <header th:replace="fragments/nav.html :: nav('deportes')"></header>
 
-    <a id = "flecha-atras-apuesta" href="/">
-        <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="white" class="bi bi-arrow-left-short" viewBox="0 0 16 16" id = "flecha-atras-apuesta">
-            <path fill-rule="evenodd" d="M12 8a.5.5 0 0 1-.5.5H5.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L5.707 7.5H11.5a.5.5 0 0 1 .5.5"/>
-        </svg>
-    </a>
+    <div class="w-100 px-3 pt-2 d-flex flex-column">
+        <div class="d-flex justify-content-between align-items-center border-bottom pb-2">
+            <h5 class="mb-0">Título del Div</h5>
+            <a th:href="@{/}" href="/" class="btn-close" aria-label="Cerrar"></a>
+        </div>
 
-    <div id = "tablaTuApuesta" class = "mx-auto w-50">
-        <span class = "d-flex flex-column justify-content-center align-items-center pb-2 pt-3 fs-5">Tu apuesta</span>
-        <hr class="separador-horizontal-apuestas">
-        <div class = "p-2">
-            <div class = "d-flex justify-content-between mb-2">
-                <span class = "ms-2">Evento: Mallorca vs Osasuna</span>
-                <span class = "col text-end me-4">81</span>
-            </div>
-            <div id = "tablaApuestasSeleccionadas">
-                <div class = "line"></div>
-                <div class = "apuestaSeleccionada ms-4">
-                    <div class = "iconoCirculoApuesta">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" fill="currentColor" class="bi bi-circle" viewBox="0 0 16 16">
-                            <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
-                        </svg>       
-                    </div>
-                    <div class = "textoIconoApuesta">
-                        <span class = "ms-3">Total de goles: Más de 2,5</span>
-                    </div>                  
-                </div>
-                <div class = "apuestaSeleccionada ms-4">
-                    <div class = "iconoCirculoApuesta">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" fill="currentColor" class="bi bi-circle" viewBox="0 0 16 16">
-                            <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
-                        </svg>
-                    </div>
-                    <div class = "textoIconoApuesta">
-                        <span class = "ms-3">Ambos equipos anotarán: Sí</span>
-                    </div>        
-                </div>
-                <div class = "apuestaSeleccionada ms-4">
-                    <div class = "iconoCirculoApuesta">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" fill="currentColor" class="bi bi-circle" viewBox="0 0 16 16">
-                            <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
-                        </svg>
-                    </div>
-                    <div class = "textoIconoApuesta">
-                        <span class = "ms-3">Ambos equipos recibirán: Una tarjeta roja</span>
-                    </div>
-                </div>
-            </div>
+        <div class="d-flex justify-content-between align-items-center mt-4">
+            <div class="barraBuscador " style>
+                <svg viewBox="0 0 24 24" aria-hidden="true" class="iconoBuscador">
+                <g>
+                    <path
+                    d="M21.53 20.47l-3.66-3.66C19.195 15.24 20 13.214 20 11c0-4.97-4.03-9-9-9s-9 4.03-9 9 4.03 9 9 9c2.215 0 4.24-.804 5.808-2.13l3.66 3.66c.147.146.34.22.53.22s.385-.073.53-.22c.295-.293.295-.767.002-1.06zM3.5 11c0-4.135 3.365-7.5 7.5-7.5s7.5 3.365 7.5 7.5-3.365 7.5-7.5 7.5-7.5-3.365-7.5-7.5z"
+                    ></path>
+                </g>
+                </svg>
             
-        </div>
+                <input
+                id="queryApuestas"
+                class="inputBuscador"
+                type="search"
+                placeholder="Search..."
+                name="searchbar"
+                />
+            </div>
 
-        <div class="row gx-0 bg-body-secondary">
-            <hr class="separador-horizontal-apuestas">
-            <div class="col-6 d-flex justify-content-center align-items-center">
-                <div class = "botonesTuApuesta">
-                    <span class = "ms-3">Establecer cantidad:</span>
+            <button type="button" class="btn btn-primary d-none d-sm-block" data-bs-toggle="modal" data-bs-target="#modalCrearApuesta" style="margin-left:10px; min-width:185px;">
+                crea tu propia apuesta
+            </button>
+            <button type="button" class="btn btn-primary d-sm-none" data-bs-toggle="modal" data-bs-target="#modalCrearApuesta" style="margin-left:10px;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-plus-circle" viewBox="0 0 16 16">
+                    <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
+                    <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"/>
+                </svg>
+            </button>
+        </div>
+        
+
+        <div class="h-100 w-100 d-flex flex-wrap justify-content-evenly" style="margin-top: 10px;">
+            <div class="d-flex flex-column contenedor-apuesta" >
+                <h5 class="pb-2 border-bottom">Nombre apuesta</h5>
+                <div id="descripcion-contendor-apuesta">
+                    <div class="d-flex align-items-start mb-2">
+                        <span class="titulo-campo-apuesta me-2">Formula:</span>
+                        <div class="border w-100 scrollBarPerso contenedor-info">
+                            <span class="spanAdaptable" style="white-space: nowrap;">GolesMadrid > golesGetafe+3qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq</span>
+                        </div>
+                    </div>
+                    <div >
+                        <span class="titulo-campo-apuesta ">Cuota favorable:</span>
+                        <span class="text-success">0,0</span>
+                    </div>
+                    <div >
+                        <span class="titulo-campo-apuesta">Cuota desfavorable:</span>
+                        <span class="text-success">0,0</span>
+                    </div>
                 </div>
-                <div class="separador-vertical-apuestas ms-auto"></div>
-            </div>     
-            <div class="col-6 d-flex justify-content-center align-items-center botonesTuApuesta">Apostar</div>
+                
+                <button type="button" class="btn btn-success mx-auto mt-3" data-bs-toggle="modal" data-bs-target="#modalApostar">
+                    apostar
+                </button>
+            </div>
+            <div class="d-flex flex-column contenedor-apuesta" >
+                <h5 class="pb-2 border-bottom">Nombre apuesta</h5>
+                <div id="descripcion-contendor-apuesta">
+                    <div class="d-flex align-items-start mb-2">
+                        <span class="titulo-campo-apuesta me-2">Formula:</span>
+                        <div class="border w-100 scrollBarPerso contenedor-info">
+                            <span class="spanAdaptable" style="white-space: nowrap;">GolesMadrid > golesGetafe+3qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq</span>
+                        </div>
+                    </div>
+                    <div >
+                        <span class="titulo-campo-apuesta ">Cuota favorable:</span>
+                        <span class="text-success">0,0</span>
+                    </div>
+                    <div >
+                        <span class="titulo-campo-apuesta">Cuota desfavorable:</span>
+                        <span class="text-success">0,0</span>
+                    </div>
+                </div>
+                
+                <button type="button" class="btn btn-success mx-auto mt-3" data-bs-toggle="modal" data-bs-target="#modalApostar">
+                    apostar
+                </button>
+            </div>
+            <div class="d-flex flex-column contenedor-apuesta" >
+                <h5 class="pb-2 border-bottom">Nombre apuesta</h5>
+                <div id="descripcion-contendor-apuesta">
+                    <div class="d-flex align-items-start mb-2">
+                        <span class="titulo-campo-apuesta me-2">Formula:</span>
+                        <div class="border w-100 scrollBarPerso contenedor-info">
+                            <span class="spanAdaptable" style="white-space: nowrap;">GolesMadrid > golesGetafe+3qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq</span>
+                        </div>
+                    </div>
+                    <div >
+                        <span class="titulo-campo-apuesta ">Cuota favorable:</span>
+                        <span class="text-success">0,0</span>
+                    </div>
+                    <div >
+                        <span class="titulo-campo-apuesta">Cuota desfavorable:</span>
+                        <span class="text-success">0,0</span>
+                    </div>
+                </div>
+                
+                <button type="button" class="btn btn-success mx-auto mt-3" data-bs-toggle="modal" data-bs-target="#modalApostar">
+                    apostar
+                </button>
+            </div>
+            <div class="d-flex flex-column contenedor-apuesta" >
+                <h5 class="pb-2 border-bottom">Nombre apuesta</h5>
+                <div id="descripcion-contendor-apuesta">
+                    <div class="d-flex align-items-start mb-2">
+                        <span class="titulo-campo-apuesta me-2">Formula:</span>
+                        <div class="border w-100 scrollBarPerso contenedor-info">
+                            <span class="spanAdaptable" style="white-space: nowrap;">GolesMadrid > golesGetafe+3qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq</span>
+                        </div>
+                    </div>
+                    <div >
+                        <span class="titulo-campo-apuesta ">Cuota favorable:</span>
+                        <span class="text-success">0,0</span>
+                    </div>
+                    <div >
+                        <span class="titulo-campo-apuesta">Cuota desfavorable:</span>
+                        <span class="text-success">0,0</span>
+                    </div>
+                </div>
+                
+                <button type="button" class="btn btn-success mx-auto mt-3" data-bs-toggle="modal" data-bs-target="#modalApostar">
+                    apostar
+                </button>
+            </div>
+            <div class="d-flex flex-column contenedor-apuesta" >
+                <h5 class="pb-2 border-bottom">Nombre apuesta</h5>
+                <div id="descripcion-contendor-apuesta">
+                    <div class="d-flex align-items-start mb-2">
+                        <span class="titulo-campo-apuesta me-2">Formula:</span>
+                        <div class="border w-100 scrollBarPerso contenedor-info">
+                            <span class="spanAdaptable" style="white-space: nowrap;">GolesMadrid > golesGetafe+3qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq</span>
+                        </div>
+                    </div>
+                    <div >
+                        <span class="titulo-campo-apuesta ">Cuota favorable:</span>
+                        <span class="text-success">0,0</span>
+                    </div>
+                    <div >
+                        <span class="titulo-campo-apuesta">Cuota desfavorable:</span>
+                        <span class="text-success">0,0</span>
+                    </div>
+                </div>
+                
+                <button type="button" class="btn btn-success mx-auto mt-3" data-bs-toggle="modal" data-bs-target="#modalApostar">
+                    apostar
+                </button>
+            </div>
+
+            <div class="d-flex flex-column contenedor-apuesta" >
+                <h5 class="pb-2 border-bottom">Nombre apuesta</h5>
+                <div id="descripcion-contendor-apuesta">
+                    <div class="d-flex align-items-start mb-2">
+                        <span class="titulo-campo-apuesta me-2">Formula:</span>
+                        <div class="border w-100 scrollBarPerso contenedor-info">
+                            <span class="spanAdaptable">GolesMadrid > golesGetafe+3</span>
+                        </div>
+                    </div>
+                    <div >
+                        <span class="titulo-campo-apuesta ">Cuota favorable:</span>
+                        <span class="text-success">0,0</span>
+                    </div>
+                    <div >
+                        <span class="titulo-campo-apuesta">Cuota desfavorable:</span>
+                        <span class="text-success">0,0</span>
+                    </div>
+                </div>
+                
+                <button type="button" class="btn btn-success mx-auto mt-3" data-bs-toggle="modal" data-bs-target="#modalApostar">
+                    apostar
+                </button>
+            </div>
+
+            <div class="d-flex flex-column contenedor-apuesta" >
+                <h5 class="pb-2 border-bottom">Nombre apuesta</h5>
+                <div id="descripcion-contendor-apuesta">
+                    <div class="d-flex align-items-start mb-2">
+                        <span class="titulo-campo-apuesta me-2">Formula:</span>
+                        <div class="border w-100 scrollBarPerso contenedor-info">
+                            <span class="spanAdaptable">GolesMadrid > golesGetafe+3</span>
+                        </div>
+                    </div>
+                    <div >
+                        <span class="titulo-campo-apuesta ">Cuota favorable:</span>
+                        <span class="text-success">0,0</span>
+                    </div>
+                    <div >
+                        <span class="titulo-campo-apuesta">Cuota desfavorable:</span>
+                        <span class="text-success">0,0</span>
+                    </div>
+                </div>
+                
+                <button type="button" class="btn btn-success mx-auto mt-3" data-bs-toggle="modal" data-bs-target="#modalApostar">
+                    apostar
+                </button>
+            </div>
+
+            <div class="d-flex flex-column contenedor-apuesta" >
+                <h5 class="pb-2 border-bottom">Nombre apuesta</h5>
+                <div id="descripcion-contendor-apuesta">
+                    <div class="d-flex align-items-start mb-2">
+                        <span class="titulo-campo-apuesta me-2">Formula:</span>
+                        <div class="border w-100 scrollBarPerso contenedor-info">
+                            <span class="spanAdaptable">GolesMadrid > golesGetafe+3</span>
+                        </div>
+                    </div>
+                    <div >
+                        <span class="titulo-campo-apuesta ">Cuota favorable:</span>
+                        <span class="text-success">0,0</span>
+                    </div>
+                    <div >
+                        <span class="titulo-campo-apuesta">Cuota desfavorable:</span>
+                        <span class="text-success">0,0</span>
+                    </div>
+                </div>
+                
+                <button type="button" class="btn btn-success mx-auto mt-3" data-bs-toggle="modal" data-bs-target="#modalApostar">
+                    apostar
+                </button>
+            </div>
+
+            <div class="d-flex flex-column contenedor-apuesta" >
+                <h5 class="pb-2 border-bottom">Nombre apuesta</h5>
+                <div id="descripcion-contendor-apuesta">
+                    <div class="d-flex align-items-start mb-2">
+                        <span class="titulo-campo-apuesta me-2">Formula:</span>
+                        <div class="border w-100 scrollBarPerso contenedor-info">
+                            <span class="spanAdaptable">GolesMadrid > golesGetafe+3</span>
+                        </div>
+                    </div>
+                    <div >
+                        <span class="titulo-campo-apuesta ">Cuota favorable:</span>
+                        <span class="text-success">0,0</span>
+                    </div>
+                    <div >
+                        <span class="titulo-campo-apuesta">Cuota desfavorable:</span>
+                        <span class="text-success">0,0</span>
+                    </div>
+                </div>
+                
+                <button type="button" class="btn btn-success mx-auto mt-3" data-bs-toggle="modal" data-bs-target="#modalApostar">
+                    apostar
+                </button>
+            </div>
         </div>
     </div>
 
-    <div class="container mt-4 d-flex flex-column bg-body-secondary tablaSeleccionApuesta">
-        <div class="align-items-center justify-content-center d-flex flex-grow-1 botonDesplegable" data-bs-toggle="collapse" data-bs-target="#tablaDesplegable" aria-expanded="false">
-            <span id="etiquetaTabla">Total de Goles</span>
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-compact-down ms-auto me-2 iconoFlechaDesplegableAbajo" viewBox="0 0 16 16">
-                <path fill-rule="evenodd" d="M1.553 6.776a.5.5 0 0 1 .67-.223L8 9.44l5.776-2.888a.5.5 0 1 1 .448.894l-6 3a.5.5 0 0 1-.448 0l-6-3a.5.5 0 0 1-.223-.67"/>
-            </svg>
-        </div>
-
-        <div class="collapse container" id="tablaDesplegable"> <!-- Los ID se camiarán luego con TH según el ID en la base de datos-->
-
-            <div class="row">
-                <hr class="separador-horizontal-apuestas">
-                <div class="col-4"></div>
-                <div class="col-4 colsNumeros">Más de</div>
-                <div class="col-4 colsNumeros">Menos de</div>
-                <hr class="separador-horizontal-apuestas">
-            </div>
+    <div class="modal fade" id="modalCrearApuesta" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-fullscreen-sm-down">
+            <div class="modal-content" style="position: relative;">
+                <div id="ocultador-formulario2">
+                    <form id="crearApuestaForm">
+                        <div class="modal-header">
+                            <button type="button" id="botonRetrocederCrearApuesta" class="btn btn-svg invisible" aria-label="atras">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="white" class="bi bi-arrow-left-short" viewBox="0 0 16 16">
+                                    <path fill-rule="evenodd" d="M12 8a.5.5 0 0 1-.5.5H5.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L5.707 7.5H11.5a.5.5 0 0 1 .5.5"/>
+                                </svg>
+                            </button>
+                            <h5 class="modal-title mx-auto">Crea tu apuesta</h5>
+                            <button type="button" class="btn-close ms-0" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                        </div>
+                    
+                        <div class="modal-body">
+                            <div class="vision-creatuApuesta-1">
+                                <div class="mb-3">
+                                    <label for="tituloModal" class="form-label">Título:</label>
+                                    <input type="text" class="form-control" id="tituloModal" name="titulo" maxlength="30" required>
+                                    <span id="tituloError" class="text-danger"></span>
+                                </div>
     
-            <div class="row">
-                <div class="col-4 colsLineas">
-                    <span>
-                        2.5 goles
-                    </span>
-                    <div class="separador-vertical-apuestas ms-auto"></div>
-                </div>
-                <div class="col-4 colsCuotas">2.00</div>
-                <div class="col-4 colsCuotas">3.00</div>
-                <hr class="separador-horizontal-apuestas">
-            </div>
+                                <div class="mb-3">
+                                    <label for="formulaModal" class="form-label">Formula:</label>
+                                    <input type="text" class="form-control" id="formulaModal" name="formula" maxlength="30" required>
+                                    <span id="formulaError" class="text-danger"></span>
+                                </div>
     
-            <div class="row">
-                <div class="col-4 colsLineas">
-                    <span>
-                        3.5 goles
-                    </span>
-                    <div class="separador-vertical-apuestas ms-auto"></div>
-                </div>
-                <div class="col-4 colsCuotas">3.75</div>
-                <div class="col-4 colsCuotas">1.82</div>
-            </div>
-        </div>
-    </div>
+                                <div class="d-flex align-items-start mt-4">
+                                    <label for="variables" class="form-label mb-0 me-2">Variables:</label>
+                                    <div id="lista-Variables-Cr" class="border w-100 scrollBarPerso">
+                                        <span class="spanAdaptable">GolesMadrid, GolesBarsa, FaltasMadrid, FaltasBarsa, cornersMadrid, cornersBarsa,   </span>
+                                    </div>
+                                </div>
+                            </div>
 
-    <div class="container mt-4 d-flex flex-column bg-body-secondary tablaSeleccionApuesta">
-        <div class="align-items-center justify-content-center d-flex flex-grow-1 botonDesplegable" data-bs-toggle="collapse" data-bs-target="#tablaDesplegable2" aria-expanded="false">
-            <span id="etiquetaTabla">Equipo - Mayor número</span>
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-compact-down ms-auto me-2 iconoFlechaDesplegableAbajo" viewBox="0 0 16 16">
-                <path fill-rule="evenodd" d="M1.553 6.776a.5.5 0 0 1 .67-.223L8 9.44l5.776-2.888a.5.5 0 1 1 .448.894l-6 3a.5.5 0 0 1-.448 0l-6-3a.5.5 0 0 1-.223-.67"/>
-            </svg>
-        </div>
+                            <div class="vision-creatuApuesta-2 desaparece">
+                                <div class="mb-3">
+                                    <label for="cantidadModal2" class="form-label">Cantidad a apostar:</label>
+                                    <input type="number" class="form-control" id="cantidadModal2" name="cantidad" min="1" required>
+                                    <span id="cantidadError" class="text-danger"></span>
+                                </div>
+            
+                                <div class="mb-3">
+                                    <label for="tipoApuestaModal2" class="form-label">Tipo de apuesta:</label>
+                                    <select class="form-select" id="tipoApuestaModal2" name="tipoApuesta" required>
+                                        <option value="favor">A favor</option>
+                                        <option value="contra">En contra</option>
+                                    </select>
+                                </div>
+                            </div>
 
-        <div class="collapse container" id="tablaDesplegable2"> 
-
-            <div class="row">
-                <hr class="separador-horizontal-apuestas">
-                <div class="col-3"></div>
-                <div class="col-3 colsNumeros">Mallorca</div>
-                <div class="col-3 colsNumeros">Empate</div>
-                <div class="col-3 colsNumeros">Osasuna</div>
-                <hr class="separador-horizontal-apuestas">
-            </div>
-    
-            <div class="row">
-                <div class="col-3 colsLineas">
-                    <span>
-                        Tarjetas
-                    </span>
-                    <div class="separador-vertical-apuestas ms-auto"></div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" id="botonSiguienteCrearApuesta"class="btn btn-secondary mx-auto vision-creatuApuesta-1">siguiente</button>
+                            <button type="submit" class="btn btn-success mx-auto vision-creatuApuesta-2 desaparece">Apostar</button>
+                        </div>
+                    </form>
                 </div>
-                <div class="col-3 colsCuotas">2.10</div>
-                <div class="col-3 colsCuotas">4.00</div>
-                <div class="col-3 colsCuotas">2.60</div>
-                <hr class="separador-horizontal-apuestas">
-            </div>
-    
-            <div class="row">
-                <div class="col-3 colsLineas">
-                    <span>
-                        Córners
-                    </span>
-                    <div class="separador-vertical-apuestas ms-auto"></div>
-                </div>
-                <div class="col-3 colsCuotas">1.53</div>
-                <div class="col-3 colsCuotas">8.00</div>
-                <div class="col-3 colsCuotas">3.00</div>
-                <hr class="separador-horizontal-apuestas">
-            </div>
-
-            <div class="row">
-                <div class="col-3 colsLineas">
-                    <span>
-                        Remates a puerta
-                    </span>
-                    <div class="separador-vertical-apuestas ms-auto"></div>
-                </div>
-                <div class="col-3 colsCuotas">1.30</div>
-                <div class="col-3 colsCuotas">7.50</div>
-                <div class="col-3 colsCuotas">4.75</div>
-                <hr class="separador-horizontal-apuestas">
-            </div>
-
-            <div class="row">
-                <div class="col-3 colsLineas">
-                    <span>
-                        Remates
-                    </span>
-                    <div class="separador-vertical-apuestas ms-auto"></div>
-                </div>
-                <div class="col-3 colsCuotas">1.28</div>
-                <div class="col-3 colsCuotas">7.50</div>
-                <div class="col-3 colsCuotas">3.75</div>
-            </div>
-        </div>      
-    </div>
-    
-    <div class="container mt-4 d-flex flex-column bg-body-secondary tablaSeleccionApuesta">
-        <div class="align-items-center justify-content-center d-flex flex-grow-1 botonDesplegable" data-bs-toggle="collapse" data-bs-target="#tablaDesplegable3" aria-expanded="false">
-            <span id="etiquetaTabla">Ambos equipos recibirán tarjetas</span>
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-compact-down ms-auto me-2 iconoFlechaDesplegableAbajo" viewBox="0 0 16 16">
-                <path fill-rule="evenodd" d="M1.553 6.776a.5.5 0 0 1 .67-.223L8 9.44l5.776-2.888a.5.5 0 1 1 .448.894l-6 3a.5.5 0 0 1-.448 0l-6-3a.5.5 0 0 1-.223-.67"/>
-            </svg>
-        </div>
-
-        <div class="collapse container" id="tablaDesplegable3">
-
-            <div class="row">
-                <hr class="separador-horizontal-apuestas">
-                <div class="col-4"></div>
-                <div class="col-4 colsNumeros">Sí</div>
-                <div class="col-4 colsNumeros">No</div>
-                <hr class="separador-horizontal-apuestas">
-            </div>
-    
-            <div class="row">
-                <div class="col-4 colsLineas">
-                    <span>
-                        Una tarjeta
-                    </span>
-                    <div class="separador-vertical-apuestas ms-auto"></div>
-                </div>
-                <div class="col-4 colsCuotas">1.12</div>
-                <div class="col-4 colsCuotas">6.00</div>
-                <hr class="separador-horizontal-apuestas">
-            </div>
-    
-            <div class="row">
-                <div class="col-4 colsLineas">
-                    <span>
-                        Dos tarjetas o más
-                    </span>
-                    <div class="separador-vertical-apuestas ms-auto"></div>
-                </div>
-                <div class="col-4 colsCuotas">1.66</div>
-                <div class="col-4 colsCuotas">2.10</div>
-                <hr class="separador-horizontal-apuestas">
-            </div>
-
-            <div class="row">
-                <div class="col-4 colsLineas">
-                    <span>
-                        Una tarjeta roja
-                    </span>
-                    <div class="separador-vertical-apuestas ms-auto"></div>
-                </div>
-                <div class="col-4 colsCuotas">29.00</div>
-                <div class="col-4 colsCuotas">1,06</div>
+                
+                <svg id="confirmacionApuesta2" xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="bi bi-check-circle-fill text-success invisible" viewBox="0 0 16 16">
+                    <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0m-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>
+                </svg>
             </div>
         </div>
     </div>
-    
-    <div class="container mt-4 d-flex flex-column bg-body-secondary tablaSeleccionApuesta">
-        <div class="align-items-center justify-content-center d-flex flex-grow-1 botonDesplegable" data-bs-toggle="collapse" data-bs-target="#tablaDesplegable4" aria-expanded="false">
-            <span id="etiquetaTabla">Ambos equipos anotarán</span>
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-compact-down ms-auto me-2 iconoFlechaDesplegableAbajo" viewBox="0 0 16 16">
-                <path fill-rule="evenodd" d="M1.553 6.776a.5.5 0 0 1 .67-.223L8 9.44l5.776-2.888a.5.5 0 1 1 .448.894l-6 3a.5.5 0 0 1-.448 0l-6-3a.5.5 0 0 1-.223-.67"/>
-            </svg>
-        </div>
 
-        <div class="collapse container" id="tablaDesplegable4">
-
-            <div class="row">
-                <hr class="separador-horizontal-apuestas">
-                <div class="col-4"></div>
-                <div class="col-4 colsNumeros">Sí</div>
-                <div class="col-4 colsNumeros">No</div>
-                <hr class="separador-horizontal-apuestas">
-            </div>
+    <div class="modal fade" id="modalApostar" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-fullscreen-sm-down">
+            <div class="modal-content" style="position: relative;">
+                <div id="ocultador-formulario">
+                    <form id="apostarForm">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Nombre apuesta</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                        </div>
+                    
+                        <div class="modal-body">
+                            <!-- Campo para cantidad de dinero -->
+                            <div class="mb-3">
+                                <label for="cantidadModal" class="form-label">Cantidad a apostar:</label>
+                                <input type="number" class="form-control" id="cantidadModal" name="cantidad" min="1" required>
+                                <span id="cantidadError" class="text-danger"></span>
+                            </div>
+        
+                            <!-- Selección de apuesta -->
+                            <div class="mb-3">
+                                <label for="tipoApuestaModal" class="form-label">Tipo de apuesta:</label>
+                                <select class="form-select" id="tipoApuestaModal" name="tipoApuesta" required>
+                                    <option value="favor">A favor</option>
+                                    <option value="contra">En contra</option>
+                                </select>
     
-            <div class="row">
-                <div class="col-4 colsLineas">
-                    <span>
-                        Encuentro
-                    </span>
-                    <div class="separador-vertical-apuestas ms-auto"></div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                            <button type="submit" class="btn btn-success">Aceptar</button>
+                        </div>
+                    </form>
                 </div>
-                <div class="col-4 colsCuotas">2.10</div>
-                <div class="col-4 colsCuotas">1.66</div>
-                <hr class="separador-horizontal-apuestas">
-            </div>
+                
 
-            <div class="row">
-                <div class="col-4 colsLineas">
-                    <span>
-                        1ª mitad
-                    </span>
-                    <div class="separador-vertical-apuestas ms-auto"></div>
-                </div> 
-
-                <div class="col-4 colsCuotas">6.50</div>
-                <div class="col-4 colsCuotas">1.11</div>
-                <hr class="separador-horizontal-apuestas">
-            </div>
-    
-            <div class="row">
-                <div class="col-4 colsLineas">
-                    <span>
-                        2ª mitad
-                    </span>
-                    <div class="separador-vertical-apuestas ms-auto"></div>
-                </div>
-                <div class="col-4 colsCuotas">4.00</div>
-                <div class="col-4 colsCuotas">1.22</div>
+                <svg id="confirmacionApuesta" xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="bi bi-check-circle-fill text-success invisible" viewBox="0 0 16 16">
+                    <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0m-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>
+                </svg>
             </div>
         </div>
     </div>

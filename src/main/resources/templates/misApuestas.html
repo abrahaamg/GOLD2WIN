@@ -23,6 +23,7 @@
 
     <main class="flex-shrink-0">
         <div class="container">
+            <div th:replace="fragments/menuApuestas.html :: navMisApuestas('null')"></div>
             <h1 class="mt-5 no-space">
                 Bienvenid@ a <span class="gold-text">GOLD</span>2<span class="gold-text">WIN</span> donde la suerte está de tu lado
             </h1>
@@ -32,19 +33,20 @@
                 <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#miDesplegable" aria-expanded="false" aria-controls="miDesplegable">
                   Abrir desplegable
                 </button>
-              </div>
+            </div>
               
-              <div class="collapse" id="miDesplegable">
+            <div class="collapse" id="miDesplegable">
                 <div class="card card-body mt-3">
-                  Aquí va el contenido del desplegable.
-                  <p>¡Esto es un texto dentro del desplegable! Puedes agregar más contenido como imágenes, formularios, etc.</p>
+                    Aquí va el contenido del desplegable.
+                    <p>¡Esto es un texto dentro del desplegable! Puedes agregar más contenido como imágenes, formularios, etc.</p>
                 </div>
-              </div>
+            </div>            
               
         </div>
     </main>
 
     <th:block th:replace="fragments/footer.html :: footer" />
+        
 </body>
 
 </html>

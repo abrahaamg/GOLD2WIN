@@ -11,9 +11,9 @@
 
 <body class="d-flex flex-column h-100" data-bs-theme="dark">
     
-    <header th:replace="fragments/nav.html :: nav('deportes')"></header>
+    <header th:replace="fragments/nav.html :: nav('administrar')"></header>
 
-    <a id = "flecha-atras-apuesta" href="/">
+    <a id = "flecha-atras-apuesta" th:href="@{/admin}">
         <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="white" class="bi bi-arrow-left-short" viewBox="0 0 16 16" id = "flecha-atras-apuesta">
             <path fill-rule="evenodd" d="M12 8a.5.5 0 0 1-.5.5H5.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L5.707 7.5H11.5a.5.5 0 0 1 .5.5"/>
         </svg>
