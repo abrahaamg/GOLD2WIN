@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html class="h-100" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <th:block th:replace="fragments/head :: header"/>
+    <title>CrearApuesta</title>
+
+    <link rel="stylesheet" href="css_german.css"> <!-- Ruta del archivo CSS -->
+    
+</head>
+
+<body class="d-flex flex-column h-100" data-bs-theme="dark">
+    
+    <header th:replace="fragments/nav.html :: nav('deportes')"></header>
+
+    <a id = "flecha-atras-apuesta" href="/tablaReportes">
+        <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="white" class="bi bi-arrow-left-short" viewBox="0 0 16 16" id = "flecha-atras-apuesta">
+            <path fill-rule="evenodd" d="M12 8a.5.5 0 0 1-.5.5H5.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L5.707 7.5H11.5a.5.5 0 0 1 .5.5"/>
+        </svg>
+    </a>
+
+    <div>
+        <div id = "tablaReportesMensajes">
+            <div class = "row" >
+                <div class="col encabezadoTablaReportes">ID</div>
+                <div class="col encabezadoTablaReportes">USUARIO REPORTADO</div>
+                <div class="col encabezadoTablaReportes">USUARIO DEL REPORTE</div>
+                <div class="col encabezadoTablaReportes">CHAT</div>
+            </div>
+            <div class = "row">
+                <div class="col celdaTablaReportes">1111</div>
+                <div class="col celdaTablaReportes">xx_jj_xx</div>
+                <div class="col celdaTablaReportes">manolito</div>
+                <div class="col celdaTablaReportes">Mallorca/Osasuna</div>
+            </div>
+            <div class = "row mt-4">
+                <div class="col encabezadoTablaReportes">FECHA REPORTE</div>
+                <div class="col encabezadoTablaReportes">RESUELTO</div>
+                <div class="col encabezadoTablaReportes">FECHA RESOLUCION</div>
+            </div>
+            <div class = "row">
+                <div class="col celdaTablaReportes">21/2/2025</div>
+                <div class="col celdaTablaReportes">No resuelto</div>
+                <div class="col celdaTablaReportesEspecial">-</div>
+            </div>
+            <div class = "row mt-5" id = "decidirBaneo">
+                <div class = "col-4 motivoReporte">
+                    <span>
+                        Motivo del reporte:
+                    </span>
+                    <span>
+                        Comentario ofensivo hacia un miembro del chat
+                    </span>
+                </div>
+
+                <div class = "col-2 ms-5">
+                    <div role = "button" class = "botonesResolverReporte" style="word-wrap: break-word; white-space: normal">
+                        Banear permanentemente
+                    </div>
+                    <div role = "button" class = "botonesResolverReporte mt-3">
+                        Banear temporalmente
+                    </div>
+                    <div role = "button" class = "botonesResolverReporte mt-3">
+                        No banear
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <th:block th:replace="fragments/footer.html :: footer" />
+</body>
+
+</html>

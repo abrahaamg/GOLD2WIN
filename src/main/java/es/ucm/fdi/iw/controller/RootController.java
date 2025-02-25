@@ -40,4 +40,14 @@ public class RootController {
     public String verificarEvento(Model model){
         return "verificarEvento";
     }
+
+    @GetMapping("/tablaReportes")
+    public String tablaReportes(Model model){
+        return "tablaReportes";
+    }
+
+    @GetMapping("/reporteConcreto")
+    public String reporteConcreto(Model model){
+        return "reporteConcreto";
+    }
 }

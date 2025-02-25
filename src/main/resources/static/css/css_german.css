@@ -1,3 +1,93 @@
+#divResetearFiltros{
+    margin-left: 35px;
+    padding-left: 70px;
+    padding-right: 0px;
+
+    display: flex;
+    align-items: center;
+}
+
+#botonResetearFiltros{
+    border: 1px solid var(--bs-border-color);
+    border-radius: var(--bs-border-radius);
+
+    display: flex;
+    justify-content: center;
+    
+    width: 70%;
+
+    hyphens: auto;
+    word-break: break-word;
+}
+#tablaReportesMensajes{
+    margin-left: 65px;
+    margin-right: 65px;
+    margin-top: 40px;
+    margin-bottom: 20px;
+}
+
+.encabezadoTablaReportes{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    border: 1px solid var(--bs-border-color);
+    padding: 10px;
+    font-weight: bold;
+}
+
+.celdaTablaReportes{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    border: 1px solid var(--bs-border-color);
+}
+
+.celdaTablaReportesEspecial{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    border: 1px solid var(--bs-border-color);
+}
+
+#saltoPaginaReportes{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.iconoReportes{
+    margin: 2px;
+}
+.iconoReportes:hover{
+    color: #A78BFA;
+}
+
+.motivoReporte{
+    border: 1px solid var(--bs-border-color);
+    border-radius: var(--bs-border-radius);
+}
+
+.botonesResolverReporte{
+    border: 1px solid var(--bs-border-color);
+    border-radius: var(--bs-border-radius);
+
+    display: flex;
+    justify-content: center;
+
+    hyphens: auto;
+    word-break: break-word;
+}
+
+#decidirBaneo{
+    display: flex;
+    justify-content: center;
+}
+
+
+
 #flecha-atras-apuesta{
     transform: translate(5px, 5px); 
 }
@@ -119,4 +209,9 @@
     align-items: center;
     justify-content: center;
     color: #A78BFA;
+}
+
+#cuerpoTablaReportes{
+    overflow-y: auto;
+    overflow-x: hidden;
 }
