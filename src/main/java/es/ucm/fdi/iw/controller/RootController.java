@@ -95,4 +95,14 @@ public class RootController {
     public String apuestasPendientes(Model model){
         return "misApuestas-pendientes";
     }
+
+    @GetMapping("/tablaReportes")
+    public String tablaReportes(Model model){
+        return "tablaReportes";
+    }
+
+    @GetMapping("/reporteConcreto")
+    public String reporteConcreto(Model model){
+        return "reporteConcreto";
+    }
 }

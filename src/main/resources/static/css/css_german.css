@@ -1,7 +1,5 @@
 #divResetearFiltros{
     margin-left: 35px;
-    padding-left: 70px;
-    padding-right: 0px;
 
     display: flex;
     align-items: center;
@@ -42,6 +40,8 @@
     align-items: center;
 
     border: 1px solid var(--bs-border-color);
+
+    height: 200px;
 }
 
 .celdaTablaReportesEspecial{
@@ -86,132 +86,25 @@
     justify-content: center;
 }
 
+#cuerpoTablaReportes{
+    overflow-y: auto;
+    overflow-x: hidden;
+    max-height: 400px;
+    padding: 0px 16px 0px 0px;
+    border-left: 1px solid var(--bs-border-color);
+}
+
+.filaEncabezadoReportes{
+    width: 100%;
+    margin: 0px;
+    padding: 0px;
+}
+
+.filaTablaReportes{
+    margin-left: 0px;
+}
 
 
 #flecha-atras-apuesta{
     transform: translate(5px, 5px); 
-}
-.line {
-    position: absolute;
-    width: 2px; /* Grosor de la línea */
-    height: 100%; /* Altura total */
-    background-color: gray;
-    top: 0;
-    left: 50%; /* Centra la línea */
-    transform: translateX(-50%);
-    left: 29px;
-    background-color:white;
-}
-#tablaTuApuesta{
-    margin-top: 20px;
-    font-weight: bold;
-    background-color: #777777;
-}
-
-#tablaApuestasSeleccionadas{
-    font-weight: 400;
-    position: relative;
-}
-
-.apuestaSeleccionada{
-    display: flex; /*coloca en la misma línea el círculo y el texto*/
-}
-
-.iconoCirculoApuesta{
-    margin-bottom: 8px;
-    color:white;
-    background-color: #777777;
-    position: relative;
-}
-
-.textoIconoApuesta{
-    margin-top: 1px;
-}
-.botonesTuApuesta:hover{
-    color: #FFD700;
-}
-
-.botonDesplegable {
-    background-color: transparent;
-    color: white;
-    padding: 10px 0px 20px 0px;
-}
-
-.botonDesplegable:hover {
-    color: #A78BFA;
-}
-
-.tablaSeleccionApuesta{
-    border-radius: 5px;
-    padding: 0px 15px;
-}
-
-#etiquetaTabla{
-    margin-left: 5px
-}
-
-.colsNumeros{
-    background-color: transparent;  
-    height: 50px;
-
-    display: inline-flex; /*centra el texto en ambas coordenadas*/
-    align-items: center;
-    justify-content: center;
-
-    font-weight: bold;
-}
-
-.colsLineas{
-    background-color: transparent; 
-    height: 50px;
-    display: inline-flex;
-    align-items: center;
-    padding: 10px 10px;
-    font-weight: bold;
-}
-
-.colsCuotas{
-    background-color: transparent; 
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    color: #FFD700;
-} 
-
-.colsCuotas:hover{
-    background-color: rgba(255, 255,255,0.2);
-}
-
-.separador-vertical-apuestas {
-    color: inherit;
-    border-right: 2px solid;
-    opacity: 0.25;
-    height: 100%;
-}
-
-.separador-horizontal-apuestas {
-    border: 1px solid;
-    opacity: 0.25;
-    margin: 0;
-}
-
-
-.colsCuotasVerificadasInc {
-    background-color: transparent; 
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.colsCuotasVerificadasCorr{
-    background-color: transparent; 
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    color: #A78BFA;
-}
-
-#cuerpoTablaReportes{
-    overflow-y: auto;
-    overflow-x: hidden;
 }
