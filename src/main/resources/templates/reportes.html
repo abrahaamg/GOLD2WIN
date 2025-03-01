@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html class="h-100" xmlns:th="http://www.thymeleaf.org">
+<html class="h-100" xmlns:th="http://www.thymeleaf.org" data-bs-theme="dark">
 
 <head>
     <th:block th:replace="fragments/head :: header"/>
@@ -12,6 +12,7 @@
     <header th:replace="fragments/nav.html :: nav('deportes')"></header>
 
     <div class="px-4">
+        <div th:replace="fragments/menuAdmin.html :: navAdmin('Reportes')"></div>
         <div class = "row mt-3 " >
             <div class = "col-12 col-md-3">
                 <label>Usuario</label>
@@ -31,8 +32,8 @@
                     <option value="usuario">No resuelto</option>
                 </select>
             </div>
-            <div class = "col-3 col-md-2 mx-md-auto mt-3 mt-md-0" id = "divResetearFiltros">
-                <div role = "button" id = "botonResetearFiltros">
+            <div class = "col-12 col-md-3 mx-md-auto mt-3 mt-md-0" id = "divResetearFiltros">
+                <div role = "button" id = "botonResetearFiltros" style="max-width: 200px;">
                     Borrar filtros
                 </div>
             </div>

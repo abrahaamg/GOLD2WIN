@@ -6,8 +6,17 @@
 <body class="d-flex flex-column h-100">
     <div th:fragment="navAdmin(active)">
         <ul class="nav nav-pills" id="nav-pills">
-            <li class="nav-item" th:class="${active == 'verificarEvento'} ? 'nav-item active' : 'nav-item'">
-                <a class="nav-link" th:href="${active == 'verificarEvento'} ? '#' : @{/admin/verificarEvento}">Verificar Evento</a>
+            <li class="nav-item" th:class="${active == 'Usuarios'} ? 'nav-item active' : 'nav-item'">
+                <a class="nav-link" th:href="${active == 'Usuarios'} ? '#' : @{/admin/usuarios}">Usuarios</a>
+            </li>
+            <li class="nav-item" th:class="${active == 'Reportes'} ? 'nav-item active' : 'nav-item'">
+                <a class="nav-link" th:href="${active == 'Reportes'} ? '#' : @{/admin/reportes}">Reportes</a>
+            </li>
+            <li class="nav-item" th:class="${active == 'Eventos'} ? 'nav-item active' : 'nav-item'">
+                <a class="nav-link" th:href="${active == 'Eventos'} ? '#' : @{/admin/eventos}">Eventos</a>
+            </li>
+            <li class="nav-item" th:class="${active == 'Secciones'} ? 'nav-item active' : 'nav-item'">
+                <a class="nav-link" th:href="${active == 'Secciones'} ? '#' : @{/admin/secciones}">Secciones</a>
             </li>
         </ul>
     </div>

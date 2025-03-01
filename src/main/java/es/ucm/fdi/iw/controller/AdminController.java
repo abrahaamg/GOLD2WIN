@@ -22,4 +22,19 @@ public class AdminController {
     public String index(Model model) {
         return "admin";
     }
+
+    @GetMapping("/reportes")
+    public String tablaReportes(Model model){
+        return "reportes";
+    }
+
+    @GetMapping("/reporteConcreto")
+    public String reporteConcreto(Model model){
+        return "reporteConcreto";
+    }
+
+    @GetMapping("/verificarEvento")
+    public String verificarEvento(Model model){
+        return "verificarEvento";
+    }
 }
