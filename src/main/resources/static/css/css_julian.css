@@ -512,3 +512,18 @@ a.botonOvalado.nav-link:hover{
     white-space: normal;
 }
 
+/*ESTILOS PARA LA TABLA DE REPORTES*/
+
+.colorBordeResponsif{
+    border-color: #c6c7c8;
+    border-style: solid;
+    border-width: 0px;
+    border-top-width: 1px;
+}
+
+[data-bs-theme="dark"] .colorBordeResponsif{
+    border-color: #4d5154;
+    border-style: solid;
+    border-width: 0px;
+    border-top-width: 1px;
+}
