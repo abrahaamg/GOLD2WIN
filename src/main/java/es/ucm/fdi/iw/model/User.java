@@ -17,6 +17,7 @@ import java.util.List;
 @Entity
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
 @NamedQueries({
         @NamedQuery(name="User.byUsername",
                 query="SELECT u FROM User u "
@@ -46,9 +47,26 @@ public class User implements Transferable<User.Transfer> {
 
     private String firstName;
     private String lastName;
+    private String email;
 
     private boolean enabled;
     private String roles; // split by ',' to separate roles
+
+    private double dineroDisponible;
+    private double dineroRetenido;
+
+    @ManyToMany
+    @JoinTable(
+        name = "pertenece_a_chat", 
+        joinColumns = @JoinColumn(name = "id_usuario"), 
+        inverseJoinColumns = @JoinColumn(name = "id_evento"))
+    private List<Evento> chats;
+
+    @OneToMany(mappedBy = "apostador")
+    private List<Apuesta> apuestas;
+
+    @OneToMany(mappedBy = "remitente")
+    private List<Mensaje> mensajes;
 
 	@OneToMany
 	@JoinColumn(name = "sender_id")
