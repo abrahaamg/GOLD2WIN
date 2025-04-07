@@ -16,7 +16,7 @@
                 <a class="nav-link" th:href="${active == 'Eventos'} ? '#' : @{/admin/eventos}">Eventos</a>
             </li>
             <li class="nav-item" th:class="${active == 'Secciones'} ? 'nav-item active' : 'nav-item'">
-                <a class="nav-link" th:href="${active == 'Secciones'} ? '#' : @{/admin/secciones}">Secciones</a>
+                <a class="nav-link" id="botonSecciones" th:href="${active == 'Secciones'} ? '#' : @{/admin/secciones}">Secciones</a>
             </li>
         </ul>
     </div>
