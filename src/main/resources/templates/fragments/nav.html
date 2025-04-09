@@ -22,16 +22,16 @@
                             <li class="nav-item mx-3" th:classappend="${active == 'deportes'} ? 'active'">
                                 <a class="nav-link" th:href="@{/}" id = "enlaceNavTodosEventos">Todos los eventos</a>
                             </li>
-                            <li class="nav-item mx-3 " th:if="${session?.u?.hasRole('USER')}" th:classappend="${active == 'apuestas'} ? 'active'">
+                            <li class="nav-item mx-3 " th:if="${u}" th:classappend="${active == 'apuestas'} ? 'active'">
                                 <a class="nav-link"  th:href="${active == 'apuestas'} ? '#' : @{/misApuestas/todas}" id = "enlaceNavMisApuestas">Mis apuestas</a>
                             </li>
-                            <li class="nav-item mx-3" th:if="${session?.u?.hasRole('USER')}" th:classappend="${active == 'ingresar'} ? 'active'">
+                            <li class="nav-item mx-3" th:if="${u}" th:classappend="${active == 'ingresar'} ? 'active'">
                                 <a class="nav-link"  th:href= "@{/cartera/ingresar}" id = "enlaceNavCartera">Cartera</a>
                             </li>
-                            <li class="nav-item mx-3" th:if="${session?.u?.hasRole('USER')}" th:classappend="${active == 'chats'} ? 'active'">
+                            <li class="nav-item mx-3" th:if="${u}" th:classappend="${active == 'chats'} ? 'active'">
                                 <a class="nav-link" th:href="${active == 'chats'} ? '#' : @{/}" id = "enlaceNavChats">Chats</a>
                             </li>
-                            <li class="nav-item mx-3" th:if="${session?.u?.hasRole('ADMIN')}" th:classappend="${active == 'administrar'} ? 'active'">
+                            <li class="nav-item mx-3" th:if="${u}" th:classappend="${active == 'administrar'} ? 'active'">
                                 <a class="nav-link"  th:href="${active == 'administrar'} ? '#' :@{/admin/}" id = "enlaceNavAdmin">Administrar</a>
                             </li>
                         </th:block>

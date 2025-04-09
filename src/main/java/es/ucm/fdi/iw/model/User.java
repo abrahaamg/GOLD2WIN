@@ -5,7 +5,7 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -25,7 +25,10 @@ import java.util.List;
         @NamedQuery(name="User.hasUsername",
                 query="SELECT COUNT(u) "
                         + "FROM User u "
-                        + "WHERE u.username = :username")
+                        + "WHERE u.username = :username"),
+    @NamedQuery(name = "User.topics", query = "SELECT t.key "
+        + "FROM Topic t JOIN t.members u "
+        + "WHERE u.id = :id")
 })
 @Table(name="IWUser")
 public class User implements Transferable<User.Transfer> {

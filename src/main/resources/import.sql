@@ -38,7 +38,6 @@ INSERT INTO EVENTO_ETIQUETAS (EVENTO_ID, ETIQUETAS) VALUES
 (5, 'esgrima'), (5, 'Mundial'), (5, 'campeonato'), (5, 'individual'), (5, 'deporte'),
 (6, 'tenis'), (6, 'Roland Garros'), (6, 'Grand Slam'), (6, 'final'), (6, 'Francia'),
 (7, 'ping pong'), (7, 'torneo'), (7, 'internacional'), (7, 'rápido'), (7, 'Asia'),
-(8, 'ciclismo'), (8, 'Tour de Francia'), (8, 'etapa'), (8, 'montaña'), (8, 'Francia'),
 (9, 'golf'), (9, 'Masters'), (9, 'Augusta'), (9, 'USA'), (9, 'profesional'),
 (10, 'eSports'), (10, 'League of Legends'), (10, 'Worlds'), (10, 'final'), (10, 'MOBA'),
 (11, 'eSports'), (11, 'Counter Strike'), (11, 'Major'), (11, 'FPS'), (11, 'torneo'),
