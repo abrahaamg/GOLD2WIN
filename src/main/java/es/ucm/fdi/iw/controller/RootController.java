@@ -161,23 +161,13 @@ public class RootController {
 
     @GetMapping("/")
     public String index(Model model) {
-        // obtengo los eventos (solo los 10 primeros que no hayan sucedido ya)
-        LocalDateTime ahora = LocalDateTime.ofInstant(Instant.now(), ZoneOffset.UTC);
-        String queryEventos = "SELECT e FROM Evento e WHERE e.fechaCierre > :ahora ORDER BY e.fechaCierre ASC";
-        TypedQuery<Evento> query = entityManager.createQuery(queryEventos, Evento.class);
-        query.setParameter("ahora", ahora);
-        query.setMaxResults(10);
-        List<Evento> eventos = query.getResultList();
-
         // obtengo las secciones
         String querySecciones = "SELECT s FROM Seccion s WHERE s.enabled = true ORDER BY s.grupo ASC";
         List<Seccion> secciones = entityManager.createQuery(querySecciones).getResultList();
 
         // añado los eventos y las secciones al modelo
-        model.addAttribute("eventos", eventos);
         model.addAttribute("secciones", secciones);
         model.addAttribute("selectedSeccion", -1);
-        model.addAttribute("fechaCreacion", ahora);
 
         return "index";
     }
@@ -185,7 +175,7 @@ public class RootController {
     @GetMapping(path = "/seccion/buscar", produces = "application/json")
     @Transactional
     @ResponseBody
-    public List<Evento.Transfer> buscarEventos(
+    public Map<String, Object> buscarEventos(
             @RequestParam long seccionId,
             @RequestParam String busqueda,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime fechaInicio, // necesito
@@ -195,6 +185,7 @@ public class RootController {
                                                                                                          // fecha
             @RequestParam int offset) {
 
+        boolean hayMasEventos = false;
         List<String> etiquetas = List.of(busqueda.split(" ")).stream()
                 .filter(palabra -> palabra.startsWith("[") && palabra.endsWith("]")).collect(Collectors.toList());
         String nombre = List.of(busqueda.split(" ")).stream()
@@ -224,18 +215,27 @@ public class RootController {
 
         query.setParameter("nombre", "%" + nombre + "%");
         query.setParameter("inicio", fechaInicio);
-        query.setMaxResults(10);
+        query.setMaxResults(11);
         query.setFirstResult(offset);
 
         List<Evento> eventos = query.getResultList();
 
-        return eventos.stream().map(Evento::toTransfer).collect(Collectors.toList());
+        if (eventos.size() == 11) {
+            hayMasEventos = true;
+            eventos.remove(10);
+        }
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("eventos", eventos.stream().map(Transferable::toTransfer).collect(Collectors.toList()));
+        response.put("hayMasEventos", hayMasEventos);
+
+        return response;
     }
 
     @GetMapping(path = "/seccion/cargarMas", produces = "application/json")
     @Transactional
     @ResponseBody
-    public List<Evento.Transfer> cargarMasEventos(
+    public Map<String, Object> cargarMasEventos(
             @RequestParam long seccionId,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime fechaInicio, // necesito
                                                                                                          // indicar el
@@ -243,6 +243,7 @@ public class RootController {
                                                                                                          // que viene la
                                                                                                          // fecha
             @RequestParam int offset) {
+        boolean hayMasEventos = false;
 
         Seccion seccion = entityManager.find(Seccion.class, seccionId);
         TypedQuery<Evento> query;
@@ -271,56 +272,31 @@ public class RootController {
         }
 
         query.setParameter("inicio", fechaInicio);
-        query.setMaxResults(10);
+        query.setMaxResults(11);
         query.setFirstResult(offset);
         List<Evento> eventos = query.getResultList();
 
-        return eventos.stream().map(Transferable::toTransfer).collect(Collectors.toList());
+        if (eventos.size() == 11) {
+            hayMasEventos = true;
+            eventos.remove(10);
+        }
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("eventos", eventos.stream().map(Transferable::toTransfer).collect(Collectors.toList()));
+        response.put("hayMasEventos", hayMasEventos);
+
+        return response;
     }
 
     @GetMapping("/seccion/{id}")
     public String eventosSeccion(@PathVariable long id, Model model) {
-        // obtengo los eventos (solo los 10 primeros que no hayan sucedido ya)
-        Seccion seccion = entityManager.find(Seccion.class, id);
-        TypedQuery<Evento> query;
-        String queryEventos = "SELECT e FROM Evento e WHERE e.fechaCierre > :ahora ORDER BY e.fechaCierre ASC"; // por
-                                                                                                                // defecto
-                                                                                                                // se
-                                                                                                                // cogen
-                                                                                                                // todos
-
-        if (seccion != null && seccion.isEnabled()) {
-            queryEventos = "SELECT e FROM Evento e WHERE (e.fechaCierre > :ahora AND e.seccion.id = :seccion) ORDER BY e.fechaCierre ASC"; // si
-                                                                                                                                           // existe
-                                                                                                                                           // la
-                                                                                                                                           // sección
-                                                                                                                                           // se
-                                                                                                                                           // cogen
-                                                                                                                                           // los
-                                                                                                                                           // eventos
-                                                                                                                                           // de
-                                                                                                                                           // esa
-                                                                                                                                           // sección
-            query = entityManager.createQuery(queryEventos, Evento.class);
-            query.setParameter("seccion", id);
-        } else {
-            query = entityManager.createQuery(queryEventos, Evento.class);
-        }
-
-        LocalDateTime ahora = LocalDateTime.ofInstant(Instant.now(), ZoneOffset.UTC);
-        query.setParameter("ahora", ahora);
-        query.setMaxResults(10);
-        List<Evento> eventos = query.getResultList();
-
         // obtengo las secciones
         String querySecciones = "SELECT s FROM Seccion s WHERE s.enabled = true ORDER BY s.grupo ASC";
         List<Seccion> secciones = entityManager.createQuery(querySecciones).getResultList();
 
         // añado los eventos y las secciones al modelo
-        model.addAttribute("eventos", eventos);
         model.addAttribute("secciones", secciones);
         model.addAttribute("selectedSeccion", id);
-        model.addAttribute("fechaCreacion", ahora);
 
         return "index";
     }
