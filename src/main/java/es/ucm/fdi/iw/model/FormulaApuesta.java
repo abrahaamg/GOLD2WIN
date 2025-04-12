@@ -37,8 +37,8 @@ public class FormulaApuesta implements Transferable<FormulaApuesta.Transfer> {
     private String formula;
     private LocalDateTime fechaCreacion;
     private String nombre;
-    private double dineroAfavor;
-    private double dineroEnContra;
+    private int dineroAfavor; //En centimos
+    private int dineroEnContra; //En centimos
 
     @Enumerated(EnumType.STRING)
     private Resultado resultado; 

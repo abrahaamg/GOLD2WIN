@@ -139,8 +139,8 @@ public class RootController {
         user.setLastName(lastName);
         user.setEnabled(true); // Inicialmente deshabilitado
         user.setRoles("USER"); // Rol por defecto
-        user.setDineroDisponible(0.0); // Inicialmente sin dinero disponible
-        user.setDineroRetenido(0.0); // Inicialmente sin dinero retenido
+        user.setDineroDisponible(0); // Inicialmente sin dinero disponible
+        user.setDineroRetenido(0); // Inicialmente sin dinero retenido
 
         entityManager.persist(user);
         entityManager.flush();

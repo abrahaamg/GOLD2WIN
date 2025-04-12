@@ -285,7 +285,7 @@ public class AdminController {
                         || (formula.getResultado() == Resultado.PERDIDO && !apuesta.isAFavor())) {
                     // Ha ganado por lo que se le suma el dinero apostado por la cuota
                     double cuota = formula.calcularCuota(apuesta.isAFavor());
-                    double dineroGanado = cuota * apuesta.getCantidad();
+                    int dineroGanado = (int)cuota * apuesta.getCantidad(); //trunco decimales
 
                     User user = apuesta.getApostador();
                     user.setDineroRetenido(user.getDineroRetenido() - apuesta.getCantidad());

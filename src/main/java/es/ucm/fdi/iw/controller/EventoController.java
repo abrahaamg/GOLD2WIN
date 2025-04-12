@@ -70,7 +70,7 @@ public class EventoController {
 
         long idFormula = o.get("idFormula").asLong();
         boolean decision = o.get("decision").asBoolean();
-        float cantidad = o.get("cantidad").floatValue();
+        int cantidad = o.get("cantidad").intValue(); //en centimos
 
         FormulaApuesta formula = entityManager.find(FormulaApuesta.class, idFormula);
         long userId = ((User) session.getAttribute("u")).getId();
@@ -132,7 +132,7 @@ public class EventoController {
 
         String titulo = o.get("titulo").asText();
         String formula = o.get("formula").asText();
-        Double cantidad = o.get("cantidad").asDouble();
+        int cantidad = o.get("cantidad").asInt(); //recibo el dinero en centimos
         boolean tipoApuesta = o.get("tipoApuesta").asBoolean();
 
         Evento evento = entityManager.find(Evento.class, id);
