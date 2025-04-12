@@ -2,32 +2,73 @@
 <html class="h-100" xmlns:th="http://www.thymeleaf.org" data-bs-theme="dark">
 
 <head>
-    <th:block th:replace="fragments/head :: header"/>
+        <th:block th:replace="~{fragments/head :: header}" />
+
     <title>Secciones</title>
 </head>
 
 <body class="d-flex flex-column h-100">
     <header th:replace="fragments/nav.html :: nav('administrar')"></header>
 
-    <div class="ms-4">
+    <div class = "ms-4">
         <div th:replace="fragments/menuAdmin.html :: navAdmin('Secciones')"></div>
+    </div>
+
+    <div class = "ms-4">
+        <nav th:replace="fragments/navSeccionesAdminComprimido.html :: navSeccionesAdminComprimido"></nav>
     </div>
 
     <main class="d-flex flex-grow-1 overflow-hidden ms-4">
         <nav th:replace="fragments/navSeccionesAdmin.html :: navSeccionesAdmin"></nav>
         
         <div class="d-flex flex-column w-100 ps-2 ps-md-1 pe-2 pe-md-1">
-            <nav th:replace="fragments/navSeccionesAdminComprimido.html :: navSeccionesAdminComprimido"></nav>
-            <div class = "d-flex d-md-none separadorMovilSecciones mb-4 mb-md-0 mt-4 mt-md-0"></div>
+            <div class = "d-flex d-md-none separadorMovilSecciones mb-3 mb-md-0 mt-3 mt-md-0"></div>        
             <div class="pe-4 mt-2 mt-md-5 seccionesDerecha">
                 <div role = "button" id = "botonCrearSeccion" style="min-height: 40px;" onclick="window.location.href='secciones-crearSeccion'">
                     Crear seccion
                 </div>
-            </div>    
+            </div>   
         </div>
     </main>
     
 
+    <div class="modal fade" id="modalCrearVariables" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-fullscreen-sm-down">
+            <div class="modal-content" style="position: relative;">
+                <div id="ocultador-formulario">
+                    <form id="apostarForm">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Nueva variable</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                        </div>
+                    
+                        <div class="modal-body">
+                            
+                            <div class="mb-3">
+                                <label for="inputnombreVarNueva" class="form-label">Nombre de la variable:</label>
+                                <input class="form-control" id="inputnombreVarNueva" name="nombreVar" >
+                            </div>
+        
+                            <div class="mb-3">
+                                <label for="selectTipoVarNueva" class="form-label">Tipo de variable:</label>
+                                <select class="form-select" id="selectTipoVarNueva" name="tipoVar">
+                                    <option value="">Seleccione una</option>
+                                    <option value="1">Valor numérico</option>
+                                    <option value="2">Texto</option>
+                                </select>
+    
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                            <button class="btn btn-success" onclick="agregarDiv()" data-bs-dismiss="modal">Añadir variable</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    
     <div class="modal fade" id="modalEliminarSeccion" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-fullscreen-sm-down">
             <div class="modal-content" style="position: relative;">
@@ -43,7 +84,7 @@
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                            <button class="btn btn-danger" data-bs-dismiss="modal">Eliminar sección</button>
+                            <button class="btn btn-danger botonEliminarSeccionP" onclick="eliminarSeccion()" data-bs-dismiss="modal">Eliminar sección</button>
                         </div>
                     </form>
                 </div>
@@ -51,13 +92,12 @@
         </div>
     </div>
 
-   <div id="menuOpcionesSeccion">
-        <a href="#">Editar evento</a>
-        <a href="#" data-bs-toggle="modal" data-bs-target="#modalEliminarSeccion">Eliminar evento</a>
+    <div id="menuOpcionesSeccion">
+        <a href="#">Editar seccion</a>
+        <a href="#" data-bs-toggle="modal" data-bs-target="#modalEliminarSeccion">Eliminar seccion</a>
     </div>
 
     <th:block th:replace="fragments/footer.html :: footer" />
-
 </body>
 
 </html>

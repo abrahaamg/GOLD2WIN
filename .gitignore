@@ -1,5 +1,6 @@
 credentials.json
 iwdb.mv.db
+iwdb.trace.db
 iwdata/*
 HELP.md
 target/

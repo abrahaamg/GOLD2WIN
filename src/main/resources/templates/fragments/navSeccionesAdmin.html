@@ -13,7 +13,8 @@
                         <span class="tituloSeccionAdmin text-nowrap" th:text="${seccion.grupo}"></span>
                 </th:block>
                 
-                <a class="enlaceSeccionAdmin nav-link text-nowrap mt-2" th:href="@{/admin/secciones/{id}/editar(id=${seccion.id})}"> 
+                <a class="enlaceSeccionAdmin nav-link text-nowrap mt-2" th:href="@{/admin/secciones/{id}/editar(id=${seccion.id})}"
+                    th:data-id="${seccion.id}"> 
                     <img width="50" height="50" th:src="@{/seccion/{id}/pic(id=${seccion.id})}">
                     <span class="ms-2 spanAjustadoAdmin font-size: 20px;" th:text="${seccion.nombre}">texto1</span>
                 </a>

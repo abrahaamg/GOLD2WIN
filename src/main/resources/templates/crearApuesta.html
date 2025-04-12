@@ -2,7 +2,8 @@
 <html class="h-100" xmlns:th="http://www.thymeleaf.org" data-bs-theme="dark">
 
 <head>
-    <th:block th:replace="fragments/head :: header"/>
+        <th:block th:replace="~{fragments/head :: header}" />
+
     <title>CREAR APUESTA</title>
 </head>
 
@@ -119,7 +120,7 @@
                         </div>
                         <div class="modal-footer">
                             <button type="button" id="botonSiguienteCrearApuesta"class="btn btn-secondary mx-auto vision-creatuApuesta-1">siguiente</button>
-                            <button type="submit" class="btn btn-success mx-auto vision-creatuApuesta-2 desaparece">Apostar</button>
+                            <button type="submit" class="btn btn-success mx-auto vision-creatuApuesta-2 desaparece" id = "botonCrearApuestaDefinitiva">Apostar</button>
                         </div>
                     </form>
                 </div>

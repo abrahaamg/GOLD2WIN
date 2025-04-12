@@ -12,7 +12,7 @@
                 th:data-cantidad="${apuesta.cantidad}" 
                 th:data-a-favor="${apuesta.aFavor}">
                 
-                <div class="headRowBettingBox d-flex align-items-center justify-content-between p-2" 
+                <div class="headRowBettingBox d-flex align-items-center justify-content-between p-2"  th:id="'bettingBox-' + ${apuesta.id}"
                     type="button" data-bs-toggle="collapse" 
                     th:data-bs-target="'#miDesplegable' + ${apuesta.id}" 
                     aria-expanded="false" 
@@ -22,8 +22,15 @@
                         <div class="headRowBettingBoxLeftElement fw-bold me-2" 
                             th:text="${#numbers.formatDecimal(apuesta.cantidad, 1, 2)} + '€'">
                         </div>
-                        <div class="fw-semibold text-uppercase" 
-                            th:text="${apuesta.formulaApuesta.evento.seccion.nombre}">
+                        <div class="fw-semibold text-uppercase" >
+                            (#<span th:text="${apuesta.id}"></span>)
+                        </div>
+                        <div class="fw-semibold text-uppercase" th:text="${apuesta.formulaApuesta.formula}"></div>
+                        
+                        <div class=""> 
+                            Apostaste 
+                            <span th:if="${apuesta.aFavor}">a favor</span>
+                            <span th:if="${!apuesta.aFavor}">en contra</span>	
                         </div>
                     </div>
 
@@ -47,23 +54,25 @@
                             <div th:if="${apuesta.formulaApuesta.resultado.name() == 'INDETERMINADO'}">Indeterminada</div>
                         </div>
                         
-                        <button class="btn btn-sm" type="button" data-bs-toggle="collapse" 
+                        <button class="btn btn-sm btn-custom" type="button" data-bs-toggle="collapse" 
                             th:data-bs-target="'#miDesplegable' + ${apuesta.id}" 
                             aria-expanded="false" 
-                            th:aria-controls="'miDesplegable' + ${apuesta.id}">
-                            ▼
+                            th:aria-controls="'miDesplegable' + ${apuesta.id}" id="mensajeDesplegable">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-caret-down" viewBox="0 0 16 16">
+                                <path d="M3.204 5h9.592L8 10.481zm-.753.659 4.796 5.48a1 1 0 0 0 1.506 0l4.796-5.48c.566-.647.106-1.659-.753-1.659H3.204a1 1 0 0 0-.753 1.659"/>
+                              </svg>
                         </button>
                     </div>
                 </div>
 
                 <div class="collapse mt-2" th:id="'miDesplegable' + ${apuesta.id}">
-                    <div class="infoRowBettingBox p-3 border rounded">
+                    <div class="infoRowBettingBox p-3">
                         <p class="mb-2">
-                            <span th:text="'CREAR APUESTA >> ' + ${#numbers.formatDecimal(apuesta.formulaApuesta.calcularCuota(apuesta.aFavor), 1, 2)}">
+                            <span th:text="'CUOTA >> ' + ${#numbers.formatDecimal(apuesta.formulaApuesta.calcularCuota(apuesta.aFavor), 1, 2)}">
                             </span>
                         </p>
-                        <p class="mb-1 fw-bold" th:text="${apuesta.formulaApuesta.nombre}"></p>
-                        <p class="small text-muted" th:text="${apuesta.formulaApuesta.formula}"></p>
+                        <p class="mb-1 fw-bold" th:text="${apuesta.formulaApuesta.evento.seccion.nombre} + ' - ' + ${apuesta.formulaApuesta.evento.nombre}"></p>
+                        <p class="small text-muted" th:text="${apuesta.formulaApuesta.nombre}"></p>
                     </div>
 
                     <div class="footerRowBettingBox mt-2 p-2 d-flex align-items-center justify-content-between">
@@ -87,6 +96,7 @@
 
                         <div class="right text-center">
                             <p class="mb-1">Ganado:</p>
+                            <span th:text="${apuesta.formulaApuesta.resultado.name() == 'ERROR' ? }">+ </span>
                             <span th:text="' ' + (${apuesta.formulaApuesta.resultado.name() == 'GANADO' && apuesta.aFavor || apuesta.formulaApuesta.resultado.name() == 'PERDIDO' && !apuesta.aFavor ? #numbers.formatDecimal(apuesta.cantidad * apuesta.formulaApuesta.calcularCuota(apuesta.aFavor), 1, 2) : '0,00'}) + '€'"></span>
                         </div>
                     </div>

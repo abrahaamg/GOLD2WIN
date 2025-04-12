@@ -2,7 +2,8 @@
 <html class="h-100" xmlns:th="http://www.thymeleaf.org" data-bs-theme="dark">
 
 <head>
-    <th:block th:replace="fragments/head :: header"/>
+        <th:block th:replace="~{fragments/head :: header}" />
+
     <title>Secciones-CrearSección</title>
 </head>
 
@@ -23,18 +24,19 @@
         <div class="d-flex flex-column w-100 ps-2 ps-md-1 pe-2 pe-md-1">
             <div class = "d-flex d-md-none separadorMovilSecciones mb-3 mb-md-0 mt-3 mt-md-0"></div>
             
-            <div class = "formularioSeccion mt-2 mt-md-4 scrollBarPerso">
+            <form id = "formularioSeccion" class = "mt-2 scrollBarPerso">
                 <div class = "zonaDatos row">
                     <div class = "col-6">
                         <label for="inputNombreSeccion" class="form-label">Nombre de la sección:</label>
-                        <input class="form-control" id="inputNombreSeccion" name="cantidad" >
-                        <label for="inputTipoSeccion" class="form-label mt-5">Nombre del tipo de sección:</label>
-                        <input class="form-control" id="inputTipoSeccion" name="cantidad" >
+                        <input class="form-control" id="inputNombreSeccion" name="nombreSeccion" required>
+                        <div id="mensajeError" class="mensaje-error" style="display: none;">Este nombre ya está en uso.</div>
+                        <label for="inputTipoSeccion" class="form-label mt-4">Nombre del tipo de sección:</label>
+                        <input class="form-control" id="inputTipoSeccion" name="tipoSeccion" required>
                     </div>
                     
                     <div class = "col-6 d-flex flex-column align-items-center">
                         <label for="inputImagenSecciones">Selecciona una imagen:</label>
-                        <input type="file" id="inputImagenSecciones" name="imagen" accept="image/*" class="form-control mt-2">
+                        <input type="file" id="inputImagenSecciones" name="imagen" accept="image/*" class="form-control mt-2" required>
 
                         <img id="mostrarImagenSeccionesForm" src="" alt="Vista previa" style="display: none; max-width: 200px; margin-top: 10px;">
                     </div>
@@ -47,22 +49,22 @@
                     </div>
 
                     <div id = "contenedorVariables" class="row g-3 justify-content-center mt-2">
-                        <button id = "botonCrearVariable" style="min-height: 30px; max-height: 80px;" class = "col-3 btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalCrearVariables"> 
+                        <button id = "botonCrearVariable" style="min-height: 30px; max-height: 80px;" class = "col-3 btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalCrearVariables" type = "button"> 
                             Crear variable
                         </button>
                     </div>
                     
                     <div id = "contConfirmarSeccion">
                         <a th:href="@{/admin/secciones}" class = "col-3">
-                            <button style="min-height: 30px;"  class="btn btn-secondary mt-4 w-100">Cancelar</button>
+                            <button style="min-height: 30px;"  class="btn btn-secondary mt-4 w-100" type = "button">Cancelar</button>
                         </a>
                         
-                        <button style="min-height: 30px; " class = "col-3 btn btn-success mt-4 ms-5"> 
+                        <button style="min-height: 30px; " onclick="guardarSeccion(event)" class = "col-3 btn btn-success mt-4 ms-5"> 
                             Confirmar seccion
                         </button>
                     </div>
                 </div>
-            </div>
+            </form>
         </div>
     </main>
     
@@ -71,7 +73,7 @@
         <div class="modal-dialog modal-dialog-centered modal-fullscreen-sm-down">
             <div class="modal-content" style="position: relative;">
                 <div id="ocultador-formulario">
-                    <form id="apostarForm">
+                    <form id="variableSeccionForm">
                         <div class="modal-header">
                             <h5 class="modal-title">Nueva variable</h5>
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
@@ -80,13 +82,13 @@
                         <div class="modal-body">
                             
                             <div class="mb-3">
-                                <label for="cantidadModal" class="form-label">Nombre de la variable:</label>
-                                <input class="form-control" id="cantidadModal" name="nombreVar" >
+                                <label for="inputnombreVarNueva" class="form-label">Nombre de la variable:</label>
+                                <input class="form-control" id="inputnombreVarNueva" name="nombreVar" >
                             </div>
         
                             <div class="mb-3">
-                                <label for="tipoApuestaModal" class="form-label">Tipo de variable:</label>
-                                <select class="form-select" id="tipoApuestaModal" name="tipoVar">
+                                <label for="selectTipoVarNueva" class="form-label">Tipo de variable:</label>
+                                <select class="form-select" id="selectTipoVarNueva" name="tipoVar">
                                     <option value="">Seleccione una</option>
                                     <option value="1">Valor numérico</option>
                                     <option value="2">Texto</option>
@@ -108,7 +110,7 @@
         <div class="modal-dialog modal-dialog-centered modal-fullscreen-sm-down">
             <div class="modal-content" style="position: relative;">
                 <div id="ocultador-formulario">
-                    <form id="apostarForm">
+                    <form id="eliminarSeccionForm">
                         <div class="modal-header">
                             <h5 class="modal-title">Eliminar sección</h5>
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
@@ -119,7 +121,7 @@
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                            <button class="btn btn-danger" data-bs-dismiss="modal">Eliminar sección</button>
+                            <button class="btn btn-danger botonEliminarSeccionP" onclick="eliminarSeccion()" data-bs-dismiss="modal">Eliminar sección</button>
                         </div>
                     </form>
                 </div>
@@ -128,12 +130,10 @@
     </div>
 
     <div id="menuOpcionesSeccion">
-        <a href="#">Editar evento</a>
-        <a href="#" data-bs-toggle="modal" data-bs-target="#modalEliminarSeccion">Eliminar evento</a>
+        <a href="#">Editar seccion</a>
+        <a href="#" data-bs-toggle="modal" data-bs-target="#modalEliminarSeccion">Eliminar seccion</a>
     </div>
 
-    <th:block th:replace="fragments/footer.html :: footer" />
-
+    <th:block th:replace="fragments/footer.html :: footer" />   
 </body>
-
 </html>

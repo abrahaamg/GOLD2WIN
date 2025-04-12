@@ -125,14 +125,14 @@ function anadirFormula(formula){
         </div>
         
         <div id="cuestionario-form-${formula.id}" class="w-100 d-flex align-items-center mt-3">
-            <button type="button" class="btn btn-success " onclick="enviarFormulario(true,${formula.id})">
-                faborable
+            <button type="button" class="btn btn-success botonApostarFavorable" onclick="enviarFormulario(true,${formula.id})">
+                favorable
             </button>
 
             <input type="number" id="cantidad-${formula.id}" class ="form-control mx-2 flex-grow-1" placeholder="cantidad..." required>
 
-            <button type="button" class="btn btn-success " onclick="enviarFormulario(false,${formula.id})">
-                desfaborable
+            <button type="button" class="btn btn-success botonApostarDesfavorable" onclick="enviarFormulario(false,${formula.id})">
+                desfavorable
             </button>
         </div>
 

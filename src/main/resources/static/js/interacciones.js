@@ -162,6 +162,7 @@ if(inputImagenSeccionesForm != null){
 }
 
 var menuOpcionesSeccionForm = document.getElementById("menuOpcionesSeccion");
+let seccionSeleccionadaId = null; 
 if(menuOpcionesSeccionForm != null){
     const contextMenu = document.getElementById("menuOpcionesSeccion");
     const contextAreas = document.querySelectorAll(".enlaceSeccionAdmin");
@@ -169,6 +170,10 @@ if(menuOpcionesSeccionForm != null){
     contextAreas.forEach((contextArea) => {
     contextArea.addEventListener("contextmenu", function(event) {
                 event.preventDefault(); 
+
+                seccionSeleccionadaId = this.getAttribute("data-id"); 
+                console.log("Sección seleccionada:", seccionSeleccionadaId);
+
                 contextMenu.style.display = "block";
                 contextMenu.style.left = `${event.pageX}px`;  // Establece la posición en el eje X
                 contextMenu.style.top = `${event.pageY}px`;   // Establece la posición en el eje Y
@@ -185,11 +190,11 @@ var contenedorVariablesForm = document.getElementById("contenedorVariables");
 if(contenedorVariablesForm != null){
     function agregarDiv() {
         const contenedor = document.getElementById("contenedorVariables");
-        var nombre = document.getElementById('cantidadModal').value;
-        var select = document.getElementById('tipoApuestaModal');
+        var nombre = document.getElementById('inputnombreVarNueva').value.trim();
+        var select = document.getElementById('selectTipoVarNueva');
         var opcionSeleccionada = select.options[select.selectedIndex].text;
     
-        if (opcionSeleccionada === "Seleccione..." || nombre === "") { //Si los campos están vacíos, no se añade el div
+        if (opcionSeleccionada === "Seleccione una" || nombre === "") { //Si los campos están vacíos, no se añade el div
             return;  
         }
     
@@ -197,12 +202,182 @@ if(contenedorVariablesForm != null){
         const nuevoDiv = document.createElement("div");
         nuevoDiv.className = "col-3 variableSeccion"; // Se organizan en 3 columnas por fila
         nuevoDiv.innerHTML = `
-            <span>Nombre : ${nombre}</span>
-            <span>Tipo de variable: ${opcionSeleccionada}</span>
+            <div id = "divEtiquetasVariables">
+                <span>Nombre:</span>
+                <span class = "nombreVariableSpan"> ${nombre}</span>
+            </div>
+            <div id = "divEtiquetasVariables">
+                <span>Tipo de variable:</span>
+                <span class = "tipoVariableSpan">${opcionSeleccionada}</span>
+            </div>
         `;
     
         contenedor.appendChild(nuevoDiv); // Agrega el div al contenedor
-        document.getElementById('tipoApuestaModal').selectedIndex = 0;
-        document.getElementById('cantidadModal').value = '';
+        document.getElementById('selectTipoVarNueva').selectedIndex = 0;
+        document.getElementById('inputnombreVarNueva').value = '';
     };
 }
+
+//window.eliminarSeccion = eliminarSeccion;
+//window.guardarSeccion = guardarSeccion;
+    
+function eliminarSeccion() {
+    //event.preventDefault();
+    go(`/admin/eliminarSeccion/${seccionSeleccionadaId}`, "DELETE")
+    .then(data => {
+        console.log("Sección eliminada:", data.mensaje);
+        window.location.href = "/admin/secciones";
+    })
+    .catch(error => console.error("Error al eliminar la sección:", error));
+}    
+
+function toBase64(file) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = error => reject(error);
+    });
+}
+
+async function guardarSeccion(event) {
+    event.preventDefault();
+
+    let formulario = document.getElementById("formularioSeccion");
+
+    if (!formulario.checkValidity()) { //esto sirve para los mensajes de required cuando arriba esta rel preventDefault
+        formulario.reportValidity(); 
+        return;
+    }
+
+    const isNombreValido = await verificarNombreSeccion();
+    if(isNombreValido){
+        const nombre = document.getElementById("inputNombreSeccion").value.trim(); //el trim elimina espacios en blanco innecesarios
+        const tipo = document.getElementById("inputTipoSeccion").value.trim();
+        const file = document.getElementById("inputImagenSecciones").files[0] || null;
+
+        const nombreS = nombre.charAt(0).toUpperCase() + nombre.slice(1);
+        const tipoS = tipo.charAt(0).toUpperCase() + tipo.slice(1);
+
+        let base64Image = await toBase64(file);
+
+        if(nombreS != "" && tipoS != "" && file != null){
+            const divs = document.querySelectorAll("#contenedorVariables .variableSeccion");
+            const variables = [];
+
+            divs.forEach(div => {
+                const nombreV = div.querySelector(".nombreVariableSpan").innerText;
+                const tipoV = div.querySelector(".tipoVariableSpan").innerText;
+                variables.push({ nombreV, tipoV });
+            });
+
+            const jsonData = {
+                seccionN: { nombre: nombreS, tipo: tipoS },
+                imageData: { // Aquí se incluye la imagen
+                    image: base64Image,
+                    filename: file.name
+                },
+                arrayVariables: variables
+            };
+
+            go(`/admin/guardarSeccion`, "POST", jsonData)
+            .then(data => {
+                console.log("Respuesta recibida:", data.mensaje);
+                //formulario.reset();
+                //document.getElementById("mostrarImagenSeccionesForm").style.display = "none";
+                //document.getElementById("contenedorVariables").innerHTML = `
+                //<button id = "botonCrearVariable" style="min-height: 30px; max-height: 80px;" class = "col-3 btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalCrearVariables" type = "button"> 
+                //    Crear variable
+                //</button>
+                //`;
+                window.location.href = "/admin/secciones";
+            })
+            .catch(error => console.error("Error go:", error));
+        }
+    }
+    else{
+        event.preventDefault();
+    }
+}    
+
+async function verificarNombreSeccion(){
+    const nombreS = document.getElementById("inputNombreSeccion").value.trim();
+    if (nombreS === "") return; 
+  
+    try {
+        const response = await fetch(`/admin/verificarSeccion?nombre=${encodeURIComponent(nombreS)}`);
+        const data = await response.json();
+    
+        if (data.existe) {
+          document.getElementById("inputNombreSeccion").classList.add("is-invalid");
+          document.getElementById("mensajeError").classList.add("invalid-feedback");
+          console.log("false");
+          return false; // Devolvemos false si el nombre existe.
+        } else {
+          document.getElementById("inputNombreSeccion").classList.remove("is-invalid");
+          document.getElementById("mensajeError").classList.remove("invalid-feedback");
+          console.log("true");
+          return true; // Devolvemos true si el nombre no existe.
+        }
+      } catch (error) {
+        console.error("Error al verificar el nombre:", error);
+        return false; // Devuelve false en caso de error.
+      }
+}
+
+async function editarSeccion(event) {
+    event.preventDefault();
+
+    let formularioEditar = document.getElementById("formularioSeccion");
+
+    if (!formularioEditar.checkValidity()) { //esto sirve para los mensajes de required cuando arriba esta rel preventDefault
+        formularioEditar.reportValidity(); 
+        return;
+    }
+    const nombreS = document.getElementById("inputNombreSeccion").value.trim(); //el trim elimina espacios en blanco innecesarios
+    const tipo = document.getElementById("inputTipoSeccion").value.trim();
+    const file = document.getElementById("inputImagenSecciones").files[0] || null;
+
+    const tipoS = tipo.charAt(0).toUpperCase() + tipo.slice(1);
+
+    let base64Image = null;
+    let fileName = null;
+    if (file != null) {base64Image = await toBase64(file); fileName = file.name;}
+
+    if(nombreS != "" && tipoS != ""){
+        const divs = document.querySelectorAll("#contenedorVariables .variableSeccion");
+        const variables = [];
+
+        divs.forEach(div => {
+            const nombreV = div.querySelector(".nombreVariableSpan").innerText;
+            const tipoV = div.querySelector(".tipoVariableSpan").innerText;
+            variables.push({ nombreV, tipoV });
+        });
+
+        const jsonData = {
+            seccionN: { nombre: nombreS, tipo: tipoS },
+            imageData: { // Aquí se incluye la imagen
+                image: base64Image,
+                filename: fileName
+            },
+            arrayVariables: variables
+        };
+
+        console.log("pregoEditar");
+        go(`/admin/editarSeccion`, "POST", jsonData)
+        .then(data => {
+            console.log("Respuesta recibida:", data.mensaje);
+            window.location.href = "/admin/secciones";
+        })
+        .catch(error => console.error("Error go:", error));
+    }
+}
+
+var variableSeccionesForm = document.getElementById("variableSeccionForm");
+
+if(variableSeccionesForm != null){
+    document.getElementById("variableSeccionForm").addEventListener("submit", function(event) {
+        event.preventDefault();
+    });
+}
+

@@ -2,7 +2,8 @@
 <html class="h-100" xmlns:th="http://www.thymeleaf.org" data-bs-theme="dark">
 
 <head>
-    <th:block th:replace="fragments/head :: header"/>
+        <th:block th:replace="~{fragments/head :: header}" />
+
     <title>BIENVENIDO</title>
 
     <style>
@@ -63,7 +64,7 @@
                         </div>
                     </th:block>
                     
-                    <a class = "nav-link estilo-contenedor-adaptable w-100 px-2 py-2 d-flex d-sm-none" style="margin: 15px 0px; min-height: 98px; max-height: 98px;"
+                    <a th:id = "'contenedorEvento-' + ${evento.id}" class = "nav-link estilo-contenedor-adaptable w-100 px-2 py-2 d-flex d-sm-none" style="margin: 15px 0px; min-height: 98px; max-height: 98px;"
                     th:href="@{/evento/{id}/apostar(id=${evento.id})}" href="/error" title="apostar" th:data-fecha-evento="${#temporals.format(evento.fechaCierre, 'yyyy-MM-dd HH:mm:ss')}">
                         <img width="40" height="40" class="my-auto ms-1 flex-shrink-0" th:src="@{/seccion/{id}/pic(id=${evento.seccion.id})}">
                         <div class="d-flex flex-column ms-2 flex-grow-1" style="min-width: 0;">
@@ -89,7 +90,7 @@
                         </div>
                     </a>
 
-                    <a class = "nav-link d-none d-sm-inline-flex flex-column estilo-contenedor-adaptable px-3 py-2 align-items-start Evento " title="apostar" 
+                    <a th:id = "'contenedorEvento-' + ${evento.id}" class = "nav-link d-none d-sm-inline-flex flex-column estilo-contenedor-adaptable px-3 py-2 align-items-start Evento " title="apostar" 
                     th:href="@{/evento/{id}/apostar(id=${evento.id})}" href="/error" th:data-fecha-evento="${#temporals.format(evento.fechaCierre, 'yyyy-MM-dd HH:mm:ss')}">
                         <div class="d-flex align-items-start w-100">
                             <div class = "d-flex d-inline-flex align-items-end flex-grow-1 me-2" style="min-width: 0;">

@@ -2,7 +2,8 @@
 <html class="h-100" xmlns:th="http://www.thymeleaf.org" data-bs-theme="dark">
 
 <head>  
-    <th:block th:replace="fragments/head :: header"/>
+        <th:block th:replace="~{fragments/head :: header}" />
+
     <title>Eventos</title>
     
     <link rel="stylesheet" th:href="@{/css/simple-datatables-10.css}" href="/css/simple-datatables-10.css"
@@ -17,6 +18,48 @@
         <div th:replace="fragments/menuAdmin.html :: navAdmin('Eventos')"></div>
     </div>
 
+    <button type="button" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#modalPrueba">
+        Modal de prueba
+      </button>
+      
+      <div class="modal fade" id="modalPrueba" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">¡Funciona!</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body">Este modal debería funcionar si Bootstrap está bien cargado.</div>
+          </div>
+        </div>
+      </div>
+
+    <!-- Fuera de la tabla -->
+    <div th:each="evento : ${eventos}">
+        <div class="modal fade" th:id="'cancelarEventoModal-' + ${evento.id}" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-fullscreen-sm-down">
+                <div class="modal-content" style="position: relative;">
+                    <div th:id="'ocultador-formulario-' + ${evento.id}">
+                        <form th:id="'apostarForm-' + ${evento.id}">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Eliminar evento</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                            </div>
+                        
+                            <div class="modal-body">
+                                <span> ¿Seguro que quiere eliminar permanentemente este evento?</span>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                                <button class="btn btn-danger" data-bs-dismiss="modal">Eliminar evento</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
     <table id="myTable" class="display">
         <thead>
             <tr>
@@ -27,20 +70,20 @@
                 <th> </th>
             </tr>
         </thead>
-        <tbody>
+        <tbody id = "myTableBody">
             <tr th:each="evento : ${eventos}">
                 <td th:text="${evento.nombre}"></td>
                 <td th:text="${evento.fechaCreacion}"></td>
                 <td th:text="${evento.fechaCierre}"></td>
                 <td>
                     <a th:href="@{eventos/determinar/{id}(id=${evento.id})}">
-                        <button class="btn btn-primary" type="button" data-bs-toggle="modal" data-bs-target="#determinarEventoModal">
+                        <button th:id = "'botonDeterminarEvento-' + ${evento.id}" class="btn btn-primary" type="button" data-bs-toggle="modal" data-bs-target="#determinarEventoModal">
                             Determinar
                         </button>
                     </a>
                 </td>
                 <td>
-                    <button class="btn btn-danger" type="button" data-bs-toggle="modal" data-bs-target="#cancelarEventoModal">
+                    <button class="btn btn-danger" type="button" data-bs-toggle="modal" th:attr="data-bs-target='#cancelarEventoModal-' + ${evento.id}">
                         Cancelar
                     </button>
                 </td>
@@ -48,8 +91,21 @@
         </tbody>
     </table>
 
+    
+
+
     <script type="module">
         import { DataTable } from "../js/simple-datatables-10.js"
         new DataTable("#myTable");
     </script>
+
+
+    <th:block th:replace="fragments/footer.html :: footer" />
+
+    <script>
+
+    </script>
+
+
+
 </body>

@@ -7,16 +7,16 @@
     <div th:fragment="navAdmin(active)">
         <ul class="nav nav-pills" id="nav-pills">
             <li class="nav-item" th:class="${active == 'Usuarios'} ? 'nav-item active' : 'nav-item'">
-                <a class="nav-link" th:href="${active == 'Usuarios'} ? '#' : @{/admin/usuarios}">Usuarios</a>
+                <a class="nav-link" th:href="${active == 'Usuarios'} ? '#' : @{/admin/usuarios}" id = "menuAdminUsuarios">Usuarios</a>
             </li>
             <li class="nav-item" th:class="${active == 'Reportes'} ? 'nav-item active' : 'nav-item'">
-                <a class="nav-link" th:href="${active == 'Reportes'} ? '#' : @{/admin/reportes}">Reportes</a>
+                <a class="nav-link" th:href="${active == 'Reportes'} ? '#' : @{/admin/reportes}" id = "menuAdminReportes">Reportes</a>
             </li>
             <li class="nav-item" th:class="${active == 'Eventos'} ? 'nav-item active' : 'nav-item'">
-                <a class="nav-link" th:href="${active == 'Eventos'} ? '#' : @{/admin/eventos}">Eventos</a>
+                <a class="nav-link" th:href="${active == 'Eventos'} ? '#' : @{/admin/eventos}" id = "menuAdminEventos">Eventos</a>
             </li>
             <li class="nav-item" th:class="${active == 'Secciones'} ? 'nav-item active' : 'nav-item'">
-                <a class="nav-link" th:href="${active == 'Secciones'} ? '#' : @{/admin/secciones}">Secciones</a>
+                <a class="nav-link" th:href="${active == 'Secciones'} ? '#' : @{/admin/secciones}" id = "menuAdminSecciones">Secciones</a>
             </li>
         </ul>
     </div>

@@ -20,19 +20,19 @@
                     <ul class="navbar-nav mx-auto">
                         <th:block th:if="true">
                             <li class="nav-item mx-3" th:classappend="${active == 'deportes'} ? 'active'">
-                                <a class="nav-link" th:href="@{/}">Todos los eventos</a>
+                                <a class="nav-link" th:href="@{/}" id = "enlaceNavTodosEventos">Todos los eventos</a>
                             </li>
-                            <li class="nav-item mx-3 " th:if="${session?.u?.hasRole('USER')}" th:classappend="${active == 'apuestas'} ? 'active'">
-                                <a class="nav-link"  th:href="${active == 'apuestas'} ? '#' : @{/misApuestas/todas}">Mis apuestas</a>
+                            <li class="nav-item mx-3 " th:if="${u}" th:classappend="${active == 'apuestas'} ? 'active'">
+                                <a class="nav-link"  th:href="${active == 'apuestas'} ? '#' : @{/misApuestas/todas}" id = "enlaceNavMisApuestas">Mis apuestas</a>
                             </li>
-                            <li class="nav-item mx-3" th:if="${session?.u?.hasRole('USER')}" th:classappend="${active == 'ingresar'} ? 'active'">
-                                <a class="nav-link"  th:href= "@{/cartera/ingresar}">Cartera</a>
+                            <li class="nav-item mx-3" th:if="${u}" th:classappend="${active == 'ingresar'} ? 'active'">
+                                <a class="nav-link"  th:href= "@{/cartera/ingresar}" id = "enlaceNavCartera">Cartera</a>
                             </li>
-                            <li class="nav-item mx-3" th:if="${session?.u?.hasRole('USER')}" th:classappend="${active == 'chats'} ? 'active'">
-                                <a class="nav-link" th:href="${active == 'chats'} ? '#' : @{/}">Chats</a>
+                            <li class="nav-item mx-3" th:if="${u}" th:classappend="${active == 'chats'} ? 'active'">
+                                <a class="nav-link" th:href="${active == 'chats'} ? '#' : @{/}" id = "enlaceNavChats">Chats</a>
                             </li>
-                            <li class="nav-item mx-3" th:if="${session?.u?.hasRole('ADMIN')}" th:classappend="${active == 'administrar'} ? 'active'">
-                                <a class="nav-link"  th:href="${active == 'administrar'} ? '#' :@{/admin/}">Administrar</a>
+                            <li class="nav-item mx-3" th:if="${u}" th:classappend="${active == 'administrar'} ? 'active'">
+                                <a class="nav-link"  th:href="${active == 'administrar'} ? '#' :@{/admin/}" id = "enlaceNavAdmin">Administrar</a>
                             </li>
                         </th:block>
                     </ul>
@@ -42,19 +42,16 @@
                     <th:block th:if="${session.u}">
                         <ul class="navbar-nav">
                             <li class="d-flex">
-                                <!-- Mostrar dinero disponible en tiempo real -->
                                 <a class="nav-link" th:href="@{/cartera/ingresar}" style="font-size: 11px; color:#dee2e6;">
                                     <div class="d-flex flex-column justify-content-center align-items-center">
                                         <span>Disponible</span>
-                                        <!-- Mostrar el saldo dinámicamente o 0 si es null -->
-                                        <span class="text-success" th:text="${dineroDisponible != null ? #numbers.formatDecimal(dineroDisponible, 1, 2) : '0.00'} + '€'">0,00€</span>
+                                        <span class="text-success" th:text="${#numbers.formatDecimal(session.u.dineroDisponible, 1, 2)} + '€'">0,00€</span>
                                     </div>
                                 </a>
                                 <a class="nav-link" th:href="@{/cartera/ingresar}" style="font-size: 11px; color:#dee2e6;">
                                     <div class="d-flex flex-column justify-content-center align-items-center">
                                         <span>Retenido</span>
-                                                                                <!-- no se si se llama dinerorestringido o no -->
-                                        <span class="text-danger" th:text="${dineroRestringido != null ? #numbers.formatDecimal(dineroRestringido, 1, 2) : '0.00'} + '$'">0,00$</span>
+                                        <span class="text-danger" th:text="${#numbers.formatDecimal(session.u.dineroRetenido, 1, 2)} + '$'">0,00$</span>
                                     </div>
                                 </a>
                             </li>
@@ -86,7 +83,7 @@
                                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-wallet2" viewBox="0 0 16 16">
                                                             <path d="M12.136.326A1.5 1.5 0 0 1 14 1.78V3h.5A1.5 1.5 0 0 1 16 4.5v9a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 0 13.5v-9a1.5 1.5 0 0 1 1.432-1.499zM5.562 3H13V1.78a.5.5 0 0 0-.621-.484zM1.5 4a.5.5 0 0 0-.5.5v9a.5.5 0 0 0 .5.5h13a.5.5 0 0 0 .5-.5v-9a.5.5 0 0 0-.5-.5z"/>
                                                         </svg>
-                                                        <span th:text="${session.u.dineroDisponible}">0,00$</span>
+                                                        <span th:text="${#numbers.formatDecimal(session.u.dineroDisponible, 1, 2)} + '€'">0,00$</span>
                                                     </div>
                                                     <span class= "ms-auto">Cartera</span>
                                                 </div>
@@ -105,7 +102,7 @@
                                             </a>
                                             <hr class="separadorDesplegable">
                                             <form th:action="@{/logout}" method="post" class="despUsItem">
-                                                <button type="submit">
+                                                <button type="submit" id = "botonNavCerrarSesion">
                                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-box-arrow-left" viewBox="0 0 16 16">
                                                         <path fill-rule="evenodd" d="M6 12.5a.5.5 0 0 0 .5.5h8a.5.5 0 0 0 .5-.5v-9a.5.5 0 0 0-.5-.5h-8a.5.5 0 0 0-.5.5v2a.5.5 0 0 1-1 0v-2A1.5 1.5 0 0 1 6.5 2h8A1.5 1.5 0 0 1 16 3.5v9a1.5 1.5 0 0 1-1.5 1.5h-8A1.5 1.5 0 0 1 5 12.5v-2a.5.5 0 0 1 1 0z"/>
                                                         <path fill-rule="evenodd" d="M.146 8.354a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L1.707 7.5H10.5a.5.5 0 0 1 0 1H1.707l2.147 2.146a.5.5 0 0 1-.708.708z"/>
@@ -240,7 +237,7 @@
                                           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-wallet2 me-2" viewBox="0 0 16 16">
                                               <path d="M12.136.326A1.5 1.5 0 0 1 14 1.78V3h.5A1.5 1.5 0 0 1 16 4.5v9a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 0 13.5v-9a1.5 1.5 0 0 1 1.432-1.499zM5.562 3H13V1.78a.5.5 0 0 0-.621-.484zM1.5 4a.5.5 0 0 0-.5.5v9a.5.5 0 0 0 .5.5h13a.5.5 0 0 0 .5-.5v-9a.5.5 0 0 0-.5-.5z"/>
                                           </svg>
-                                        <span class="text-success"  th:text="${session.u.dineroDisponible}">0,00$</span>
+                                        <span class="text-success"  th:text="${#numbers.formatDecimal(session.u.dineroDisponible, 1, 2)} + '€'">0,00$</span>
                                       </div>
                                       <button type="button" class="btn boton-dinamico d-flex align-items-center justify-content-center">
                                           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-box-arrow-in-down me-2" viewBox="0 0 16 16">

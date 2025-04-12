@@ -39,11 +39,12 @@
 .infoRowBettingBox {
     padding: 10px 15px;
     margin: 0px;
-    border-top: 1px solid #000000;
+    border-top: 1px solid #0000005d;
 }
 
 /* Pie de la caja */
 .footerRowBettingBox {
+    border-top: 1px solid #0000005d;
     margin: 0px;
     border-bottom-left-radius: 10px;
     border-bottom-right-radius: 10px;
