@@ -93,7 +93,7 @@
                                     <label for="variables" class="form-label mb-0 me-2">Variables:</label>
                                     <div id="lista-Variables-Cr" class="border w-100 scrollBarPerso">
                                         <span class="spanAdaptable">                                            
-                                            <span th:each="variable, iterStat : ${variables}" 
+                                            <span th:each="variable, iterStat : ${eventoSel.variables}" 
                                               th:text="${variable.nombre + (iterStat.last ? '' : ', ')}">
                                             </span>
                                         </span>
