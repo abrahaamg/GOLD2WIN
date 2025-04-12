@@ -93,6 +93,18 @@
                             </th:block>
                         </div>
 
+                        <div class="right text-center">
+                            <p class="mb-1">Ganado:</p>
+                            <span th:if="${apuesta.formulaApuesta.resultado.name() == 'ERROR'}" th:text="${apuesta.cantidad / 100} + ',' + ${apuesta.cantidad % 100} + '€'"></span>
+                            <span th:unless="${apuesta.formulaApuesta.resultado.name() == 'ERROR'}" th:text="' ' +
+                                ${(apuesta.formulaApuesta.resultado.name() == 'GANADO' && apuesta.aFavor) || 
+                                (apuesta.formulaApuesta.resultado.name() == 'PERDIDO' && !apuesta.aFavor) ? 
+                                ((apuesta.cantidad * apuesta.formulaApuesta.calcularCuota(apuesta.aFavor)) / 100) + ',' + 
+                                ((apuesta.cantidad * apuesta.formulaApuesta.calcularCuota(apuesta.aFavor)) % 100) + '€' : 
+                                '0' + '€'}">
+                            </span>
+                        </div>
+
                         
                     </div>
                 </div>
