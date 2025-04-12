@@ -70,7 +70,7 @@ public class EventoController {
 
         long idFormula = o.get("idFormula").asLong();
         boolean decision = o.get("decision").asBoolean();
-        float cantidad = o.get("cantidad").floatValue();
+        int cantidad = o.get("cantidad").intValue(); //en centimos
 
         FormulaApuesta formula = entityManager.find(FormulaApuesta.class, idFormula);
         long userId = ((User) session.getAttribute("u")).getId();
@@ -79,6 +79,18 @@ public class EventoController {
         // Comprobamos que los datos sean validos
         if (formula == null)
             return "Id invalido";
+        
+        if(formula.getEvento().isCancelado()){
+            return "Evento cancelado";
+        }
+
+        if(formula.getEvento().isCancelado()){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Evento cancelado");
+        }
+
+        if(formula.getEvento().getFechaCierre().isBefore(LocalDateTime.now(ZoneOffset.UTC))){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Evento cerrado para apuestas");
+        }
 
         if (cantidad <= 0)
             return "Cantidad no válida";
@@ -120,7 +132,7 @@ public class EventoController {
 
         String titulo = o.get("titulo").asText();
         String formula = o.get("formula").asText();
-        Double cantidad = o.get("cantidad").asDouble();
+        int cantidad = o.get("cantidad").asInt(); //recibo el dinero en centimos
         boolean tipoApuesta = o.get("tipoApuesta").asBoolean();
 
         Evento evento = entityManager.find(Evento.class, id);
@@ -130,6 +142,14 @@ public class EventoController {
         // Comprobamos que los datos sean validos
         if (evento == null)
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Evento no encontrado");
+
+        if(evento.isCancelado()){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Evento cancelado");
+        }
+
+        if(evento.getFechaCierre().isBefore(LocalDateTime.now(ZoneOffset.UTC))){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Evento cerrado para apuestas");
+        }
 
         if (cantidad < 0)
             return "ERROR-CANTIDAD";
@@ -189,8 +209,17 @@ public class EventoController {
         boolean hayMasFormulas = false;
         Evento evento = entityManager.find(Evento.class, id);
 
-        if (evento == null)
+        if (evento == null) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Evento no encontrado");
+        }
+
+        if(evento.isCancelado()){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Evento cancelado");
+        }
+
+        if(evento.getFechaCierre().isBefore(LocalDateTime.now(ZoneOffset.UTC))){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Evento cerrado para apuestas");
+        }
 
         String queryEventos = "SELECT e FROM FormulaApuesta e WHERE e.fechaCreacion < :inicio AND e.evento.id = :id AND ((LOWER(e.nombre) LIKE LOWER(:busqueda)) OR (LOWER(e.formula) LIKE LOWER(:busqueda))) ORDER BY e.fechaCreacion ASC, e.id ASC";
         TypedQuery<FormulaApuesta> query = entityManager.createQuery(queryEventos, FormulaApuesta.class);
@@ -260,6 +289,14 @@ public class EventoController {
 
         if (eventoSel == null) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Evento no encontrado");
+        }
+
+        if(eventoSel.isCancelado()){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Evento cancelado");
+        }
+
+        if(eventoSel.getFechaCierre().isBefore(LocalDateTime.now(ZoneOffset.UTC))){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Evento cerrado para apuestas");
         }
 
         model.addAttribute("eventoSel", eventoSel);

@@ -217,7 +217,8 @@ document.getElementById("crearApuestaForm").addEventListener("submit", function(
         const ruta = window.location.pathname.replace("apostar", "crearFormula");
         const titulo = document.getElementById("tituloModal").value;
         const formula = document.getElementById("formulaModal").value;
-        const cantidad = parseFloat(document.getElementById("cantidadModal").value);
+        var cantidad = parseFloat(document.getElementById("cantidadModal").value);
+        cantidad = Math.floor(cantidad * 100);
         const tipoApuesta = document.getElementById("tipoApuestaModal").value == "favorable";
 
         goTexto(ruta, 'POST', {titulo,formula,cantidad,tipoApuesta}).then((response) => {
@@ -262,7 +263,8 @@ function enviarFormulario(esFavorable,id) {
     
     if(!enviandoFormulario && input.value != ""){
         enviandoFormulario = true;
-        const cantidad = parseFloat(input.value);
+        var cantidad = parseFloat(input.value);
+        cantidad = Math.floor(cantidad * 100); // Convertir a centimos
         const idFormula = id;
         const decision = esFavorable;
 

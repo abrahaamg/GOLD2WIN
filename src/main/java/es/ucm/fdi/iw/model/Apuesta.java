@@ -16,7 +16,7 @@ public class Apuesta {
     @SequenceGenerator(name = "gen", sequenceName = "gen")
     private Long id;
     
-    private double cantidad;
+    private int cantidad; //En centimos
     private boolean aFavor;
     
     @ManyToOne
@@ -26,5 +26,4 @@ public class Apuesta {
     @ManyToOne
     @JoinColumn(name = "formula")
     private FormulaApuesta formulaApuesta;
-    
 }

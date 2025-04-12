@@ -55,8 +55,8 @@ public class User implements Transferable<User.Transfer> {
     private boolean enabled;
     private String roles; // split by ',' to separate roles
 
-    private double dineroDisponible;
-    private double dineroRetenido;
+    private int dineroDisponible; // En centimos
+    private int dineroRetenido; // En centimos
 
     @ManyToMany
     @JoinTable(

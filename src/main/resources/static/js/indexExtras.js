@@ -1,15 +1,18 @@
-const appRoot = document.getElementById('root').value; // th:href="@{/}"
-const seccionId = document.getElementById("seccionId").value; // Id de la sección de la que se quieren los elementos
-var fechaInicio = document.getElementById("fechaCreacion").value; // fecha en la que se almacena el primer evento
+const appRoot = document.getElementById('root').value; //th:href="@{/}"
+const seccionId = document.getElementById("seccionId").value; //Id de la sección de la que se quieren los elementos
+var fechaInicio = new Date().toISOString(); //fecha en la que se almacena el primer evento
 const botonVerMas = document.getElementById("verMasEventos"); //el boton que esta abajo del contenedor de eventos (todo debe ser insertado antes)
-var offset = 10; // numElementos cargados
-var buscado = null; // indica la ultima busqueda realizada (para sobre la busqueda ver mas)
-let fechaAnterior = new Date(0); // fecha del ultimo evento cargado (para separar por dias)
+var offset = 0; //numElementos cargados
+var buscado = null; //indica la ultima busqueda realizada (para sobre la busqueda ver mas)
+let fechaAnterior = new Date(0); //fecha del ultimo evento cargado (para separar por dias)
 
-fechaUltimoEvento(); //carga fecha anterior
+var cargando = true
+
+cargarEventos().then(() => {
+    cargando = false;
+});
 
 //FUNCIONES PARA LA BARRA BUSCADORA
-var cargando = false
 
 document.getElementById("queryEventos").addEventListener("keypress", function(event) {
     if (event.key === "Enter" && !cargando) {
@@ -85,7 +88,7 @@ async function cargarEventos(){ //la funcion se ejecuta de manera asincrona
         else 
             response = await go(appRoot + 'seccion/buscar' + '?seccionId=' + seccionId + '&fechaInicio=' + fechaInicio +'&busqueda=' + buscado + '&offset=' + offset, 'GET');
 
-        response.forEach(evento => {
+        response.eventos.forEach(evento => {
             let fechaActual = new Date(evento.fechaCierre);
             if (fechaAnterior.getFullYear() != fechaActual.getFullYear() ||
                 fechaAnterior.getMonth() != fechaActual.getMonth() ||
@@ -102,11 +105,12 @@ async function cargarEventos(){ //la funcion se ejecuta de manera asincrona
 
         actualizarTiempoRestante();
 
-        if(response.length < 10)
-            botonVerMas.style.display = "none";
-        else{
+        if(response.hayMasEventos){
             botonVerMas.disabled = false;
             botonVerMas.style.display = "block";
+        }
+        else{
+            botonVerMas.style.display = "none";
         }
 
         offset += 10;
@@ -202,15 +206,4 @@ function introducirEvento(evento){
 
     contenedor.insertBefore(eventoMovil, botonVerMas);
     contenedor.insertBefore(eventoOrdenador, botonVerMas);
-}
-
-function fechaUltimoEvento(){
-    let ultimoEvento = botonVerMas.previousElementSibling;
-
-    if(ultimoEvento != null){
-        fechaAnterior = new Date(ultimoEvento.getAttribute("data-fecha-evento").replace(" ", "T"));
-    }
-    else{
-        fechaAnterior = new Date(0); //si no hay eventos se pone una fecha que no pueda coincidir con ninguna otra
-    }
 }
