@@ -11,6 +11,13 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@NamedQueries({
+    @NamedQuery(name="Seccion.activas",
+            query="SELECT s FROM Seccion s "
+                    + "WHERE s.enabled = true ORDER BY s.grupo ASC"),
+    @NamedQuery(name = "Seccion.countByNombre",
+        query = "SELECT COUNT(s) FROM Seccion s WHERE s.nombre = :nombre"),
+})
 public class Seccion {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "gen")
