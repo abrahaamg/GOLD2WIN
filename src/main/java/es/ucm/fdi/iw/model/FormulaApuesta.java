@@ -8,6 +8,7 @@ import lombok.AllArgsConstructor;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -35,7 +36,7 @@ public class FormulaApuesta implements Transferable<FormulaApuesta.Transfer> {
     private User creador;
     
     private String formula;
-    private LocalDateTime fechaCreacion;
+    private OffsetDateTime fechaCreacion;
     private String nombre;
     private int dineroAfavor; //En centimos
     private int dineroEnContra; //En centimos

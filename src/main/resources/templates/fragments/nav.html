@@ -18,23 +18,21 @@
                 <!-- opciones de navegación -->
                 <div class="collapse navbar-collapse mx-auto " id="navbarOpciones">
                     <ul class="navbar-nav mx-auto">
-                        <th:block th:if="true">
-                            <li class="nav-item mx-3" th:classappend="${active == 'deportes'} ? 'active'">
-                                <a class="nav-link" th:href="@{/}" id = "enlaceNavTodosEventos">Todos los eventos</a>
-                            </li>
-                            <li class="nav-item mx-3 " th:if="${u}" th:classappend="${active == 'apuestas'} ? 'active'">
-                                <a class="nav-link"  th:href="${active == 'apuestas'} ? '#' : @{/misApuestas/todas}" id = "enlaceNavMisApuestas">Mis apuestas</a>
-                            </li>
-                            <li class="nav-item mx-3" th:if="${u}" th:classappend="${active == 'ingresar'} ? 'active'">
-                                <a class="nav-link"  th:href= "@{/cartera/ingresar}" id = "enlaceNavCartera">Cartera</a>
-                            </li>
-                            <li class="nav-item mx-3" th:if="${u}" th:classappend="${active == 'chats'} ? 'active'">
-                                <a class="nav-link" th:href="${active == 'chats'} ? '#' : @{/}" id = "enlaceNavChats">Chats</a>
-                            </li>
-                            <li class="nav-item mx-3" th:if="${u}" th:classappend="${active == 'administrar'} ? 'active'">
-                                <a class="nav-link"  th:href="${active == 'administrar'} ? '#' :@{/admin/}" id = "enlaceNavAdmin">Administrar</a>
-                            </li>
-                        </th:block>
+                        <li class="nav-item mx-3" th:classappend="${active == 'deportes'} ? 'active'">
+                            <a class="nav-link" th:href="@{/}" id = "enlaceNavTodosEventos">Todos los eventos</a>
+                        </li>
+                        <li class="nav-item mx-3 " th:if="${session?.u}" th:classappend="${active == 'apuestas'} ? 'active'">
+                            <a class="nav-link"  th:href="${active == 'apuestas'} ? '#' : @{/misApuestas/}" id = "enlaceNavMisApuestas">Mis apuestas</a>
+                        </li>
+                        <li class="nav-item mx-3" th:if="${session?.u}" th:classappend="${active == 'ingresar'} ? 'active'">
+                            <a class="nav-link"  th:href= "@{/cartera/ingresar}" id = "enlaceNavCartera">Cartera</a>
+                        </li>
+                        <li class="nav-item mx-3" th:if="${session?.u}" th:classappend="${active == 'chats'} ? 'active'">
+                            <a class="nav-link" th:href="${active == 'chats'} ? '#' : @{/}" id = "enlaceNavChats">Chats</a>
+                        </li>
+                        <li class="nav-item mx-3" th:if="${session?.u?.hasRole('ADMIN')}" th:classappend="${active == 'administrar'} ? 'active'">
+                            <a class="nav-link"  th:href="${active == 'administrar'} ? '#' :@{/admin/}" id = "enlaceNavAdmin">Administrar</a>
+                        </li>
                     </ul>
                 </div>
 
@@ -222,7 +220,7 @@
                                   <a class="nav-link" th:classappend="${active == 'deportes'} ? 'active'" th:href="@{/}">Todos los eventos</a>
                               </li>
                               <li class="nav-item" th:if="${session?.u?.hasRole('USER')}" >
-                                  <a class="nav-link" th:classappend="${active == 'apuestas'} ? 'active'" th:href="${active == 'apuestas'} ? '#' : @{/misApuestas/todas}">Mis apuestas</a>
+                                  <a class="nav-link" th:classappend="${active == 'apuestas'} ? 'active'" th:href="${active == 'apuestas'} ? '#' : @{/misApuestas/}">Mis apuestas</a>
                               </li>
                               <li class="nav-item" th:if="${session?.u?.hasRole('USER')}">
                                   <a class="nav-link" th:classappend="${active == 'chats'} ? 'active'" th:href="${active == 'chats'} ? '#' : @{/}">Chats</a>

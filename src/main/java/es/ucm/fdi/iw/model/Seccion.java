@@ -11,6 +11,10 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@NamedQueries({
+    @NamedQuery(name="Seccion.getAll",
+            query="SELECT s FROM Seccion s WHERE s.enabled = true ORDER BY s.grupo ASC")
+})
 public class Seccion {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "gen")
