@@ -162,8 +162,7 @@ public class RootController {
     @GetMapping("/")
     public String index(Model model) {
         // obtengo las secciones
-        String querySecciones = "SELECT s FROM Seccion s WHERE s.enabled = true ORDER BY s.grupo ASC";
-        List<Seccion> secciones = entityManager.createQuery(querySecciones).getResultList();
+        List<Seccion> secciones = entityManager.createNamedQuery("Seccion.getAll",Seccion.class).getResultList();
 
         // añado los eventos y las secciones al modelo
         model.addAttribute("secciones", secciones);
@@ -186,31 +185,25 @@ public class RootController {
             @RequestParam int offset) {
 
         boolean hayMasEventos = false;
-        List<String> etiquetas = List.of(busqueda.split(" ")).stream()
+        TypedQuery<Evento> query;
+        String nombre;
+        List<String> etiquetas;
+        Seccion seccion;
+
+        //procesamos la busqueda
+        etiquetas = List.of(busqueda.split(" ")).stream()
                 .filter(palabra -> palabra.startsWith("[") && palabra.endsWith("]")).collect(Collectors.toList());
-        String nombre = List.of(busqueda.split(" ")).stream()
+        nombre = List.of(busqueda.split(" ")).stream()
                 .filter(palabra -> !(palabra.startsWith("[") && palabra.endsWith("]")))
                 .collect(Collectors.joining(" "));
 
-        String queryEventos = "SELECT e FROM Evento e WHERE e.fechaCierre > :inicio AND e.fechaCreacion < :inicio AND (LOWER(e.nombre) LIKE LOWER(:nombre)) ORDER BY e.fechaCierre ASC"; // por
-                                                                                                                                                                                         // defecto
-                                                                                                                                                                                         // se
-                                                                                                                                                                                         // cogen
-                                                                                                                                                                                         // todas
-                                                                                                                                                                                         // las
-                                                                                                                                                                                         // secciones
-        Seccion seccion = entityManager.find(Seccion.class, seccionId);
-        TypedQuery<Evento> query;
-
+        seccion = entityManager.find(Seccion.class, seccionId);
+        
         if (seccion != null && seccion.isEnabled()) {
-            queryEventos = "SELECT e FROM Evento e WHERE e.fechaCierre > :inicio AND e.fechaCreacion < :inicio AND e.seccion.id = :seccionId AND "
-                    + "(LOWER(e.nombre) LIKE LOWER(:nombre)) ORDER BY e.fechaCierre ASC"; // si existe la sección se
-                                                                                          // cogen los eventos de esa
-                                                                                          // sección
-            query = entityManager.createQuery(queryEventos, Evento.class);
+            query = entityManager.createNamedQuery("Evento.getBusquedaInSeccion", Evento.class);
             query.setParameter("seccionId", seccionId);
         } else {
-            query = entityManager.createQuery(queryEventos, Evento.class);
+            query = entityManager.createNamedQuery("Evento.getBusqueda", Evento.class);
         }
 
         query.setParameter("nombre", "%" + nombre + "%");
@@ -237,38 +230,18 @@ public class RootController {
     @ResponseBody
     public Map<String, Object> cargarMasEventos(
             @RequestParam long seccionId,
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime fechaInicio, // necesito
-                                                                                                         // indicar el
-                                                                                                         // formato en
-                                                                                                         // que viene la
-                                                                                                         // fecha
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime fechaInicio,
             @RequestParam int offset) {
         boolean hayMasEventos = false;
 
         Seccion seccion = entityManager.find(Seccion.class, seccionId);
         TypedQuery<Evento> query;
-        String queryEventos = "SELECT e FROM Evento e WHERE e.fechaCierre > :inicio AND e.fechaCreacion < :inicio ORDER BY e.fechaCierre ASC"; // por
-                                                                                                                                               // defecto
-                                                                                                                                               // se
-                                                                                                                                               // cogen
-                                                                                                                                               // todos
 
         if (seccion != null && seccion.isEnabled()) {
-            queryEventos = "SELECT e FROM Evento e WHERE (e.fechaCierre > :inicio AND e.fechaCreacion < :inicio AND e.seccion.id = :seccion) ORDER BY e.fechaCierre ASC"; // si
-                                                                                                                                                                          // existe
-                                                                                                                                                                          // la
-                                                                                                                                                                          // sección
-                                                                                                                                                                          // se
-                                                                                                                                                                          // cogen
-                                                                                                                                                                          // los
-                                                                                                                                                                          // eventos
-                                                                                                                                                                          // de
-                                                                                                                                                                          // esa
-                                                                                                                                                                          // sección
-            query = entityManager.createQuery(queryEventos, Evento.class);
+            query = entityManager.createNamedQuery("Evento.getAllAfterDateInSeccion", Evento.class); 
             query.setParameter("seccion", seccionId);
         } else {
-            query = entityManager.createQuery(queryEventos, Evento.class);
+            query = entityManager.createNamedQuery("Evento.getAllAfterDate", Evento.class);
         }
 
         query.setParameter("inicio", fechaInicio);
@@ -291,10 +264,9 @@ public class RootController {
     @GetMapping("/seccion/{id}")
     public String eventosSeccion(@PathVariable long id, Model model) {
         // obtengo las secciones
-        String querySecciones = "SELECT s FROM Seccion s WHERE s.enabled = true ORDER BY s.grupo ASC";
-        List<Seccion> secciones = entityManager.createQuery(querySecciones).getResultList();
+        List<Seccion> secciones = entityManager.createNamedQuery("Seccion.getAll",Seccion.class).getResultList();
 
-        // añado los eventos y las secciones al modelo
+        // añado las secciones al modelo
         model.addAttribute("secciones", secciones);
         model.addAttribute("selectedSeccion", id);
 
