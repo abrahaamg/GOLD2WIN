@@ -64,6 +64,26 @@ public class AdminController {
         return "admin";
     }
 
+    @GetMapping("/usuarios")
+    public String usuarios(Model model){
+        String queryUsuarios = "SELECT u FROM User u";
+        List<User> usuarios = entityManager.createQuery(queryUsuarios, User.class).getResultList();
+
+        model.addAttribute("usuarios", usuarios);
+
+        return "usuarios";
+    }
+
+    @GetMapping("/usuarios/usuarioDetalles")
+    public String usuarioDetalles(Model model){
+        return "usuarioDetalles";
+    }
+
+    @GetMapping("/usuarios/transacciones")
+    public String transacciones(Model model){
+        return "transacciones";
+    }
+
     @GetMapping("/reportes")
     public String tablaReportes(Model model){
         return "reportes";
