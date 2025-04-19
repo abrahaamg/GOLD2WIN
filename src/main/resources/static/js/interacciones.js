@@ -326,7 +326,6 @@ async function verificarNombreSeccion(){
 }
 
 async function editarSeccion(event) {
-    event.preventDefault();
 
     let formularioEditar = document.getElementById("formularioSeccion");
 
