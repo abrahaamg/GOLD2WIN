@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.time.OffsetDateTime;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
@@ -111,7 +112,7 @@ public class AdminController {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El evento ya ha sido cancelado");
         }
 
-        if (!evento.getFechaCierre().isBefore(java.time.LocalDateTime.now())) {
+        if (!evento.getFechaCierre().isBefore(OffsetDateTime.now())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El evento aun no se ha producido");
         }
 
@@ -143,7 +144,7 @@ public class AdminController {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El evento ya ha sido cancelado");
         }
 
-        if (!evento.getFechaCierre().isBefore(java.time.LocalDateTime.now())) {
+        if (!evento.getFechaCierre().isBefore(OffsetDateTime.now())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El evento aun no se ha producido");
         }
 

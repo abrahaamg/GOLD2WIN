@@ -4,16 +4,13 @@ import java.io.BufferedInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
+import java.time.OffsetDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import jakarta.transaction.Transactional;
 
@@ -21,10 +18,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.FileCopyUtils;
@@ -35,7 +29,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -45,20 +38,14 @@ import es.ucm.fdi.iw.LocalData;
 import es.ucm.fdi.iw.model.Apuesta;
 
 import es.ucm.fdi.iw.model.Evento;
-import es.ucm.fdi.iw.model.FormulaApuesta;
 import es.ucm.fdi.iw.model.Seccion;
 import es.ucm.fdi.iw.model.User;
-import es.ucm.fdi.iw.model.Variable;
 import es.ucm.fdi.iw.model.User.Role;
-import es.ucm.fdi.iw.model.VariableSeccion;
 import es.ucm.fdi.iw.model.Transferable;
 import java.util.stream.Collectors;
 import java.util.Map;
 
 import java.io.File;
-
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 
 /**
  * Non-authenticated requests only.
@@ -177,7 +164,7 @@ public class RootController {
     public Map<String, Object> buscarEventos(
             @RequestParam long seccionId,
             @RequestParam String busqueda,
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime fechaInicio, // necesito
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime fechaInicio, // necesito
                                                                                                          // indicar el
                                                                                                          // formato en
                                                                                                          // que viene la
@@ -230,7 +217,7 @@ public class RootController {
     @ResponseBody
     public Map<String, Object> cargarMasEventos(
             @RequestParam long seccionId,
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime fechaInicio,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime fechaInicio,
             @RequestParam int offset) {
         boolean hayMasEventos = false;
 
@@ -286,11 +273,6 @@ public class RootController {
                         "static/img/default-pic.jpg")));
     }
 
-    @GetMapping("/misApuestas")
-    public String misApuestas(Model model) {
-        return "misApuestas";
-    }
-
     @GetMapping("/crearApuesta")
     public String crearApuesta(Model model) {
         return "crearApuesta";
@@ -328,77 +310,6 @@ public class RootController {
     @GetMapping("/cartera/ingresar/tarjeta")
     public String tarjeta(Model model) {
         return "tarjeta";
-    }
-
-    @GetMapping("/misApuestas/todas")
-    public String todasMisApuestas(Model model) {
-        // Obtener el username desde el contexto de seguridad
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        String username = auth.getName();
-
-        // Buscar el usuario por su username
-        String queryUser = "SELECT u FROM User u WHERE u.username = :username";
-        User user = entityManager.createQuery(queryUser, User.class)
-                .setParameter("username", username)
-                .getSingleResult();
-
-        // Ya tienes el ID
-        Long id = user.getId();
-
-        // Buscar solo las apuestas del usuario actual
-        String queryApuestas = "SELECT a FROM Apuesta a WHERE a.apostador.id = :id";
-        List<Apuesta> apuestas = entityManager.createQuery(queryApuestas, Apuesta.class)
-                .setParameter("id", id)
-                .getResultList();
-
-        model.addAttribute("apuestas", apuestas);
-        return "misApuestas-todas";
-    }
-
-    @GetMapping("/misApuestas/determinadas")
-    public String apuestasDeterminadas(Model model) {
-        // Obtener el username desde el contexto de seguridad
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        String username = auth.getName();
-
-        // Buscar el usuario por su username
-        String queryUser = "SELECT u FROM User u WHERE u.username = :username";
-        User user = entityManager.createQuery(queryUser, User.class)
-                .setParameter("username", username)
-                .getSingleResult();
-
-        // Ya tienes el ID
-        Long id = user.getId();
-
-        String queryDeterminadas = "SELECT a FROM Apuesta a WHERE a.formulaApuesta.resultado IN ('GANADO', 'PERDIDO') AND a.apostador.id = :id";
-        List<Apuesta> apuestasDeterminadas = entityManager.createQuery(queryDeterminadas, Apuesta.class)
-                .setParameter("id", id)
-                .getResultList();
-        model.addAttribute("apuestasDeterminadas", apuestasDeterminadas);
-        return "misApuestas-determinadas";
-    }
-
-    @GetMapping("/misApuestas/pendientes")
-    public String apuestasPendientes(Model model) {
-        // Obtener el username desde el contexto de seguridad
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        String username = auth.getName();
-
-        // Buscar el usuario por su username
-        String queryUser = "SELECT u FROM User u WHERE u.username = :username";
-        User user = entityManager.createQuery(queryUser, User.class)
-                .setParameter("username", username)
-                .getSingleResult();
-
-        // Ya tienes el ID
-        Long id = user.getId();
-
-        String queryDeterminadas = "SELECT a FROM Apuesta a WHERE a.formulaApuesta.resultado = 'INDETERMINADO' AND a.apostador.id = :id";
-        List<Apuesta> apuestasPendientes = entityManager.createQuery(queryDeterminadas, Apuesta.class)
-                .setParameter("id", id)
-                .getResultList();
-        model.addAttribute("apuestasPendientes", apuestasPendientes);
-        return "misApuestas-pendientes";
     }
 
     @GetMapping("/admin/usuarios")

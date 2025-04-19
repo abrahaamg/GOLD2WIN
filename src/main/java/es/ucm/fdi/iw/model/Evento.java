@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -28,8 +29,8 @@ public class Evento implements Transferable<Evento.Transfer> {
     private Long id;
 
     private String nombre;
-    private LocalDateTime fechaCreacion;
-    private LocalDateTime fechaCierre;
+    private OffsetDateTime fechaCreacion;
+    private OffsetDateTime fechaCierre;
     private boolean cancelado;
     private boolean determinado = false;
 
@@ -58,8 +59,8 @@ public class Evento implements Transferable<Evento.Transfer> {
     public static class Transfer {
         private long id;
         private String nombre;
-        private LocalDateTime fechaCreacion;
-        private LocalDateTime fechaCierre;
+        private OffsetDateTime fechaCreacion;
+        private OffsetDateTime fechaCierre;
         private boolean cancelado;
         private List<String> etiquetas;
         private Long seccionId;
