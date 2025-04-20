@@ -2,7 +2,7 @@
 <html class="h-100" xmlns:th="http://www.thymeleaf.org">
 
 <head>
-    <th:block th:replace="fragments/head :: header" />
+    <th:block th:replace="~{fragments/head :: header}" />
     <title>LOGIN</title>
 </head>
 
@@ -16,7 +16,7 @@
             <div class="mb-3">
                 <label for="username" class="form-label">Username</label>
                 <input type="text" class="form-control" id="username" name="username" placeholder="Ingrese su username" required="required">
-                <p th:if="${#request.getQueryString() == 'error'}" class="error">
+                <p th:if="${loginError != false}" class="error">
                     Error en nombre de usuario o contraseña
                 </p>
             </div>
@@ -45,7 +45,7 @@
         </div>
     </main>
 
-    <th:block th:replace="fragments/footer.html :: footer" />
+    <th:block th:replace="~{fragments/footer.html :: footer}" />
 </body>
 
 </html>

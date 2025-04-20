@@ -5,11 +5,17 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
 import es.ucm.fdi.iw.model.Resultado;
+
+import com.ezylang.evalex.*;
 
 @Entity
 @Data
@@ -30,10 +36,10 @@ public class FormulaApuesta implements Transferable<FormulaApuesta.Transfer> {
     private User creador;
     
     private String formula;
-    private LocalDateTime fechaCreacion;
+    private OffsetDateTime fechaCreacion;
     private String nombre;
-    private double dineroAfavor;
-    private double dineroEnContra;
+    private int dineroAfavor; //En centimos
+    private int dineroEnContra; //En centimos
 
     @Enumerated(EnumType.STRING)
     private Resultado resultado; 
@@ -56,8 +62,33 @@ public class FormulaApuesta implements Transferable<FormulaApuesta.Transfer> {
 
     @Transient
     public static boolean formulaValida(String formula, Evento evento) {
-        //Aqui habria que verificar que no se usan variables que no existan y otras cosas que se quieran añadir
-        return !formula.equals("");
+        boolean res = true;
+
+        Map<String, Variable> variablesEvento = new HashMap<>();
+        for (Variable variable : evento.getVariables()) {
+            variablesEvento.put(variable.getNombre(), variable);
+        }
+
+        try{
+            Expression expresion = new Expression(formula);
+            String variablesNecesarias[] = expresion.getUndefinedVariables().toArray(new String[0]);
+
+            for (String variable : variablesNecesarias) {
+                if (!variablesEvento.containsKey(variable)) {
+                    res = false;
+                    break;
+                }
+            }
+        }
+        catch (Exception e){
+            res = false;
+        }
+        
+        if(formula.equals("")){
+            res = false;
+        }
+
+        return res;
     }
 
     //COSAS PARA MANDAR DATOS CON AJAX A JS

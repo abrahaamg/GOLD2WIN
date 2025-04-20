@@ -62,7 +62,7 @@ function actualizarTiempoRestante() {
         if (!fechaEventoStr) return;
 
         // Convertir la cadena a una fecha en JavaScript
-        const fechaEvento = new Date(fechaEventoStr.replace(" ", "T")); // Reemplaza el espacio con 'T' para compatibilidad
+        const fechaEvento = new Date(fechaEventoStr); // Reemplaza el espacio con 'T' para compatibilidad
 
         // Obtener la fecha actual
         const ahora = new Date();
@@ -326,7 +326,6 @@ async function verificarNombreSeccion(){
 }
 
 async function editarSeccion(event) {
-    event.preventDefault();
 
     let formularioEditar = document.getElementById("formularioSeccion");
 

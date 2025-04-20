@@ -1,31 +1,26 @@
 package es.ucm.fdi.iw.controller;
 
-import java.io.BufferedInputStream;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Objects;
 
-import javax.persistence.EntityManager;
-import javax.persistence.TypedQuery;
-import javax.servlet.http.HttpSession;
-import javax.transaction.Transactional;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.TypedQuery;
+import jakarta.servlet.http.HttpSession;
+import jakarta.transaction.Transactional;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -33,44 +28,40 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.server.ResponseStatusException;
-import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 
-import es.ucm.fdi.iw.AppConfig;
 import es.ucm.fdi.iw.LocalData;
 import es.ucm.fdi.iw.model.Apuesta;
 
 import es.ucm.fdi.iw.model.Evento;
 import es.ucm.fdi.iw.model.FormulaApuesta;
 import es.ucm.fdi.iw.model.Resultado;
-import es.ucm.fdi.iw.model.Seccion;
 import es.ucm.fdi.iw.model.User;
-import es.ucm.fdi.iw.model.Variable;
-import es.ucm.fdi.iw.model.User.Role;
-import es.ucm.fdi.iw.model.VariableSeccion;
 
 import es.ucm.fdi.iw.model.Transferable;
 import java.util.stream.Collectors;
 
 import java.util.Map;
-import java.util.HashMap;
-
-import java.io.File;
 
 @Controller
 @RequestMapping("evento")
 public class EventoController {
-	@Autowired
-	private EntityManager entityManager;
+    @Autowired
+    private EntityManager entityManager;
 
     @Autowired
     private LocalData localData;
 
-	private static final Logger log = LogManager.getLogger(RootController.class);
+    private static final Logger log = LogManager.getLogger(RootController.class);
 
+	@ModelAttribute
+	public void populateModel(HttpSession session, Model model) {
+		for (String name : new String[] { "u", "url", "ws", "topics" }) {
+			model.addAttribute(name, session.getAttribute(name));
+		}
+	}
 
     @PostMapping("/apostar")
     @Transactional
@@ -80,35 +71,48 @@ public class EventoController {
 
         long idFormula = o.get("idFormula").asLong();
         boolean decision = o.get("decision").asBoolean();
-        float cantidad = o.get("cantidad").floatValue();
+        int cantidad = o.get("cantidad").intValue(); //en centimos
 
         FormulaApuesta formula = entityManager.find(FormulaApuesta.class, idFormula);
-        long userId = ((User)session.getAttribute("u")).getId();		
-		User u = entityManager.find(User.class, userId);
+        long userId = ((User) session.getAttribute("u")).getId();
+        User u = entityManager.find(User.class, userId);
 
-        //Comprobamos que los datos sean validos
-        if(formula == null)
+        // Comprobamos que los datos sean validos
+        if (formula == null)
             return "Id invalido";
-
-        if(cantidad <= 0)
-            return "Cantidad no válida";
         
-        if(cantidad > u.getDineroDisponible())
+        if(formula.getEvento().isCancelado()){
+            return "Evento cancelado";
+        }
+
+        if(formula.getEvento().isCancelado()){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Evento cancelado");
+        }
+
+        if(formula.getEvento().getFechaCierre().isBefore(OffsetDateTime.now())){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Evento cerrado para apuestas");
+        }
+
+        if (cantidad <= 0)
+            return "Cantidad no válida";
+
+        if (cantidad > u.getDineroDisponible())
             return "saldo insuficiente";
 
-        //Una vez las verificaciones hechas procedemos a crear la apuesta
+        // Una vez las verificaciones hechas procedemos a crear la apuesta
         Apuesta nuevaApuesta = new Apuesta();
         nuevaApuesta.setCantidad(cantidad);
         nuevaApuesta.setAFavor(decision);
         nuevaApuesta.setApostador(u);
         nuevaApuesta.setFormulaApuesta(formula);
+        nuevaApuesta.setFechaCreacion(OffsetDateTime.now());
 
         u.setDineroRetenido(u.getDineroRetenido() + cantidad);
         u.setDineroDisponible(u.getDineroDisponible() - cantidad);
 
-        if (decision) 
+        if (decision)
             formula.setDineroAfavor(formula.getDineroAfavor() + cantidad);
-        else 
+        else
             formula.setDineroEnContra(formula.getDineroEnContra() + cantidad);
 
         entityManager.persist(u);
@@ -130,27 +134,35 @@ public class EventoController {
 
         String titulo = o.get("titulo").asText();
         String formula = o.get("formula").asText();
-        Double cantidad = o.get("cantidad").asDouble();
+        int cantidad = o.get("cantidad").asInt(); //recibo el dinero en centimos
         boolean tipoApuesta = o.get("tipoApuesta").asBoolean();
-        
+
         Evento evento = entityManager.find(Evento.class, id);
-        long userId = ((User)session.getAttribute("u")).getId();
+        long userId = ((User) session.getAttribute("u")).getId();
         User u = entityManager.find(User.class, userId);
 
-        //Comprobamos que los datos sean validos
-        if(evento == null)
+        // Comprobamos que los datos sean validos
+        if (evento == null)
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Evento no encontrado");
 
-        if(cantidad < 0)
-            return "ERROR-CANTIDAD";
-        
-        if(cantidad > u.getDineroDisponible())
+        if(evento.isCancelado()){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Evento cancelado");
+        }
+
+        if(evento.getFechaCierre().isBefore(OffsetDateTime.now())){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Evento cerrado para apuestas");
+        }
+
+        if (cantidad < 0)
             return "ERROR-CANTIDAD";
 
-        if(titulo.equals(""))
+        if (cantidad > u.getDineroDisponible())
+            return "ERROR-CANTIDAD";
+
+        if (titulo.equals(""))
             return "ERROR-TITULO";
-        
-        if(!FormulaApuesta.formulaValida(formula, evento))
+
+        if (!FormulaApuesta.formulaValida(formula, evento))
             return "ERROR-FORMULA";
 
         FormulaApuesta nuevaFormula = new FormulaApuesta();
@@ -165,7 +177,7 @@ public class EventoController {
             nuevaFormula.setDineroAfavor(0);
             nuevaFormula.setDineroEnContra(cantidad);
         }
-        nuevaFormula.setFechaCreacion(LocalDateTime.ofInstant(Instant.now(), ZoneOffset.UTC));
+        nuevaFormula.setFechaCreacion(OffsetDateTime.now());
         nuevaFormula.setResultado(Resultado.INDETERMINADO);
 
         Apuesta nuevaApuesta = new Apuesta();
@@ -173,6 +185,7 @@ public class EventoController {
         nuevaApuesta.setAFavor(tipoApuesta);
         nuevaApuesta.setApostador(u);
         nuevaApuesta.setFormulaApuesta(nuevaFormula);
+        nuevaApuesta.setFechaCreacion(OffsetDateTime.now());
 
         u.setDineroRetenido(u.getDineroRetenido() + cantidad);
         u.setDineroDisponible(u.getDineroDisponible() - cantidad);
@@ -193,16 +206,25 @@ public class EventoController {
     public Map<String, Object> buscarApuestas(
             @PathVariable long id,
             @RequestParam String busqueda,
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime fechaInicio,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime fechaInicio,
             @RequestParam int offset) {
 
         boolean hayMasFormulas = false;
         Evento evento = entityManager.find(Evento.class, id);
 
-        if (evento == null) 
+        if (evento == null) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Evento no encontrado");
-        
-        String queryEventos = "SELECT e FROM FormulaApuesta e WHERE e.fechaCreacion < :inicio AND e.evento.id = :id AND ((LOWER(e.nombre) LIKE LOWER(:busqueda)) OR (LOWER(e.formula) LIKE LOWER(:busqueda))) ORDER BY e.fechaCreacion ASC, e.id ASC"; 
+        }
+
+        if(evento.isCancelado()){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Evento cancelado");
+        }
+
+        if(evento.getFechaCierre().isBefore(OffsetDateTime.now())){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Evento cerrado para apuestas");
+        }
+
+        String queryEventos = "SELECT e FROM FormulaApuesta e WHERE e.fechaCreacion < :inicio AND e.evento.id = :id AND ((LOWER(e.nombre) LIKE LOWER(:busqueda)) OR (LOWER(e.formula) LIKE LOWER(:busqueda))) ORDER BY e.fechaCreacion ASC, e.id ASC";
         TypedQuery<FormulaApuesta> query = entityManager.createQuery(queryEventos, FormulaApuesta.class);
 
         query.setParameter("id", id);
@@ -213,7 +235,7 @@ public class EventoController {
 
         List<FormulaApuesta> formulas = query.getResultList();
 
-        if(formulas.size() == 11){
+        if (formulas.size() == 11) {
             hayMasFormulas = true;
             formulas.remove(10);
         }
@@ -225,24 +247,26 @@ public class EventoController {
         return response;
     }
 
-
     @GetMapping(path = "/{id}/apostar/cargarMas", produces = "application/json")
     @Transactional
     @ResponseBody
     public Map<String, Object> cargarApuestas(
             @PathVariable long id,
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime fechaInicio, //necesito indicar el formato en que viene la fecha
-            @RequestParam int offset){
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime fechaInicio, // necesito
+                                                                                                         // indicar el
+                                                                                                         // formato en
+                                                                                                         // que viene la
+                                                                                                         // fecha
+            @RequestParam int offset) {
 
         Evento evento = entityManager.find(Evento.class, id);
         TypedQuery<FormulaApuesta> query;
-        String queryEventos = "SELECT e FROM FormulaApuesta e WHERE e.fechaCreacion < :inicio AND e.evento.id = :id ORDER BY e.fechaCreacion ASC, e.id ASC"; 
+        String queryEventos = "SELECT e FROM FormulaApuesta e WHERE e.fechaCreacion < :inicio AND e.evento.id = :id ORDER BY e.fechaCreacion ASC, e.id ASC";
         boolean hayMasFormulas = false;
-        
 
-        if (evento == null) 
+        if (evento == null)
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Evento no encontrado");
-            
+
         query = entityManager.createQuery(queryEventos, FormulaApuesta.class);
         query.setParameter("id", id);
         query.setParameter("inicio", fechaInicio);
@@ -250,7 +274,7 @@ public class EventoController {
         query.setFirstResult(offset);
         List<FormulaApuesta> formulas = query.getResultList();
 
-        if(formulas.size() == 11){
+        if (formulas.size() == 11) {
             hayMasFormulas = true;
             formulas.remove(10);
         }
@@ -263,16 +287,24 @@ public class EventoController {
     }
 
     @GetMapping("{id}/apostar")
-    public String apostar(@PathVariable long id, Model model, HttpSession session){
+    public String apostar(@PathVariable long id, Model model, HttpSession session) {
         Evento eventoSel = entityManager.find(Evento.class, id);
 
-        if(eventoSel == null){
+        if (eventoSel == null) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Evento no encontrado");
+        }
+
+        if(eventoSel.isCancelado()){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Evento cancelado");
+        }
+
+        if(eventoSel.getFechaCierre().isBefore(OffsetDateTime.now())){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Evento cerrado para apuestas");
         }
 
         model.addAttribute("eventoSel", eventoSel);
 
         return "crearApuesta";
     }
-    
+
 }

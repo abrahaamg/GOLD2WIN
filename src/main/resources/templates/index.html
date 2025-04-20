@@ -2,20 +2,9 @@
 <html class="h-100" xmlns:th="http://www.thymeleaf.org" data-bs-theme="dark">
 
 <head>
-    <th:block th:replace="fragments/head :: header"/>
+        <th:block th:replace="~{fragments/head :: header}" />
+
     <title>BIENVENIDO</title>
-
-    <style>
-        .gold-text {
-            color: rgb(255, 217, 0);
-            font-weight: bold;
-            font-family: Cambria;
-        }
-        .no-space {
-            letter-spacing: 0;
-        }
-    </style>
-
 </head>
 
 <body class="d-flex flex-column h-100">
@@ -26,7 +15,6 @@
         
         <form style="display: none;" id="datos">
             <input type="hidden" id="seccionId" name="seccionId" th:value="${selectedSeccion}">
-            <input type="hidden" id="fechaCreacion" name="fechaCreacion" th:value="${#temporals.format(fechaCreacion, 'yyyy-MM-dd''T''HH:mm:ss')}">
             <input type="hidden" id="root" name="root" th:value="@{/}">
         </form>
 
@@ -54,67 +42,6 @@
             
 
             <div class="d-flex flex-column listaEventos mt-3 scrollBarPerso align-items-center" id="contendorEventos" >
-                <th:block th:each="evento,i: ${eventos}">
-                    <th:block th:if="${i.first or #temporals.format(evento.fechaCierre, 'yyyy-MM-dd') != #temporals.format(eventos[i.index - 1]?.fechaCierre, 'yyyy-MM-dd')}">
-                        <div class="d-flex align-items-center my-3 w-100">
-                            <div class="flex-grow-1 border-bottom"></div>
-                            <span class="mx-2 text-muted" style="font-size: 13px;" th:text="${#temporals.format(evento.fechaCierre, 'dd/MM/yyyy')}">0/0/0</span>
-                            <div class="flex-grow-1 border-bottom"></div>
-                        </div>
-                    </th:block>
-                    
-                    <a th:id = "'contenedorEvento-' + ${evento.id}" class = "nav-link estilo-contenedor-adaptable w-100 px-2 py-2 d-flex d-sm-none" style="margin: 15px 0px; min-height: 98px; max-height: 98px;"
-                    th:href="@{/evento/{id}/apostar(id=${evento.id})}" href="/error" title="apostar" th:data-fecha-evento="${#temporals.format(evento.fechaCierre, 'yyyy-MM-dd HH:mm:ss')}">
-                        <img width="40" height="40" class="my-auto ms-1 flex-shrink-0" th:src="@{/seccion/{id}/pic(id=${evento.seccion.id})}">
-                        <div class="d-flex flex-column ms-2 flex-grow-1" style="min-width: 0;">
-                            <div class="d-flex w-100">
-                                <div class="d-flex flex-column flex-grow-1 me-3" style="min-width: 0;">
-                                    <p class="ms-2 mb-0 textoColapsable" style = "font-size: 16px;" th:text="${evento.nombre}">Nombre evento</p>
-                                    <p class="ms-2 mb-0 tiempo-restante" style="font-size: 12px; text-align: left;">
-                                        <span >Quedan:</span> 
-                                        <span class="tiempo-restante" th:data-fecha-evento="${#temporals.format(evento.fechaCierre, 'yyyy-MM-dd HH:mm:ss')}" >Fecha evento</span>
-                                    </p>
-                                </div>
-
-                                <button class ="btn boton-dinamico ms-auto p-1 d-flex align-items-start flex-shrink-0" style="align-self: flex-start;box-sizing: border-box;" title="Unirse a chat" data-url="@{/chat/{id}(id=${evento.id})}" onclick="event.preventDefault();window.location.href=this.dataset.url">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chat-fill" viewBox="0 0 16 16">
-                                        <path d="M8 15c4.418 0 8-3.134 8-7s-3.582-7-8-7-8 3.134-8 7c0 1.76.743 3.37 1.97 4.6-.097 1.016-.417 2.13-.771 2.966-.079.186.074.394.273.362 2.256-.37 3.597-.938 4.18-1.234A9 9 0 0 0 8 15"/>
-                                    </svg>
-                                </button>
-                            </div>
-
-                            <div class="ms-2 caja-etiquetas scrollBarPerso">
-                                <span class= "etiquetaEvento text-nowrap" th:each="etiqueta,i: ${evento.etiquetas}" th:text ="${etiqueta}">...</span>
-                            </div>
-                        </div>
-                    </a>
-
-                    <a th:id = "'contenedorEvento-' + ${evento.id}" class = "nav-link d-none d-sm-inline-flex flex-column estilo-contenedor-adaptable px-3 py-2 align-items-start Evento " title="apostar" 
-                    th:href="@{/evento/{id}/apostar(id=${evento.id})}" href="/error" th:data-fecha-evento="${#temporals.format(evento.fechaCierre, 'yyyy-MM-dd HH:mm:ss')}">
-                        <div class="d-flex align-items-start w-100">
-                            <div class = "d-flex d-inline-flex align-items-end flex-grow-1 me-2" style="min-width: 0;">
-                                <img width="25" height="25" th:src="@{/seccion/{id}/pic(id=${evento.seccion.id})}">
-                                <p class="ms-2 mb-0 textoColapsable" th:text="${evento.nombre}">Nombre evento</p>
-                            </div>
-
-                            <div class="vr ms-auto flex-shrink-0" style = "width: 2px;"></div>
-                            <div class="ms-2 d-flex flex-column align-items-center flex-shrink-0">
-                                <p class="mb-0" style ="font-size: 12px;text-align: center;">Quedan</p>
-                                <p class="mb-0 tiempo-restante" style = "font-size: 12px; text-align: center;"  th:data-fecha-evento="${#temporals.format(evento.fechaCierre, 'yyyy-MM-dd HH:mm:ss')}"></p>
-                            </div>
-
-                            <button class ="btn boton-dinamico p-1 d-flex align-items-start ms-3 flex-shrink-0" title="Unirse a chat" data-url="@{/chat/{id}(id=${evento.id})}" onclick="event.preventDefault();window.location.href=this.dataset.url">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chat-fill" viewBox="0 0 16 16">
-                                    <path d="M8 15c4.418 0 8-3.134 8-7s-3.582-7-8-7-8 3.134-8 7c0 1.76.743 3.37 1.97 4.6-.097 1.016-.417 2.13-.771 2.966-.079.186.074.394.273.362 2.256-.37 3.597-.938 4.18-1.234A9 9 0 0 0 8 15"/>
-                                </svg>
-                            </button>
-                        </div>
-                        <div class="caja-etiquetas scrollBarPerso">
-                            <span class= "etiquetaEvento text-nowrap" th:each="etiqueta,i: ${evento.etiquetas}" th:text ="${etiqueta}">...</span>
-                        </div>
-                    </a>
-                </th:block> 
-
                 <button class="btn btn-outline-primary mt-3 botonVerMas" id="verMasEventos">ver mas</button>
             <div>
         </div>

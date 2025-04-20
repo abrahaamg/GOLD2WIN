@@ -4,13 +4,17 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.util.List;
 
 @Entity
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@NamedQueries({
+    @NamedQuery(name="Seccion.getAll",
+            query="SELECT s FROM Seccion s WHERE s.enabled = true ORDER BY s.grupo ASC")
+})
 public class Seccion {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "gen")

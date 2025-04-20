@@ -2,7 +2,7 @@
 <html class="h-100" xmlns:th="http://www.thymeleaf.org" data-bs-theme="dark">
 
 <head>
-    <th:block th:replace="fragments/head :: header"/>
+    <th:block th:replace="~{fragments/head :: header}" />
     <title>editar seccion</title>
 </head>
 
@@ -66,7 +66,7 @@
                             <button style="min-height: 30px;"  class="btn btn-secondary mt-4 w-100">Cancelar</button>
                         </a>
                         
-                        <button style="min-height: 30px; " onclick="editarSeccion(event)" class = "col-3 btn btn-success mt-4 ms-5"> 
+                        <button style="min-height: 30px; " class = "col-3 btn btn-success mt-4 ms-5"  data-bs-toggle="modal" data-bs-target="#modalAvisoVariables" type = "button"> 
                             Confirmar cambios
                         </button>
                     </div>
@@ -106,6 +106,30 @@
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
                             <button class="btn btn-success" onclick="agregarDiv()" data-bs-dismiss="modal">Añadir variable</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modalAvisoVariables" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-fullscreen-sm-down">
+            <div class="modal-content" style="position: relative;">
+                <div id="ocultador-formulario">
+                    <form id="variableSeccionForm">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Borrado de variables</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                        </div>
+                    
+                        <div class="modal-body">
+                            <span> Si ha creado alguna variable nueva se sobreescribirán las variables guardadas,
+                                ¿está seguro que quiere continuar?</span>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                            <button class="btn btn-success" onclick="editarSeccion()" data-bs-dismiss="modal">Confirmar cambios</button>
                         </div>
                     </form>
                 </div>
