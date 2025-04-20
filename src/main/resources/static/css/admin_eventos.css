@@ -192,3 +192,27 @@ border-bottom: 2px solid #007BFF; /* azul bootstrap */
     width: 100%;          
     box-sizing: border-box; 
 }
+
+/*campo de texto no discreto pero especial jsjsjs*/
+
+.texto-estilizado {
+    padding: 5px;           
+    font-size: 16px;                 
+    border: none;
+    border-bottom: 2px solid transparent;               
+    background-color: rgba(128, 128, 128, 0.2);                    
+    transition: all 0.3s ease;         
+    border-radius: 8px;               
+}
+
+.texto-estilizado:hover {
+    background-color: rgba(128, 128, 128, 0.4); 
+}
+
+.texto-estilizado:focus {
+    outline: none;                 
+    background-color: rgba(128, 128, 128, 0.5);
+    border: none;  
+    border-bottom: 2px solid #007BFF;   
+    box-shadow: none;
+}
