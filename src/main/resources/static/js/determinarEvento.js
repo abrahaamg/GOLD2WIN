@@ -1,6 +1,6 @@
 var enviando = false;
-document.getElementById("btn_determinar").addEventListener("click", function() {
-    if(enviando) return;
+document.getElementById("btn_determinar").addEventListener("click", function () {
+    if (enviando) return;
 
     enviando = true;
     var idEvento = document.getElementById("idEvento").value;
@@ -15,7 +15,7 @@ document.getElementById("btn_determinar").addEventListener("click", function() {
             valido = false;
             inputs[i].classList.add("is-invalid");
         }
-        else{
+        else {
             inputs[i].classList.remove("is-invalid")
         }
     }
@@ -26,10 +26,10 @@ document.getElementById("btn_determinar").addEventListener("click", function() {
     }
 
     var data = {};
-    Array.from(contendorVariables.children).forEach(function(child) {
+    Array.from(contendorVariables.children).forEach(function (child) {
         var input = child.querySelector("input");
         if (input) {
-            if (input.type === "number") 
+            if (input.type === "number")
                 data[input.name] = parseFloat(parseFloat(input.value).toFixed(4));
             else
                 data[input.name] = input.value;
@@ -37,19 +37,19 @@ document.getElementById("btn_determinar").addEventListener("click", function() {
     });
 
     go(window.location.href, 'POST', data)
-    .then(data => {
-        if (data.success) {
-            window.location.href = root+"admin/eventos"; //redirijo
-        } else {
-            alert("Ocurrió un error en el servidor");
-        }
+        .then(data => {
+            if (data.success) {
+                window.location.href = root + "admin/eventos"; //redirijo
+            } else {
+                alert("Ocurrió un error en el servidor");
+            }
 
-        mandando = false;
-    })
-    .catch(error => {
-        alert("Ocurrió un error en el servidor")
-        mandando = false; 
-    });
+            mandando = false;
+        })
+        .catch(error => {
+            alert("Ocurrió un error en el servidor")
+            mandando = false;
+        });
 
     console.log(data);
 });

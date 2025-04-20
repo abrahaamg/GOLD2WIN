@@ -1,0 +1,194 @@
+#inputNombreEvento {
+    border: none;
+    border-bottom: 2px solid #ccc;
+    border-radius: 0;
+    padding: 3px;
+    padding-bottom: 0;
+    outline: none;
+    text-align: left;
+    font-size: 22px; 
+    transition: border-color 0.3s;
+}
+
+#inputNombreEvento:focus {
+border-bottom: 2px solid #007BFF; /* azul bootstrap */
+}
+
+/*ESTILOS PARA EL BOTON DE CERRAR*/
+
+#cerrarModalCrearEvento {
+    width: 48px;  
+    height: 48px;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: none;  
+    background-color: transparent; 
+    cursor: pointer;
+    
+}
+
+/*ESTILOS BOTON CERRAR DEL MODAL*/
+
+#cerrarModalCrearEvento div{
+    width: 24px;
+    height: 24px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 50%;
+    background-color: transparent;
+    transition: background-color 0.3s ease; 
+}
+
+#cerrarModalCrearEvento:hover div{
+    background: rgba(0, 0, 0, 0.1);
+}
+
+[data-bs-theme="dark"] #cerrarModalCrearEvento:hover div{
+    background: rgba(255, 255, 255, 0.1);
+}
+
+/*ESTILOS DE LOS BOTONES MENU DEL MODAD*/
+
+.btn-toggle {
+    background-color: transparent;
+    border: none;
+    padding: 8px 12px;
+    font-size: 16px;
+    color: inherit;
+    cursor: pointer;
+    border-radius: 6px;
+    transition: background-color 0.3s;
+}
+
+.btn-toggle:hover:not(.active) {
+    background-color: rgba(128, 128, 128, 0.2); 
+}
+
+.btn-toggle.active {
+    background-color: rgba(0, 123, 255, 0.2); 
+    font-weight: bold;
+}
+
+/*ESTILOS PARA LOS CAMPOS DE ENTRADA DE FECHA*/
+#timepicker {                  /* Mantener el tamaño de fuente igual que la fecha */               /* Reducir el padding para hacer el contenedor más pequeño */
+    width: 75px;                       /* Reducir la altura del contenedor */
+}
+
+.flatpickr-calendar {
+    margin-top: 20px !important;
+}
+
+.flatpickr-calendar::before {
+    content: none !important; /* Elimina cualquier contenido generado por ::after */
+}
+
+.flatpickr-calendar::after {
+    content: none !important; /* Elimina cualquier contenido generado por ::after */
+}
+
+.flatpickr-input {
+    padding: 10px 15px;           
+    font-size: 14px;                 
+    border: none;
+    border-bottom: 2px solid transparent;               
+    background-color: rgba(128, 128, 128, 0.2);                    
+    transition: all 0.3s ease;         
+    border-radius: 8px;               
+}
+
+.flatpickr-input:hover {
+    background-color: rgba(128, 128, 128, 0.4); 
+}
+
+.flatpickr-input.focused {
+    outline: none;                 
+    background-color: rgba(128, 128, 128, 0.5);
+    border: none;  
+    border-bottom: 2px solid #007BFF;   
+    box-shadow: none;
+}
+
+.flatpickr-input:focus {
+    outline: none;
+    background-color: rgba(128, 128, 128, 0.5);       
+    box-shadow: none;
+}
+
+.flatpickr-input::placeholder {                  
+    font-style: italic;                
+}
+
+/*ESTILO PARA EL SELECT*/
+/* Estilo por defecto: solo texto */
+.selectDiscreto {
+    border: 1px solid transparent;
+    background: none;
+    font-size: 1rem;
+    cursor: pointer;
+    appearance: none;  /* Eliminar el estilo predeterminado */
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    padding: 0;
+    padding-right: 20px;
+}
+
+.selectDiscreto:focus {
+    box-shadow: none;
+    border: 3px solid inherit;
+}
+
+.selectDiscreto:focus::-ms-expand {
+    display: none;
+}
+
+/*ESTILO PARA CAMPO DE TEXTO DE MODAL*/
+.input-texto-discreto {
+    border: none;
+    border-bottom: 2px solid transparent;
+    background-color: transparent;
+    font-size: 16px;
+    padding: 6px 0;
+    color: inherit;
+    transition: all 0.2s ease;
+    outline: none;
+}
+
+.input-texto-discreto:hover {
+    background-color: rgba(128, 128, 128, 0.1);
+}
+
+.input-texto-discreto:focus {
+    border-bottom: 2px solid #0d6efd; /* azul Bootstrap */
+    background-color: rgba(128, 128, 128, 0.1); /* opcional si quieres mantener el hover */
+}
+
+.input-texto-discreto {
+    border: none;
+    border-bottom: 2px solid transparent;
+    background-color: transparent;
+    font-size: 16px;
+    padding: 6px 0;
+    color: inherit;
+    transition: all 0.2s ease;
+    outline: none;
+}
+
+.input-texto-discreto:not(:focus)::placeholder {
+    color: inherit;
+    opacity: 1;
+}
+
+.input-texto-discreto:focus::placeholder {
+    opacity: 0.5;
+}
+
+/*Contenedor etiquetas*/
+#listaEtiquetasModal {
+    max-height: 300px;     
+    overflow-y: auto;      
+    width: 100%;          
+    box-sizing: border-box; 
+}
