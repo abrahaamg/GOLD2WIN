@@ -18,7 +18,8 @@ function configurarflatpickr(){
         locale: "es",  
         dateFormat: "Y-m-d",         
         altInput: true,
-        minDate: new Date(),   
+        minDate: new Date(),
+        defaultDate: new Date(),    
         altFormat: "j \\de F \\de Y",               
         allowInput: false,
         theme: isDarkMode ? "dark" : "light",
@@ -34,6 +35,7 @@ function configurarflatpickr(){
         viewMode: 'clock',
         enableTime: true,
         noCalendar: true,
+        defaultDate: new Date(), 
         dateFormat: "H:i", 
         time_24hr: true ,  
         theme: isDarkMode ? "dark" : "light",
@@ -57,6 +59,52 @@ document.getElementById("textoEtiquetasModal").addEventListener("click", functio
     document.getElementById("inputsEtiquetasModal").style.display = "flex";
     document.getElementById('inputVariable').focus();
 });
+
+document.getElementById("timepicker").addEventListener("change", function() {
+    actualizarTextoFecha();
+});
+
+document.getElementById("datepicker").addEventListener("change", function() {
+    actualizarTextoFecha();
+});
+
+actualizarTextoFecha();
+
+function actualizarTextoFecha(){
+    const opciones = {
+        weekday: 'long',   // lunes, martes...
+        day: 'numeric',
+        month: 'long'      // enero, febrero...
+    };
+
+    const fechaInput = document.getElementById("datepicker");
+    const horaInput = document.getElementById("timepicker");
+    const spanFecha = document.getElementById("spanFecha");
+    const spanHora = document.getElementById("spanHora");
+
+    const formateador = new Intl.DateTimeFormat('es-ES', opciones);
+    const fechaFormateada = formateador.format(new Date(fechaInput.value));
+    spanFecha.textContent = fechaFormateada;
+    spanHora.textContent = formatearHora(horaInput.value);
+}
+
+function formatearHora(hora){
+    const partes = hora.split(":");
+    const horas = parseInt(partes[0], 10);
+    const minutos = parseInt(partes[1], 10);
+    var salida = "";
+    salida = `${Math.trunc(partes[0]%12)}:${partes[1]}`;
+
+    if(horas <= 12)
+        salida += " am";
+    else
+        salida += " pm";
+
+    console.log(salida);
+    console.log("entra");
+
+    return salida;
+}
 
 /*CODIGO PARA EL SELECT*/
 const select = document.getElementById('seccionSelect');
@@ -93,8 +141,8 @@ function cambiarMenu(paginaElegida){
     document.getElementById("textoFechaModal").style.display = "flex";
     document.getElementById("inputsFechaModal").style.display = "none";
 
-    document.getElementById(`contenedor${paginaActual}`).style.display = "none";
-    document.getElementById(`contenedor${paginaElegida}`).style.display = "flex";
+    document.getElementById(`contenedor${paginaActual}Modal`).style.display = "none";
+    document.getElementById(`contenedor${paginaElegida}Modal`).style.display = "flex";
     document.getElementById(`boton${paginaActual}`).classList.remove("active");
     document.getElementById(`boton${paginaElegida}`).classList.add("active");
     paginaActual = paginaElegida;
