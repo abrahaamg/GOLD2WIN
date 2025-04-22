@@ -193,7 +193,7 @@ public class AdminController {
     @GetMapping("/secciones")
     public String secciones(Model model) {
         // obtengo las secciones
-        List<Seccion> secciones = entityManager.createNamedQuery("Seccion.activas", Seccion.class).getResultList();
+        List<Seccion> secciones = entityManager.createNamedQuery("Seccion.getAll", Seccion.class).getResultList();
 
         model.addAttribute("secciones", secciones);
 
@@ -203,7 +203,7 @@ public class AdminController {
     @GetMapping("/secciones/{id}/editar")
     public String editarSeccion(@PathVariable long id, Model model, HttpSession session) {
         Seccion target = entityManager.find(Seccion.class, id);
-        List<Seccion> secciones = entityManager.createNamedQuery("Seccion.activas", Seccion.class).getResultList();
+        List<Seccion> secciones = entityManager.createNamedQuery("Seccion.getAll", Seccion.class).getResultList();
 
         model.addAttribute("seccionEditable", target);
         model.addAttribute("secciones", secciones);
@@ -214,8 +214,7 @@ public class AdminController {
     @GetMapping("/secciones-crearSeccion")
     public String seccionesCrear(Model model) {
         // obtengo las secciones
-        //String querySecciones = "SELECT s FROM Seccion s WHERE s.enabled = true ORDER BY s.grupo ASC";
-        List<Seccion> secciones = entityManager.createNamedQuery("Seccion.activas", Seccion.class).getResultList();
+        List<Seccion> secciones = entityManager.createNamedQuery("Seccion.getAll", Seccion.class).getResultList();
 
         model.addAttribute("secciones", secciones);
 
