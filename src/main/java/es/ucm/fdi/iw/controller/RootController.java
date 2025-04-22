@@ -4,16 +4,13 @@ import java.io.BufferedInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
+import java.time.OffsetDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import jakarta.transaction.Transactional;
 
@@ -21,10 +18,11 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
+<<<<<<< HEAD
+import org.springframework.security.crypto.password.PasswordEncoder;
+=======
+>>>>>>> main
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.FileCopyUtils;
@@ -35,7 +33,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -45,20 +42,14 @@ import es.ucm.fdi.iw.LocalData;
 import es.ucm.fdi.iw.model.Apuesta;
 
 import es.ucm.fdi.iw.model.Evento;
-import es.ucm.fdi.iw.model.FormulaApuesta;
 import es.ucm.fdi.iw.model.Seccion;
 import es.ucm.fdi.iw.model.User;
-import es.ucm.fdi.iw.model.Variable;
 import es.ucm.fdi.iw.model.User.Role;
-import es.ucm.fdi.iw.model.VariableSeccion;
 import es.ucm.fdi.iw.model.Transferable;
 import java.util.stream.Collectors;
 import java.util.Map;
 
 import java.io.File;
-
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 
 /**
  * Non-authenticated requests only.
@@ -69,6 +60,10 @@ public class RootController {
     private final AuthenticationManager authenticationManagerBean;
 
     private final AppConfig appConfig;
+
+    @Autowired
+	private PasswordEncoder passwordEncoder;
+
 
     private final AdminController adminController;
 
@@ -86,6 +81,10 @@ public class RootController {
             model.addAttribute(name, session.getAttribute(name));
         }
     }
+
+    public String encodePassword(String rawPassword) {
+		return passwordEncoder.encode(rawPassword);
+	}
 
     RootController(AdminController adminController, AppConfig appConfig,
             AuthenticationManager authenticationManagerBean) {
@@ -133,7 +132,7 @@ public class RootController {
         User user = new User();
 
         user.setUsername(username);
-        user.setPassword(password); // Sustituye esto con la encriptación de contraseña
+        user.setPassword(encodePassword(password)); // Sustituye esto con la encriptación de contraseña
         user.setEmail(email);
         user.setFirstName(firstName);
         user.setLastName(lastName);
@@ -162,8 +161,7 @@ public class RootController {
     @GetMapping("/")
     public String index(Model model) {
         // obtengo las secciones
-        String querySecciones = "SELECT s FROM Seccion s WHERE s.enabled = true ORDER BY s.grupo ASC";
-        List<Seccion> secciones = entityManager.createQuery(querySecciones).getResultList();
+        List<Seccion> secciones = entityManager.createNamedQuery("Seccion.getAll",Seccion.class).getResultList();
 
         // añado los eventos y las secciones al modelo
         model.addAttribute("secciones", secciones);
@@ -178,7 +176,7 @@ public class RootController {
     public Map<String, Object> buscarEventos(
             @RequestParam long seccionId,
             @RequestParam String busqueda,
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime fechaInicio, // necesito
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime fechaInicio, // necesito
                                                                                                          // indicar el
                                                                                                          // formato en
                                                                                                          // que viene la
@@ -186,31 +184,25 @@ public class RootController {
             @RequestParam int offset) {
 
         boolean hayMasEventos = false;
-        List<String> etiquetas = List.of(busqueda.split(" ")).stream()
+        TypedQuery<Evento> query;
+        String nombre;
+        List<String> etiquetas;
+        Seccion seccion;
+
+        //procesamos la busqueda
+        etiquetas = List.of(busqueda.split(" ")).stream()
                 .filter(palabra -> palabra.startsWith("[") && palabra.endsWith("]")).collect(Collectors.toList());
-        String nombre = List.of(busqueda.split(" ")).stream()
+        nombre = List.of(busqueda.split(" ")).stream()
                 .filter(palabra -> !(palabra.startsWith("[") && palabra.endsWith("]")))
                 .collect(Collectors.joining(" "));
 
-        String queryEventos = "SELECT e FROM Evento e WHERE e.fechaCierre > :inicio AND e.fechaCreacion < :inicio AND (LOWER(e.nombre) LIKE LOWER(:nombre)) ORDER BY e.fechaCierre ASC"; // por
-                                                                                                                                                                                         // defecto
-                                                                                                                                                                                         // se
-                                                                                                                                                                                         // cogen
-                                                                                                                                                                                         // todas
-                                                                                                                                                                                         // las
-                                                                                                                                                                                         // secciones
-        Seccion seccion = entityManager.find(Seccion.class, seccionId);
-        TypedQuery<Evento> query;
-
+        seccion = entityManager.find(Seccion.class, seccionId);
+        
         if (seccion != null && seccion.isEnabled()) {
-            queryEventos = "SELECT e FROM Evento e WHERE e.fechaCierre > :inicio AND e.fechaCreacion < :inicio AND e.seccion.id = :seccionId AND "
-                    + "(LOWER(e.nombre) LIKE LOWER(:nombre)) ORDER BY e.fechaCierre ASC"; // si existe la sección se
-                                                                                          // cogen los eventos de esa
-                                                                                          // sección
-            query = entityManager.createQuery(queryEventos, Evento.class);
+            query = entityManager.createNamedQuery("Evento.getBusquedaInSeccion", Evento.class);
             query.setParameter("seccionId", seccionId);
         } else {
-            query = entityManager.createQuery(queryEventos, Evento.class);
+            query = entityManager.createNamedQuery("Evento.getBusqueda", Evento.class);
         }
 
         query.setParameter("nombre", "%" + nombre + "%");
@@ -237,38 +229,18 @@ public class RootController {
     @ResponseBody
     public Map<String, Object> cargarMasEventos(
             @RequestParam long seccionId,
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime fechaInicio, // necesito
-                                                                                                         // indicar el
-                                                                                                         // formato en
-                                                                                                         // que viene la
-                                                                                                         // fecha
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime fechaInicio,
             @RequestParam int offset) {
         boolean hayMasEventos = false;
 
         Seccion seccion = entityManager.find(Seccion.class, seccionId);
         TypedQuery<Evento> query;
-        String queryEventos = "SELECT e FROM Evento e WHERE e.fechaCierre > :inicio AND e.fechaCreacion < :inicio ORDER BY e.fechaCierre ASC"; // por
-                                                                                                                                               // defecto
-                                                                                                                                               // se
-                                                                                                                                               // cogen
-                                                                                                                                               // todos
 
         if (seccion != null && seccion.isEnabled()) {
-            queryEventos = "SELECT e FROM Evento e WHERE (e.fechaCierre > :inicio AND e.fechaCreacion < :inicio AND e.seccion.id = :seccion) ORDER BY e.fechaCierre ASC"; // si
-                                                                                                                                                                          // existe
-                                                                                                                                                                          // la
-                                                                                                                                                                          // sección
-                                                                                                                                                                          // se
-                                                                                                                                                                          // cogen
-                                                                                                                                                                          // los
-                                                                                                                                                                          // eventos
-                                                                                                                                                                          // de
-                                                                                                                                                                          // esa
-                                                                                                                                                                          // sección
-            query = entityManager.createQuery(queryEventos, Evento.class);
+            query = entityManager.createNamedQuery("Evento.getAllAfterDateInSeccion", Evento.class); 
             query.setParameter("seccion", seccionId);
         } else {
-            query = entityManager.createQuery(queryEventos, Evento.class);
+            query = entityManager.createNamedQuery("Evento.getAllAfterDate", Evento.class);
         }
 
         query.setParameter("inicio", fechaInicio);
@@ -291,10 +263,9 @@ public class RootController {
     @GetMapping("/seccion/{id}")
     public String eventosSeccion(@PathVariable long id, Model model) {
         // obtengo las secciones
-        String querySecciones = "SELECT s FROM Seccion s WHERE s.enabled = true ORDER BY s.grupo ASC";
-        List<Seccion> secciones = entityManager.createQuery(querySecciones).getResultList();
+        List<Seccion> secciones = entityManager.createNamedQuery("Seccion.getAll",Seccion.class).getResultList();
 
-        // añado los eventos y las secciones al modelo
+        // añado las secciones al modelo
         model.addAttribute("secciones", secciones);
         model.addAttribute("selectedSeccion", id);
 
@@ -312,11 +283,6 @@ public class RootController {
         return new BufferedInputStream(Objects.requireNonNull(
                 UserController.class.getClassLoader().getResourceAsStream(
                         "static/img/default-pic.jpg")));
-    }
-
-    @GetMapping("/misApuestas")
-    public String misApuestas(Model model) {
-        return "misApuestas";
     }
 
     @GetMapping("/crearApuesta")
@@ -356,77 +322,6 @@ public class RootController {
     @GetMapping("/cartera/ingresar/tarjeta")
     public String tarjeta(Model model) {
         return "tarjeta";
-    }
-
-    @GetMapping("/misApuestas/todas")
-    public String todasMisApuestas(Model model) {
-        // Obtener el username desde el contexto de seguridad
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        String username = auth.getName();
-
-        // Buscar el usuario por su username
-        String queryUser = "SELECT u FROM User u WHERE u.username = :username";
-        User user = entityManager.createQuery(queryUser, User.class)
-                .setParameter("username", username)
-                .getSingleResult();
-
-        // Ya tienes el ID
-        Long id = user.getId();
-
-        // Buscar solo las apuestas del usuario actual
-        String queryApuestas = "SELECT a FROM Apuesta a WHERE a.apostador.id = :id";
-        List<Apuesta> apuestas = entityManager.createQuery(queryApuestas, Apuesta.class)
-                .setParameter("id", id)
-                .getResultList();
-
-        model.addAttribute("apuestas", apuestas);
-        return "misApuestas-todas";
-    }
-
-    @GetMapping("/misApuestas/determinadas")
-    public String apuestasDeterminadas(Model model) {
-        // Obtener el username desde el contexto de seguridad
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        String username = auth.getName();
-
-        // Buscar el usuario por su username
-        String queryUser = "SELECT u FROM User u WHERE u.username = :username";
-        User user = entityManager.createQuery(queryUser, User.class)
-                .setParameter("username", username)
-                .getSingleResult();
-
-        // Ya tienes el ID
-        Long id = user.getId();
-
-        String queryDeterminadas = "SELECT a FROM Apuesta a WHERE a.formulaApuesta.resultado IN ('GANADO', 'PERDIDO') AND a.apostador.id = :id";
-        List<Apuesta> apuestasDeterminadas = entityManager.createQuery(queryDeterminadas, Apuesta.class)
-                .setParameter("id", id)
-                .getResultList();
-        model.addAttribute("apuestasDeterminadas", apuestasDeterminadas);
-        return "misApuestas-determinadas";
-    }
-
-    @GetMapping("/misApuestas/pendientes")
-    public String apuestasPendientes(Model model) {
-        // Obtener el username desde el contexto de seguridad
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        String username = auth.getName();
-
-        // Buscar el usuario por su username
-        String queryUser = "SELECT u FROM User u WHERE u.username = :username";
-        User user = entityManager.createQuery(queryUser, User.class)
-                .setParameter("username", username)
-                .getSingleResult();
-
-        // Ya tienes el ID
-        Long id = user.getId();
-
-        String queryDeterminadas = "SELECT a FROM Apuesta a WHERE a.formulaApuesta.resultado = 'INDETERMINADO' AND a.apostador.id = :id";
-        List<Apuesta> apuestasPendientes = entityManager.createQuery(queryDeterminadas, Apuesta.class)
-                .setParameter("id", id)
-                .getResultList();
-        model.addAttribute("apuestasPendientes", apuestasPendientes);
-        return "misApuestas-pendientes";
     }
 
     @GetMapping("/admin/usuarios")

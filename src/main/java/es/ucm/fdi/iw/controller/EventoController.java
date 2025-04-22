@@ -2,6 +2,7 @@ package es.ucm.fdi.iw.controller;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.HashMap;
 import java.util.List;
@@ -88,7 +89,7 @@ public class EventoController {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Evento cancelado");
         }
 
-        if(formula.getEvento().getFechaCierre().isBefore(LocalDateTime.now(ZoneOffset.UTC))){
+        if(formula.getEvento().getFechaCierre().isBefore(OffsetDateTime.now())){
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Evento cerrado para apuestas");
         }
 
@@ -104,6 +105,7 @@ public class EventoController {
         nuevaApuesta.setAFavor(decision);
         nuevaApuesta.setApostador(u);
         nuevaApuesta.setFormulaApuesta(formula);
+        nuevaApuesta.setFechaCreacion(OffsetDateTime.now());
 
         u.setDineroRetenido(u.getDineroRetenido() + cantidad);
         u.setDineroDisponible(u.getDineroDisponible() - cantidad);
@@ -147,7 +149,7 @@ public class EventoController {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Evento cancelado");
         }
 
-        if(evento.getFechaCierre().isBefore(LocalDateTime.now(ZoneOffset.UTC))){
+        if(evento.getFechaCierre().isBefore(OffsetDateTime.now())){
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Evento cerrado para apuestas");
         }
 
@@ -175,7 +177,7 @@ public class EventoController {
             nuevaFormula.setDineroAfavor(0);
             nuevaFormula.setDineroEnContra(cantidad);
         }
-        nuevaFormula.setFechaCreacion(LocalDateTime.ofInstant(Instant.now(), ZoneOffset.UTC));
+        nuevaFormula.setFechaCreacion(OffsetDateTime.now());
         nuevaFormula.setResultado(Resultado.INDETERMINADO);
 
         Apuesta nuevaApuesta = new Apuesta();
@@ -183,6 +185,7 @@ public class EventoController {
         nuevaApuesta.setAFavor(tipoApuesta);
         nuevaApuesta.setApostador(u);
         nuevaApuesta.setFormulaApuesta(nuevaFormula);
+        nuevaApuesta.setFechaCreacion(OffsetDateTime.now());
 
         u.setDineroRetenido(u.getDineroRetenido() + cantidad);
         u.setDineroDisponible(u.getDineroDisponible() - cantidad);
@@ -203,7 +206,7 @@ public class EventoController {
     public Map<String, Object> buscarApuestas(
             @PathVariable long id,
             @RequestParam String busqueda,
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime fechaInicio,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime fechaInicio,
             @RequestParam int offset) {
 
         boolean hayMasFormulas = false;
@@ -217,7 +220,7 @@ public class EventoController {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Evento cancelado");
         }
 
-        if(evento.getFechaCierre().isBefore(LocalDateTime.now(ZoneOffset.UTC))){
+        if(evento.getFechaCierre().isBefore(OffsetDateTime.now())){
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Evento cerrado para apuestas");
         }
 
@@ -249,7 +252,7 @@ public class EventoController {
     @ResponseBody
     public Map<String, Object> cargarApuestas(
             @PathVariable long id,
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime fechaInicio, // necesito
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime fechaInicio, // necesito
                                                                                                          // indicar el
                                                                                                          // formato en
                                                                                                          // que viene la
@@ -295,7 +298,7 @@ public class EventoController {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Evento cancelado");
         }
 
-        if(eventoSel.getFechaCierre().isBefore(LocalDateTime.now(ZoneOffset.UTC))){
+        if(eventoSel.getFechaCierre().isBefore(OffsetDateTime.now())){
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Evento cerrado para apuestas");
         }
 
