@@ -430,10 +430,7 @@ public class AdminController {
         String nombre = seccionNode.get("nombre").asText();
         String grupo = seccionNode.get("tipo").asText();
 
-        TypedQuery<Seccion> queryEditarSeccion = entityManager.createQuery("SELECT u FROM Seccion u WHERE u.nombre = :nombre",Seccion.class);;
-        queryEditarSeccion.setParameter("nombre", nombre);
-
-        Seccion seccion = queryEditarSeccion.getSingleResult();
+        Seccion seccion = entityManager.createNamedQuery("Seccion.getPorNombre", Seccion.class).setParameter("nombre", nombre).getSingleResult();
 
         seccion.setGrupo(grupo);    
         entityManager.merge(seccion);
@@ -500,6 +497,23 @@ public class AdminController {
         boolean existe = count > 0; // Si el numero es mayor a 0, ya existe
 
         return ResponseEntity.ok().body("{\"existe\": " + existe + "}");
+    }
+
+    @GetMapping("/verificarVarSeccion")
+    public ResponseEntity<?> verificarVariableSeccion(@RequestParam String nombre, @RequestParam String nombreSec) {
+        nombre = nombre.trim(); 
+
+        List<VariableSeccion> vars = entityManager.createNamedQuery("VarSeccion.filtrarPorNombre", VariableSeccion.class).setParameter("nombre", nombre).getResultList();
+        Seccion seccion = entityManager.createNamedQuery("Seccion.getPorNombre", Seccion.class).setParameter("nombre", nombreSec).getSingleResult();                       
+
+        for(VariableSeccion variable : vars) {
+            if(variable.getSeccion().getId() == seccion.getId()) {
+                return ResponseEntity.ok().body("{\"existe\": " + true + "}");
+            }
+        }
+        //boolean existe = count > 0; // Si el numero es mayor a 0, ya existe
+
+        return ResponseEntity.ok().body("{\"existe\": " + false + "}");
     }
 
     public MultipartFile convertirBase64AMultipartFile(String base64, String filename) throws IOException {

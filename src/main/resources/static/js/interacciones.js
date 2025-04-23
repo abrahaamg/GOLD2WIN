@@ -186,19 +186,23 @@ if(menuOpcionesSeccionForm != null){
     });
 }
 
-var contenedorVariablesForm = document.getElementById("contenedorVariables");
-if(contenedorVariablesForm != null){
-    function agregarDiv() {
-        const contenedor = document.getElementById("contenedorVariables");
-        var nombre = document.getElementById('inputnombreVarNueva').value.trim();
-        var select = document.getElementById('selectTipoVarNueva');
-        var opcionSeleccionada = select.options[select.selectedIndex].text;
-    
-        if (opcionSeleccionada === "Seleccione una" || nombre === "") { //Si los campos están vacíos, no se añade el div
-            return;  
-        }
-    
-        // Crear un nuevo div con Bootstrap
+
+async function agregarDiv(event) {
+    event.preventDefault();
+
+    let form = document.getElementById("variableSeccionForm");
+    if (!form.checkValidity()) { //esto sirve para los mensajes de required cuando arriba esta rel preventDefault
+        form.reportValidity(); 
+        return;
+    }
+   
+    const contenedor = document.getElementById("contenedorVariables");
+    var nombre = document.getElementById('inputnombreVarNueva').value.trim();
+    var select = document.getElementById('selectTipoVarNueva');
+    var opcionSeleccionada = select.options[select.selectedIndex].text;
+
+    const isNombreVal = await verificarNombreVariableSeccion();
+    if(isNombreVal && opcionSeleccionada != "Seleccione una" && nombre != "") {
         const nuevoDiv = document.createElement("div");
         nuevoDiv.className = "col-3 variableSeccion"; // Se organizan en 3 columnas por fila
         nuevoDiv.innerHTML = `
@@ -211,12 +215,15 @@ if(contenedorVariablesForm != null){
                 <span class = "tipoVariableSpan">${opcionSeleccionada}</span>
             </div>
         `;
-    
         contenedor.appendChild(nuevoDiv); // Agrega el div al contenedor
         document.getElementById('selectTipoVarNueva').selectedIndex = 0;
         document.getElementById('inputnombreVarNueva').value = '';
-    };
-}
+
+        const modal = bootstrap.Modal.getInstance(document.getElementById('modalCrearVariables'));
+        modal.hide();
+    }
+};        
+
 
 //window.eliminarSeccion = eliminarSeccion;
 //window.guardarSeccion = guardarSeccion;
@@ -244,7 +251,6 @@ async function guardarSeccion(event) {
     event.preventDefault();
 
     let formulario = document.getElementById("formularioSeccion");
-
     if (!formulario.checkValidity()) { //esto sirve para los mensajes de required cuando arriba esta rel preventDefault
         formulario.reportValidity(); 
         return;
@@ -254,14 +260,14 @@ async function guardarSeccion(event) {
     if(isNombreValido){
         const nombre = document.getElementById("inputNombreSeccion").value.trim(); //el trim elimina espacios en blanco innecesarios
         const tipo = document.getElementById("inputTipoSeccion").value.trim();
-        const file = document.getElementById("inputImagenSecciones").files[0] || null;
+        //const file = document.getElementById("inputImagenSecciones").files[0] || null;
 
         const nombreS = nombre.charAt(0).toUpperCase() + nombre.slice(1);
         const tipoS = tipo.charAt(0).toUpperCase() + tipo.slice(1);
 
-        let base64Image = await toBase64(file);
+        //let base64Image = await toBase64(file);
 
-        if(nombreS != "" && tipoS != "" && file != null){
+        if(nombreS != "" && tipoS != "" ){//&& file != null){
             const divs = document.querySelectorAll("#contenedorVariables .variableSeccion");
             const variables = [];
 
@@ -274,8 +280,8 @@ async function guardarSeccion(event) {
             const jsonData = {
                 seccionN: { nombre: nombreS, tipo: tipoS },
                 imageData: { // Aquí se incluye la imagen
-                    image: base64Image,
-                    filename: file.name
+                    //image: base64Image,
+                    //filename: file.name
                 },
                 arrayVariables: variables
             };
@@ -325,8 +331,34 @@ async function verificarNombreSeccion(){
       }
 }
 
-async function editarSeccion(event) {
+async function verificarNombreVariableSeccion(){
+    const nombreV = document.getElementById("inputnombreVarNueva").value.trim();
+    const nombreS = document.getElementById("inputNombreSeccion").value.trim();
+    if (nombreV === "") return; 
+  
+    try {
+        const response = await fetch(`/admin/verificarVarSeccion?nombre=${encodeURIComponent(nombreV)}&nombreSec=${encodeURIComponent(nombreS)}`);
+        const data = await response.json();
+    
+        if (data.existe) {
+          document.getElementById("inputnombreVarNueva").classList.add("is-invalid");
+          document.getElementById("mensajeErrorVar").classList.add("invalid-feedback");
+          console.log("false");
+          return false; // Devolvemos false si el nombre existe.
+        } else {
+          document.getElementById("inputnombreVarNueva").classList.remove("is-invalid");
+          document.getElementById("mensajeErrorVar").classList.remove("invalid-feedback");
+          console.log("true");
+          return true; // Devolvemos true si el nombre no existe.
+        }
+      } catch (error) {
+        console.error("Error al verificar el nombre:", error);
+        return false; // Devuelve false en caso de error.
+      }
+}
 
+async function editarSeccion() {
+    event.preventDefault();     //solo sirve para q los test redireccionen bien 
     let formularioEditar = document.getElementById("formularioSeccion");
 
     if (!formularioEditar.checkValidity()) { //esto sirve para los mensajes de required cuando arriba esta rel preventDefault
@@ -335,13 +367,13 @@ async function editarSeccion(event) {
     }
     const nombreS = document.getElementById("inputNombreSeccion").value.trim(); //el trim elimina espacios en blanco innecesarios
     const tipo = document.getElementById("inputTipoSeccion").value.trim();
-    const file = document.getElementById("inputImagenSecciones").files[0] || null;
+    //const file = document.getElementById("inputImagenSecciones").files[0] || null;
 
     const tipoS = tipo.charAt(0).toUpperCase() + tipo.slice(1);
 
     let base64Image = null;
     let fileName = null;
-    if (file != null) {base64Image = await toBase64(file); fileName = file.name;}
+    //if (file != null) {base64Image = await toBase64(file); fileName = file.name;}
 
     if(nombreS != "" && tipoS != ""){
         const divs = document.querySelectorAll("#contenedorVariables .variableSeccion");
@@ -356,8 +388,8 @@ async function editarSeccion(event) {
         const jsonData = {
             seccionN: { nombre: nombreS, tipo: tipoS },
             imageData: { // Aquí se incluye la imagen
-                image: base64Image,
-                filename: fileName
+                //image: base64Image,
+                //filename: fileName
             },
             arrayVariables: variables
         };

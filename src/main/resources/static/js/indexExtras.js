@@ -141,6 +141,7 @@ function introducirEvento(evento){
     eventoMovil.href = appRoot + "evento/" + evento.id+"/apostar";
     eventoMovil.className = "nav-link estilo-contenedor-adaptable w-100 px-2 py-2 d-flex d-sm-none";
     eventoMovil.style = "margin: 15px 0px; min-height: 98px; max-height: 98px;";
+    eventoMovil.id = "contenedorEvento-"+evento.id;
     eventoMovil.setAttribute("data-fecha-evento",evento.fechaCierre);
     eventoMovil.setAttribute("name","apostar");
     
@@ -175,6 +176,7 @@ function introducirEvento(evento){
     eventoOrdenador.href = appRoot + "evento/" + evento.id+"/apostar";
     eventoOrdenador.className = "nav-link d-none d-sm-inline-flex flex-column estilo-contenedor-adaptable px-3 py-2 align-items-start Evento ";
     eventoOrdenador.setAttribute("name","apostar");
+    eventoOrdenador.id = "contenedorEvento-"+evento.id;
     eventoOrdenador.setAttribute("data-fecha-evento",evento.fechaCierre);
 
     htmlOrdenador = `<div class="d-flex align-items-start w-100">
