@@ -54,7 +54,7 @@ public class User implements Transferable<User.Transfer> {
 
     private boolean enabled;
     private String roles; // split by ',' to separate roles
-
+    // añadir tiempo de expulsion como vaiable
     private int dineroDisponible; // En centimos
     private int dineroRetenido; // En centimos
 
