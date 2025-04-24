@@ -438,8 +438,8 @@ public class AdminController {
         JsonNode itemsNode = json.get("arrayVariables");
         if (itemsNode != null && itemsNode.isArray() && itemsNode.size() > 0) {
             //borrar las variables antiguas
-            String queryDelete = "DELETE FROM VariableSeccion v WHERE v.seccion = :seccion";
-            entityManager.createQuery(queryDelete).setParameter("seccion", seccion).executeUpdate();
+            //String queryDelete = "DELETE FROM VariableSeccion v WHERE v.seccion = :seccion";
+            //entityManager.createQuery(queryDelete).setParameter("seccion", seccion).executeUpdate();
 
             for (JsonNode item : itemsNode) {
 
@@ -500,11 +500,11 @@ public class AdminController {
     }
 
     @GetMapping("/verificarVarSeccion")
-    public ResponseEntity<?> verificarVariableSeccion(@RequestParam String nombre, @RequestParam String nombreSec) {
+    public ResponseEntity<?> verificarVariableSeccion(@RequestParam String nombre, @RequestParam Long idSec) {
         nombre = nombre.trim(); 
 
         List<VariableSeccion> vars = entityManager.createNamedQuery("VarSeccion.filtrarPorNombre", VariableSeccion.class).setParameter("nombre", nombre).getResultList();
-        Seccion seccion = entityManager.createNamedQuery("Seccion.getPorNombre", Seccion.class).setParameter("nombre", nombreSec).getSingleResult();                       
+        Seccion seccion = entityManager.find(Seccion.class, idSec);                
 
         for(VariableSeccion variable : vars) {
             if(variable.getSeccion().getId() == seccion.getId()) {

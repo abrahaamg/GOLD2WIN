@@ -253,6 +253,16 @@
     flex-direction: column;
 
     max-height: 80px;
+    background-color: #33373D;     
+    color: #ffffff;
+}
+
+.nombreVariableSpan{
+    font-weight: bold;
+}
+
+.tipoVariableSpan{
+    font-weight: bold;
 }
 
 .variableSeccionAnt{

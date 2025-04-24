@@ -187,7 +187,7 @@ if(menuOpcionesSeccionForm != null){
 }
 
 
-async function agregarDiv(event) {
+async function agregarDiv(event, seccionId) {
     event.preventDefault();
 
     let form = document.getElementById("variableSeccionForm");
@@ -201,10 +201,13 @@ async function agregarDiv(event) {
     var select = document.getElementById('selectTipoVarNueva');
     var opcionSeleccionada = select.options[select.selectedIndex].text;
 
-    const isNombreVal = await verificarNombreVariableSeccion();
+    console.log(seccionId);
+    var isNombreVal = true;
+    if(seccionId != null) isNombreVal = await verificarNombreVariableSeccion(seccionId); 
     if(isNombreVal && opcionSeleccionada != "Seleccione una" && nombre != "") {
         const nuevoDiv = document.createElement("div");
         nuevoDiv.className = "col-3 variableSeccion"; // Se organizan en 3 columnas por fila
+        nuevoDiv.setAttribute("data-bd", "false");
         nuevoDiv.innerHTML = `
             <div id = "divEtiquetasVariables">
                 <span>Nombre:</span>
@@ -331,13 +334,13 @@ async function verificarNombreSeccion(){
       }
 }
 
-async function verificarNombreVariableSeccion(){
+async function verificarNombreVariableSeccion(seccionId){
     const nombreV = document.getElementById("inputnombreVarNueva").value.trim();
     const nombreS = document.getElementById("inputNombreSeccion").value.trim();
     if (nombreV === "") return; 
   
     try {
-        const response = await fetch(`/admin/verificarVarSeccion?nombre=${encodeURIComponent(nombreV)}&nombreSec=${encodeURIComponent(nombreS)}`);
+        const response = await fetch(`/admin/verificarVarSeccion?nombre=${encodeURIComponent(nombreV)}&idSec=${encodeURIComponent(seccionId)}`);
         const data = await response.json();
     
         if (data.existe) {
@@ -380,9 +383,11 @@ async function editarSeccion() {
         const variables = [];
 
         divs.forEach(div => {
-            const nombreV = div.querySelector(".nombreVariableSpan").innerText;
-            const tipoV = div.querySelector(".tipoVariableSpan").innerText;
-            variables.push({ nombreV, tipoV });
+            if (div.dataset.bd != "true") {
+                const nombreV = div.querySelector(".nombreVariableSpan").innerText;
+                const tipoV = div.querySelector(".tipoVariableSpan").innerText;
+                variables.push({ nombreV, tipoV });
+            }
         });
 
         const jsonData = {
