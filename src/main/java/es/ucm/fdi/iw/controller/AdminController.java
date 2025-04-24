@@ -511,8 +511,6 @@ public class AdminController {
                 return ResponseEntity.ok().body("{\"existe\": " + true + "}");
             }
         }
-        //boolean existe = count > 0; // Si el numero es mayor a 0, ya existe
-
         return ResponseEntity.ok().body("{\"existe\": " + false + "}");
     }
 

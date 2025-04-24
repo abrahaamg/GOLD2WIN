@@ -55,7 +55,7 @@
 
                         <div th:each="variable,i: ${seccionEditable.plantilla}" class="col-3 variableSeccion" data-bd="true">
                             <span th:text="'Nombre: ' + ${variable.nombre}"></span>
-                            <span th:if="${variable.numerico}">Tipo de variable: Valor numérico</span>
+                            <span th:if="${variable.numerico}">Tipo: Valor numérico</span>
                             <span th:if="${!variable.numerico}">Tipo de variable: Texto</span>
                             
                         </div>

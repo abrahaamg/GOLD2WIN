@@ -203,7 +203,8 @@ async function agregarDiv(event, seccionId) {
 
     console.log(seccionId);
     var isNombreVal = true;
-    if(seccionId != null) isNombreVal = await verificarNombreVariableSeccion(seccionId); 
+    if(seccionId != null) isNombreVal = await verificarNombreVariableSeccion(seccionId);
+    if(isNombreVal) isNombreVal = evitarNombresVarRepetidos(); //verifica si el nombre ya existe en la seccion actual 
     if(isNombreVal && opcionSeleccionada != "Seleccione una" && nombre != "") {
         const nuevoDiv = document.createElement("div");
         nuevoDiv.className = "col-3 variableSeccion"; // Se organizan en 3 columnas por fila
@@ -216,6 +217,11 @@ async function agregarDiv(event, seccionId) {
             <div id = "divEtiquetasVariables">
                 <span>Tipo de variable:</span>
                 <span class = "tipoVariableSpan">${opcionSeleccionada}</span>
+            </div>
+            <div> 
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash3" viewBox="0 0 16 16">
+                    <path d="M6.5 1h3a.5.5 0 0 1 .5.5v1H6v-1a.5.5 0 0 1 .5-.5M11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3A1.5 1.5 0 0 0 5 1.5v1H1.5a.5.5 0 0 0 0 1h.538l.853 10.66A2 2 0 0 0 4.885 16h6.23a2 2 0 0 0 1.994-1.84l.853-10.66h.538a.5.5 0 0 0 0-1zm1.958 1-.846 10.58a1 1 0 0 1-.997.92h-6.23a1 1 0 0 1-.997-.92L3.042 3.5zm-7.487 1a.5.5 0 0 1 .528.47l.5 8.5a.5.5 0 0 1-.998.06L5 5.03a.5.5 0 0 1 .47-.53Zm5.058 0a.5.5 0 0 1 .47.53l-.5 8.5a.5.5 0 1 1-.998-.06l.5-8.5a.5.5 0 0 1 .528-.47M8 4.5a.5.5 0 0 1 .5.5v8.5a.5.5 0 0 1-1 0V5a.5.5 0 0 1 .5-.5"/>
+                </svg>
             </div>
         `;
         contenedor.appendChild(nuevoDiv); // Agrega el div al contenedor
@@ -263,12 +269,12 @@ async function guardarSeccion(event) {
     if(isNombreValido){
         const nombre = document.getElementById("inputNombreSeccion").value.trim(); //el trim elimina espacios en blanco innecesarios
         const tipo = document.getElementById("inputTipoSeccion").value.trim();
-        //const file = document.getElementById("inputImagenSecciones").files[0] || null;
+        const file = document.getElementById("inputImagenSecciones").files[0] || null;
 
         const nombreS = nombre.charAt(0).toUpperCase() + nombre.slice(1);
         const tipoS = tipo.charAt(0).toUpperCase() + tipo.slice(1);
 
-        //let base64Image = await toBase64(file);
+        let base64Image = await toBase64(file);
 
         if(nombreS != "" && tipoS != "" ){//&& file != null){
             const divs = document.querySelectorAll("#contenedorVariables .variableSeccion");
@@ -283,8 +289,8 @@ async function guardarSeccion(event) {
             const jsonData = {
                 seccionN: { nombre: nombreS, tipo: tipoS },
                 imageData: { // Aquí se incluye la imagen
-                    //image: base64Image,
-                    //filename: file.name
+                    image: base64Image,
+                    filename: file.name
                 },
                 arrayVariables: variables
             };
@@ -311,52 +317,80 @@ async function guardarSeccion(event) {
 
 async function verificarNombreSeccion(){
     const nombreS = document.getElementById("inputNombreSeccion").value.trim();
-    if (nombreS === "") return; 
-  
     try {
         const response = await fetch(`/admin/verificarSeccion?nombre=${encodeURIComponent(nombreS)}`);
         const data = await response.json();
-    
-        if (data.existe) {
+
+        if (data.existe) {  //el nombre existe
           document.getElementById("inputNombreSeccion").classList.add("is-invalid");
           document.getElementById("mensajeError").classList.add("invalid-feedback");
           console.log("false");
-          return false; // Devolvemos false si el nombre existe.
-        } else {
+          return false; 
+        } else {    //el nombre no existe
           document.getElementById("inputNombreSeccion").classList.remove("is-invalid");
           document.getElementById("mensajeError").classList.remove("invalid-feedback");
           console.log("true");
-          return true; // Devolvemos true si el nombre no existe.
+          return true; 
         }
       } catch (error) {
         console.error("Error al verificar el nombre:", error);
-        return false; // Devuelve false en caso de error.
+        return false; 
       }
 }
 
 async function verificarNombreVariableSeccion(seccionId){
     const nombreV = document.getElementById("inputnombreVarNueva").value.trim();
-    const nombreS = document.getElementById("inputNombreSeccion").value.trim();
-    if (nombreV === "") return; 
-  
     try {
         const response = await fetch(`/admin/verificarVarSeccion?nombre=${encodeURIComponent(nombreV)}&idSec=${encodeURIComponent(seccionId)}`);
         const data = await response.json();
-    
-        if (data.existe) {
+
+        if (data.existe) { //el nombre existe
           document.getElementById("inputnombreVarNueva").classList.add("is-invalid");
           document.getElementById("mensajeErrorVar").classList.add("invalid-feedback");
           console.log("false");
-          return false; // Devolvemos false si el nombre existe.
-        } else {
+          return false; 
+        } else {    //el nombre no existe
           document.getElementById("inputnombreVarNueva").classList.remove("is-invalid");
           document.getElementById("mensajeErrorVar").classList.remove("invalid-feedback");
           console.log("true");
-          return true; // Devolvemos true si el nombre no existe.
+          return true; 
         }
       } catch (error) {
         console.error("Error al verificar el nombre:", error);
-        return false; // Devuelve false en caso de error.
+        return false; 
+      }
+}
+
+function evitarNombresVarRepetidos() { //esta funcion sirve para verificar vars que se acaben de crear y no esten todavia en la bd
+    const nombreV = document.getElementById("inputnombreVarNueva").value.trim();
+    try {     
+        const divs = document.querySelectorAll("#contenedorVariables .variableSeccion");
+
+        let existe = false;
+        divs.forEach(div => {
+            if (div.dataset.bd != "true") {
+                const nombreVarExistente = div.querySelector(".nombreVariableSpan").innerText;
+                console.log("nombreVarExistente: " + nombreVarExistente);
+                if(nombreVarExistente == nombreV) {
+                    existe = true;
+                }
+            }
+        });
+
+        if (existe) { //el nombre existe
+          document.getElementById("inputnombreVarNueva").classList.add("is-invalid");
+          document.getElementById("mensajeErrorVar").classList.add("invalid-feedback");
+          console.log("false");
+          return false; 
+        } else {    //el nombre no existe
+          document.getElementById("inputnombreVarNueva").classList.remove("is-invalid");
+          document.getElementById("mensajeErrorVar").classList.remove("invalid-feedback");
+          console.log("true");
+          return true; 
+        }
+      } catch (error) {
+        console.error("Error al verificar el nombre:", error);
+        return false; 
       }
 }
 
@@ -370,13 +404,13 @@ async function editarSeccion() {
     }
     const nombreS = document.getElementById("inputNombreSeccion").value.trim(); //el trim elimina espacios en blanco innecesarios
     const tipo = document.getElementById("inputTipoSeccion").value.trim();
-    //const file = document.getElementById("inputImagenSecciones").files[0] || null;
+    const file = document.getElementById("inputImagenSecciones").files[0] || null;
 
     const tipoS = tipo.charAt(0).toUpperCase() + tipo.slice(1);
 
     let base64Image = null;
     let fileName = null;
-    //if (file != null) {base64Image = await toBase64(file); fileName = file.name;}
+    if (file != null) {base64Image = await toBase64(file); fileName = file.name;}
 
     if(nombreS != "" && tipoS != ""){
         const divs = document.querySelectorAll("#contenedorVariables .variableSeccion");
@@ -393,8 +427,8 @@ async function editarSeccion() {
         const jsonData = {
             seccionN: { nombre: nombreS, tipo: tipoS },
             imageData: { // Aquí se incluye la imagen
-                //image: base64Image,
-                //filename: fileName
+                image: base64Image,
+                filename: fileName
             },
             arrayVariables: variables
         };
