@@ -9,10 +9,13 @@ Feature: Testeo UI con Karate
     * delay(500)
     * click('#bettingBox-5')
     * click('#bettingBox-16')
-    * delay(3000)
+    * delay(500)
 
     #Se va a la parte de admin/eventos y se rellenan las variables para determinar el evento
     * click('#enlaceNavAdmin')
+    * driver.screenshot()
+    * delay(500)
+    * driver.screenshot()
     * click('#menuAdminEventos')
     * click('#botonDeterminarEvento-5')
     And input('#_Toques', '8')
