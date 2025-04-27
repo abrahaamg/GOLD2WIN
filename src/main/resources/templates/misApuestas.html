@@ -1,52 +1,40 @@
 <!DOCTYPE html>
-<html class="h-100" xmlns:th="http://www.thymeleaf.org" data-bs-theme="dark">
+<html class="h-100" xmlns:th="http://www.thymeleaf.org/" data-bs-theme="dark">
 
 <head>
-    <th:block th:replace="fragments/head :: header"/>
-    <title>MIS APUESTAS</title>
-
-    <style>
-        .gold-text {
-            color: rgb(255, 217, 0);
-            font-weight: bold;
-            font-family: Cambria;
-        }
-        .no-space {
-            letter-spacing: 0;
-        }
-    </style>
-
+    <th:block th:replace="~{fragments/head :: header}" />
+    <title>TODAS LAS APUESTAS</title>
 </head>
 
 <body class="d-flex flex-column h-100">
     <header th:replace="fragments/nav.html :: nav('apuestas')"></header>
 
     <main class="flex-shrink-0">
-        <div class="container">
-            <div th:replace="fragments/menuApuestas.html :: navMisApuestas('null')"></div>
-            <h1 class="mt-5 no-space">
-                Bienvenid@ a <span class="gold-text">GOLD</span>2<span class="gold-text">WIN</span> donde la suerte está de tu lado
-            </h1>
-            
-            <div class="container mt-5">
-                <!-- Botón para abrir el desplegable -->
-                <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#miDesplegable" aria-expanded="false" aria-controls="miDesplegable">
-                  Abrir desplegable
-                </button>
+        <form style="display: none;" id="datos">
+            <input type="hidden" id="root" name="root" th:value="@{/}">
+        </form>
+
+        <div id="contenedorPrincipal" class="container d-flex flex-column">
+            <div>
+                <ul class="nav nav-pills" id="nav-pills">
+                    <li class="nav-item active">
+                        <button class="nav-link" id="todas">Todas</button>
+                    </li>
+                    <li class="nav-item">
+                        <button class="nav-link" id="determinadas">Determinadas</button>
+                    </li>
+                    <li class="nav-item">
+                        <button class="nav-link" id="pendientes">Pendientes</button>
+                    </li>
+                </ul>
             </div>
-              
-            <div class="collapse" id="miDesplegable">
-                <div class="card card-body mt-3">
-                    Aquí va el contenido del desplegable.
-                    <p>¡Esto es un texto dentro del desplegable! Puedes agregar más contenido como imágenes, formularios, etc.</p>
-                </div>
-            </div>            
-              
+
+            <button class="btn btn-outline-primary mt-4 botonVerMas mx-auto" id="verMasEventos">ver mas</button>
         </div>
     </main>
 
     <th:block th:replace="fragments/footer.html :: footer" />
-        
+    <script th:src="@{/js/historico.js}" src="js/historico.js"></script>
 </body>
 
 </html>

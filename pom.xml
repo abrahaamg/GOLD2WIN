@@ -5,19 +5,30 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.7.8</version>
+		<version>3.4.3</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>es.ucm.fdi.iw</groupId>
-	<artifactId>plantilla</artifactId>                      <!-- cambia esto -->
+	<artifactId>gold2win</artifactId>                      <!-- cambia esto -->
 	<version>0.0.1-SNAPSHOT</version>     
-	<name>plantilla</name>                                  <!-- cambia esto -->
-	<description>Demo project for Spring Boot</description> <!-- cambia esto -->
+	<name>gold2win</name>                                  <!-- cambia esto -->
+	<description>Apuesta y gana</description> <!-- cambia esto -->
+	<url/>
+	<licenses>
+		<license/>
+	</licenses>
+	<developers>
+		<developer/>
+	</developers>
+	<scm>
+		<connection/>
+		<developerConnection/>
+		<tag/>
+		<url/>
+	</scm>
 	<properties>
-		<java.version>11</java.version>
-		<maven.compiler.version>3.8.1</maven.compiler.version>
-        <maven.surefire.version>2.22.2</maven.surefire.version>        
-        <karate.version>1.1.0</karate.version>
+		<java.version>21</java.version>
+	        <karate.version>1.4.1</karate.version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -34,15 +45,11 @@
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-web</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-websocket</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.thymeleaf.extras</groupId>
-			<artifactId>thymeleaf-extras-springsecurity5</artifactId>
+			<artifactId>thymeleaf-extras-springsecurity6</artifactId>
 		</dependency>
 
 		<dependency>
@@ -53,7 +60,6 @@
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
-			<version>1.18.32</version>
 			<optional>true</optional>
 		</dependency>
 		<dependency>
@@ -77,6 +83,13 @@
 			<artifactId>EvalEx</artifactId>
 			<version>3.4.0</version>
 		</dependency>
+
+    <!-- karate-js: sólo necesario si quieres interpretar JS en tu servidor -->
+    <dependency>
+      <groupId>io.karatelabs.js</groupId>
+      <artifactId>karate-js</artifactId>
+      <version>0.1.1</version>
+    </dependency>
 
 
 		<!-- pruebas con Karate https://github.com/karatelabs/karate -->
@@ -110,24 +123,6 @@
 					</excludes>
 				</configuration>
 			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>${maven.compiler.version}</version>
-				<configuration>
-					<encoding>UTF-8</encoding>
-					<source>${java.version}</source>
-					<target>${java.version}</target>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-surefire-plugin</artifactId>
-				<version>${maven.surefire.version}</version>
-				<configuration>
-					<argLine>-Dfile.encoding=UTF-8</argLine>
-				</configuration>
-			</plugin>          
 		</plugins>
 	</build>
 

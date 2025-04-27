@@ -15,13 +15,23 @@ class ExternalRunner {
     }  
 
     @Karate.Test
-    Karate testVerApuestaExterna() {
-        return Karate.run("verApuestaExterna").relativeTo(getClass());
+    Karate testCrearFormulaApuesta() {
+        return Karate.run("crearFormulaApuesta").relativeTo(getClass());
     }  
 
     @Karate.Test
-    Karate testCrearApuestaVista() {
-        return Karate.run("crearApuestaVista").relativeTo(getClass());
+    Karate testCrearApuesta() {
+        return Karate.run("crearApuesta").relativeTo(getClass());
+    }
+
+    @Karate.Test
+    Karate testDeterminarEvento() {  //esta prueba da error porque el go del boton de determinar da error
+        return Karate.run("determinarEvento").relativeTo(getClass());
+    }
+
+    @Karate.Test
+    Karate testProbarSeccion() {  
+        return Karate.run("crear-editarSeccion").relativeTo(getClass());
     }
 
     @Karate.Test

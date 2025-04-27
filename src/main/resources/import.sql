@@ -1,12 +1,13 @@
 -- insert secciones
 INSERT INTO SECCION (ID, ENABLED, GRUPO, NOMBRE) VALUES
 (1, true, 'Deportes en Equipo', 'Futbol'),
-(2, true, 'Deportes en Equipo', 'baloncesto'),
+(2, true, 'Deportes en Equipo', 'Baloncesto'),
 (3, true, 'Deportes en Equipo', 'Beisbol'),
-(4, true, 'Deportes en Equipo', 'balonmano'),
+(4, true, 'Deportes en Equipo', 'Balonmano'),
 (5, true, 'Deportes individuales', 'Esgrima'),
 (6, true, 'Deportes individuales', 'Tenis'),
-(7, true, 'Deportes individuales', 'ping pong'),
+(7, true, 'Deportes individuales', 'Ping pong'),
+(8, true, 'Deportes individuales', 'Boxeo'),
 (9, true, 'Deportes individuales', 'Golf'),
 (10, true, 'eSports', 'League of Legends'),
 (11, true, 'eSports', 'Counter Strike'),
@@ -23,6 +24,7 @@ INSERT INTO EVENTO (ID, CANCELADO, DETERMINADO, FECHA_CIERRE, FECHA_CREACION, NO
 (5, false, false, '2025-1-02 15:00:00', '2025-03-06 08:00:00', 'Campeonato Mundial de Esgrima', 5),
 (6, false, false, '2025-06-22 21:00:00', '2025-03-07 13:20:00', 'Roland Garros - Final Masculina', 6),
 (7, false, false, '2025-06-23 11:00:00', '2025-03-08 07:30:00', 'Torneo Internacional de Ping Pong', 7),
+(8, false, false, '2025-05-20 13:00:00', '2025-05-10 15:15:00', 'Exhibición de mayo', 8),
 (9, false, false, '2025-05-20 13:00:00', '2025-03-10 11:15:00', 'Masters de Golf en Augusta', 9),
 (10, false, false, '2025-05-20 17:30:00', '2025-03-11 15:45:00', 'Worlds - League of Legends', 10),
 (11, false, false, '2025-06-08 19:00:00', '2025-03-12 10:50:00', 'Major de Counter Strike', 11),
@@ -31,54 +33,55 @@ INSERT INTO EVENTO (ID, CANCELADO, DETERMINADO, FECHA_CIERRE, FECHA_CREACION, NO
 
 -- inserta etiquetas
 INSERT INTO EVENTO_ETIQUETAS (EVENTO_ID, ETIQUETAS) VALUES
-(1, 'futbol'), (1, 'liga'), (1, 'España'), (1, 'final'), (1, 'deportes'),
-(2, 'baloncesto'), (2, 'NBA'), (2, 'playoffs'), (2, 'Lakers'), (2, 'Celtics'), (2, 'USA'),
-(3, 'beisbol'), (3, 'Serie Mundial'), (3, 'final'), (3, 'MLB'), (3, 'deportes'),
-(4, 'balonmano'), (4, 'Copa Europa'), (4, 'clubes'), (4, 'Europa'), (4, 'final'),
-(5, 'esgrima'), (5, 'Mundial'), (5, 'campeonato'), (5, 'individual'), (5, 'deporte'),
-(6, 'tenis'), (6, 'Roland Garros'), (6, 'Grand Slam'), (6, 'final'), (6, 'Francia'),
-(7, 'ping pong'), (7, 'torneo'), (7, 'internacional'), (7, 'rápido'), (7, 'Asia'),
-(8, 'ciclismo'), (8, 'Tour de Francia'), (8, 'etapa'), (8, 'montaña'), (8, 'Francia'),
-(9, 'golf'), (9, 'Masters'), (9, 'Augusta'), (9, 'USA'), (9, 'profesional'),
-(10, 'eSports'), (10, 'League of Legends'), (10, 'Worlds'), (10, 'final'), (10, 'MOBA'),
-(11, 'eSports'), (11, 'Counter Strike'), (11, 'Major'), (11, 'FPS'), (11, 'torneo'),
-(12, 'eSports'), (12, 'Valorant'), (12, 'Champions'), (12, 'final'), (12, 'shooter');
+(1, 'Futbol'), (1, 'Liga'), (1, 'España'), (1, 'Final'), (1, 'Deportes'),
+(2, 'Baloncesto'), (2, 'NBA'), (2, 'Playoffs'), (2, 'Lakers'), (2, 'Celtics'), (2, 'USA'),
+(3, 'Beisbol'), (3, 'Serie Mundial'), (3, 'Final'), (3, 'MLB'), (3, 'Deportes'),
+(4, 'Balonmano'), (4, 'Copa Europa'), (4, 'Clubes'), (4, 'Europa'), (4, 'Final'),
+(5, 'Esgrima'), (5, 'Mundial'), (5, 'campeonato'), (5, 'individual'), (5, 'deporte'),
+(6, 'Tenis'), (6, 'Roland Garros'), (6, 'Grand Slam'), (6, 'Final'), (6, 'Francia'),
+(7, 'Ping pong'), (7, 'Torneo'), (7, 'Internacional'), (7, 'Rápido'), (7, 'Asia'),
+(8, 'Boxeo'), (8, 'Exhibición'), (8, 'Deporte de contacto'), 
+(9, 'Golf'), (9, 'Masters'), (9, 'Augusta'), (9, 'USA'), (9, 'Profesional'),
+(10, 'eSports'), (10, 'League of Legends'), (10, 'Worlds'), (10, 'Final'), (10, 'MOBA'),
+(11, 'eSports'), (11, 'Counter Strike'), (11, 'Major'), (11, 'FPS'), (11, 'Torneo'),
+(12, 'eSports'), (12, 'Valorant'), (12, 'Champions'), (12, 'Final'), (12, 'Shooter');
 
 -- insert admin (username a, password aa)
 INSERT INTO IWUser (ID, DINERO_DISPONIBLE, DINERO_RETENIDO, EMAIL, ENABLED, FIRST_NAME, LAST_NAME, PASSWORD, ROLES, USERNAME) VALUES
-(1, 0.0, 0.0, 'julianix882@gmail.com', TRUE, 'julián', 'Reguera Peñalosa', '{bcrypt}$2a$10$2BpNTbrsarbHjNsUWgzfNubJqBRf.0Vz9924nRSHBqlbPKerkgX.W', 'ADMIN,USER', 'julianix'),
-(2, 100.0, 20.0, 'maria.garcia@example.com', TRUE, 'María', 'García López', '{bcrypt}$2a$10$2BpNTbrsarbHjNsUWgzfNubJqBRf.0Vz9924nRSHBqlbPKerkgX.W', 'USER', 'mgarcia'),
-(3, 200.0, 50.0, 'carlos.hernandez@example.com', TRUE, 'Carlos', 'Hernández Ruiz', '{bcrypt}$2a$10$2BpNTbrsarbHjNsUWgzfNubJqBRf.0Vz9924nRSHBqlbPKerkgX.W', 'USER', 'chernandez'),
-(4, 50.0, 0.0, 'ana.martinez@example.com', TRUE, 'Ana', 'Martínez Sánchez', '{bcrypt}$2a$10$2BpNTbrsarbHjNsUWgzfNubJqBRf.0Vz9924nRSHBqlbPKerkgX.W', 'USER', 'amartinez'),
-(5, 300.0, 30.0, 'luis.flores@example.com', TRUE, 'Luis', 'Flores Mendoza', '{bcrypt}$2a$10$2BpNTbrsarbHjNsUWgzfNubJqBRf.0Vz9924nRSHBqlbPKerkgX.W', 'ADMIN', 'lflores'),
-(6, 0.0, 0.0, 'sofia.rodriguez@example.com', TRUE, 'Sofía', 'Rodríguez Gómez', '{bcrypt}$2a$10$2BpNTbrsarbHjNsUWgzfNubJqBRf.0Vz9924nRSHBqlbPKerkgX.W', 'USER', 'srodriguez'),
-(7, 120.0, 10.0, 'andres.lopez@example.com', TRUE, 'Andrés', 'López Martínez', '{bcrypt}$2a$10$2BpNTbrsarbHjNsUWgzfNubJqBRf.0Vz9924nRSHBqlbPKerkgX.W', 'USER', 'alopez'),
-(8, 80.0, 5.0, 'carla.gomez@example.com', TRUE, 'Carla', 'Gómez García', '{bcrypt}$2a$10$2BpNTbrsarbHjNsUWgzfNubJqBRf.0Vz9924nRSHBqlbPKerkgX.W', 'USER', 'cgomez'),
-(9, 500.0, 100.0, 'diego.sanchez@example.com', TRUE, 'Diego', 'Sánchez Pérez', '{bcrypt}$2a$10$2BpNTbrsarbHjNsUWgzfNubJqBRf.0Vz9924nRSHBqlbPKerkgX.W', 'ADMIN,USER', 'dsanchez'),
-(10, 60.0, 0.0, 'lucia.ramirez@example.com', TRUE, 'Lucía', 'Ramírez Torres', '{bcrypt}$2a$10$2BpNTbrsarbHjNsUWgzfNubJqBRf.0Vz9924nRSHBqlbPKerkgX.W', 'USER', 'lramirez'),
-(11, 130.55, 22.00, 'ramon@gmail.com', TRUE, 'Ramon', 'apellido1 apellido2', '{bcrypt}$2a$10$2BpNTbrsarbHjNsUWgzfNubJqBRf.0Vz9924nRSHBqlbPKerkgX.W', 'ADMIN,USER', 'Ramon'),
-(12, 130.55, 22.00, 'Jose_Luis@gmail.com', TRUE, 'Jose Luis', 'apellido1 apellido2', '{bcrypt}$2a$10$2BpNTbrsarbHjNsUWgzfNubJqBRf.0Vz9924nRSHBqlbPKerkgX.W', 'USER', 'Jose Luis'),
-(13, 400.0, 15.0, 'elena.fernandez@example.com', TRUE, 'Elena', 'Fernández Díaz', '{bcrypt}$2a$10$2BpNTbrsarbHjNsUWgzfNubJqBRf.0Vz9924nRSHBqlbPKerkgX.W', 'USER', 'efernandez'),
-(14, 580.0, 40.0, 'pedro.alvarez@example.com', TRUE, 'Pedro', 'Álvarez Ruiz', '{bcrypt}$2a$10$2BpNTbrsarbHjNsUWgzfNubJqBRf.0Vz9924nRSHBqlbPKerkgX.W', 'USER', 'palvarez'),
-(15, 250.0, 0.0, 'isabel.perez@example.com', TRUE, 'Isabel', 'Pérez López', '{bcrypt}$2a$10$2BpNTbrsarbHjNsUWgzfNubJqBRf.0Vz9924nRSHBqlbPKerkgX.W', 'ADMIN', 'iperez');
+(1, 00, 00, 'julianix882@gmail.com', TRUE, 'julián', 'Reguera Peñalosa', '{bcrypt}$2a$10$2BpNTbrsarbHjNsUWgzfNubJqBRf.0Vz9924nRSHBqlbPKerkgX.W', 'ADMIN,USER', 'julianix'),
+(2, 10000, 2000, 'maria.garcia@example.com', TRUE, 'María', 'García López', '{bcrypt}$2a$10$2BpNTbrsarbHjNsUWgzfNubJqBRf.0Vz9924nRSHBqlbPKerkgX.W', 'USER', 'mgarcia'),
+(3, 20000, 5000, 'carlos.hernandez@example.com', TRUE, 'Carlos', 'Hernández Ruiz', '{bcrypt}$2a$10$2BpNTbrsarbHjNsUWgzfNubJqBRf.0Vz9924nRSHBqlbPKerkgX.W', 'USER', 'chernandez'),
+(4, 5000, 00, 'ana.martinez@example.com', TRUE, 'Ana', 'Martínez Sánchez', '{bcrypt}$2a$10$2BpNTbrsarbHjNsUWgzfNubJqBRf.0Vz9924nRSHBqlbPKerkgX.W', 'USER', 'amartinez'),
+(5, 30000, 3000, 'luis.flores@example.com', TRUE, 'Luis', 'Flores Mendoza', '{bcrypt}$2a$10$2BpNTbrsarbHjNsUWgzfNubJqBRf.0Vz9924nRSHBqlbPKerkgX.W', 'ADMIN', 'lflores'),
+(6, 00, 00, 'sofia.rodriguez@example.com', TRUE, 'Sofía', 'Rodríguez Gómez', '{bcrypt}$2a$10$2BpNTbrsarbHjNsUWgzfNubJqBRf.0Vz9924nRSHBqlbPKerkgX.W', 'USER', 'srodriguez'),
+(7, 12000, 1000, 'andres.lopez@example.com', TRUE, 'Andrés', 'López Martínez', '{bcrypt}$2a$10$2BpNTbrsarbHjNsUWgzfNubJqBRf.0Vz9924nRSHBqlbPKerkgX.W', 'USER', 'alopez'),
+(8, 8000, 500, 'carla.gomez@example.com', TRUE, 'Carla', 'Gómez García', '{bcrypt}$2a$10$2BpNTbrsarbHjNsUWgzfNubJqBRf.0Vz9924nRSHBqlbPKerkgX.W', 'USER', 'cgomez'),
+(9, 50000, 10000, 'diego.sanchez@example.com', TRUE, 'Diego', 'Sánchez Pérez', '{bcrypt}$2a$10$2BpNTbrsarbHjNsUWgzfNubJqBRf.0Vz9924nRSHBqlbPKerkgX.W', 'ADMIN,USER', 'dsanchez'),
+(10, 6000, 00, 'lucia.ramirez@example.com', TRUE, 'Lucía', 'Ramírez Torres', '{bcrypt}$2a$10$2BpNTbrsarbHjNsUWgzfNubJqBRf.0Vz9924nRSHBqlbPKerkgX.W', 'USER', 'lramirez'),
+(11, 13055, 2200, 'ramon@gmail.com', TRUE, 'Ramon', 'apellido1 apellido2', '{bcrypt}$2a$10$2BpNTbrsarbHjNsUWgzfNubJqBRf.0Vz9924nRSHBqlbPKerkgX.W', 'ADMIN,USER', 'Ramon'),
+(12, 13055, 2200, 'Jose_Luis@gmail.com', TRUE, 'Jose Luis', 'apellido1 apellido2', '{bcrypt}$2a$10$2BpNTbrsarbHjNsUWgzfNubJqBRf.0Vz9924nRSHBqlbPKerkgX.W', 'USER', 'Jose Luis'),
+(13, 40000, 1500, 'elena.fernandez@example.com', TRUE, 'Elena', 'Fernández Díaz', '{bcrypt}$2a$10$2BpNTbrsarbHjNsUWgzfNubJqBRf.0Vz9924nRSHBqlbPKerkgX.W', 'USER', 'efernandez'),
+(14, 58000, 4000, 'pedro.alvarez@example.com', TRUE, 'Pedro', 'Álvarez Ruiz', '{bcrypt}$2a$10$2BpNTbrsarbHjNsUWgzfNubJqBRf.0Vz9924nRSHBqlbPKerkgX.W', 'USER', 'palvarez'),
+(15, 25000, 00, 'isabel.perez@example.com', TRUE, 'Isabel', 'Pérez López', '{bcrypt}$2a$10$2BpNTbrsarbHjNsUWgzfNubJqBRf.0Vz9924nRSHBqlbPKerkgX.W', 'ADMIN', 'iperez');
 
 -- INSERT FORMULA_APUESTA con FECHA_CREACION
 INSERT INTO FORMULA_APUESTA 
     (ID, DINERO_AFAVOR, DINERO_EN_CONTRA, FORMULA, NOMBRE, RESULTADO, CREADOR_ID, EVENTO_ID, FECHA_CREACION)
 VALUES
-(1, 0, 0, 'goles Barsa > goles Madrid', 'Gana Barsa', 'INDETERMINADO', 1, 1, '2025-03-22 14:53:00'),
-(2, 0, 0, 'puntos Lakers > puntos Celtics', 'Victoria Lakers', 'INDETERMINADO', 2, 2, '2025-03-22 14:53:00'),
-(3, 20, 55, 'carreras Yankees > carreras Dodgers', 'Ganan Yankees', 'INDETERMINADO', 3, 3, '2025-03-22 14:53:00'),
-(4, 0, 0, 'goles Kiel > goles Veszprem', 'Gana Kiel', 'INDETERMINADO', 4, 4, '2025-03-22 14:53:00'),
-(5, 0, 0, 'toques Alvarado > toques Smith', 'Victoria Alvarado', 'PERDIDO', 5, 5, '2025-03-22 14:53:00'),
-(6, 0, 0, 'sets Nadal > sets Djokovic', 'Gana Nadal', 'INDETERMINADO', 6, 6, '2025-03-22 14:53:00'),
-(7, 0, 0, 'puntos Wang > puntos Lee', 'Gana Wang', 'INDETERMINADO', 7, 7, '2025-03-22 14:53:00'),
-(9, 0, 0, 'golpes Woods > golpes McIlroy', 'Gana Woods', 'INDETERMINADO', 9, 9, '2025-03-22 14:53:00'),
-(10, 0, 0, 'torres destruidas G2 > torres destruidas T1', 'Gana G2', 'INDETERMINADO', 10, 10, '2025-03-22 14:53:00'),
-(11, 0, 0, 'rounds ganados NaVi > rounds ganados Vitality', 'Victoria NaVi', 'INDETERMINADO', 11, 11, '2025-03-22 14:53:00'),
-(12, 50, 750, 'mapas ganados Fnatic > mapas ganados Sentinels', 'Gana Fnatic', 'PERDIDO', 12, 12, '2025-03-22 14:53:00'),
-(13, 0, 0, 'hoyos Woods > hoyos McIlroy', 'Gana Woods', 'INDETERMINADO', 9, 9, '2025-03-22 14:53:00'),
-(14, 0, 0, 'promedio birdies Woods < promedio birdies McIlroy', 'Gana McIlroy', 'INDETERMINADO', 9, 9, '2025-03-22 14:53:00');
+(1, 0, 0, 'Goles Barsa > Goles Madrid', 'Gana Barsa', 'INDETERMINADO', 1, 1, '2025-03-22 14:53:00'),
+(2, 0, 0, 'Puntos Lakers > Puntos Celtics', 'Victoria Lakers', 'INDETERMINADO', 2, 2, '2025-03-22 14:53:00'),
+(3, 20, 55, 'Carreras Yankees > carreras Dodgers', 'Ganan Yankees', 'INDETERMINADO', 3, 3, '2025-03-22 14:53:00'),
+(4, 0, 0, 'Goles Kiel > Goles Veszprem', 'Gana Kiel', 'INDETERMINADO', 4, 4, '2025-03-22 14:53:00'),
+(5, 100, 30, 'ToquesDobles > 3', 'Total toquesDobles', 'INDETERMINADO', 5, 5, '2025-03-22 14:53:00'),
+(6, 0, 0, 'Sets Nadal > Sets Djokovic', 'Gana Nadal', 'INDETERMINADO', 6, 6, '2025-03-22 14:53:00'),
+(7, 0, 0, 'Puntos Wang > Puntos Lee', 'Gana Wang', 'INDETERMINADO', 7, 7, '2025-03-22 14:53:00'),
+(8, 0, 0, 'Número de asaltos > 3', 'Total asaltos', 'INDETERMINADO', 7, 7, '2025-03-13 22:31:00'),
+(9, 0, 0, 'Golpes Woods > Golpes McIlroy', 'Gana Woods', 'INDETERMINADO', 9, 9, '2025-03-22 14:53:00'),
+(10, 0, 0, 'Torres destruidas G2 > Torres destruidas T1', 'Gana G2', 'INDETERMINADO', 10, 10, '2025-03-22 14:53:00'),
+(11, 0, 0, 'Rounds ganados NaVi > Rounds ganados Vitality', 'Victoria NaVi', 'INDETERMINADO', 11, 11, '2025-03-22 14:53:00'),
+(12, 50, 750, 'Mapas ganados Fnatic > Mapas ganados Sentinels', 'Gana Fnatic', 'PERDIDO', 12, 12, '2025-03-22 14:53:00'),
+(13, 0, 0, 'Hoyos Woods > Hoyos McIlroy', 'Gana Woods', 'INDETERMINADO', 9, 9, '2025-03-22 14:53:00'),
+(14, 0, 0, 'Promedio birdies Woods < PSromedio birdies McIlroy', 'Gana McIlroy', 'INDETERMINADO', 9, 9, '2025-03-22 14:53:00');
 
 
 -- INSERT de 25 fórmulas de apuesta adicionales para el evento con ID 1
@@ -111,50 +114,88 @@ VALUES
     (38, 0, 0, 'goles EquipoA > goles EquipoB - 38', 'Apuesta 38', 'INDETERMINADO', 1, 1, '2025-03-22 14:53:00'),
     (39, 0, 0, 'goles EquipoA > goles EquipoB - 39', 'Apuesta 39', 'INDETERMINADO', 1, 1, '2025-03-22 14:53:00');
 
--- INSERT APUESTA
-INSERT INTO APUESTA (ID, CANTIDAD, A_FAVOR, APOSTADOR_ID, FORMULA) VALUES
-(1, 50.0, TRUE, 1, 1),
-(2, 30.0, FALSE, 2, 2),
-(3, 75.5, TRUE, 3, 3),
-(4, 20.0, FALSE, 4, 4),
-(5, 100.0, TRUE, 5, 5),
-(6, 45.0, TRUE, 6, 6),
-(7, 60.0, FALSE, 7, 7),
-(9, 90.0, FALSE, 9, 9),
-(10, 15.0, TRUE, 10, 10),
-(11, 120.0, FALSE, 11, 11),
-(12, 35.0, TRUE, 12, 12),
-(13, 400.0, FALSE, 12, 12),
-(14, 350.0, FALSE, 12, 12),
-(15, 15.0, TRUE, 12, 12);
+-- INSERT APUESTA con FECHA_CREACION en formato OffsetDateTime
+INSERT INTO APUESTA (ID, CANTIDAD, A_FAVOR, APOSTADOR_ID, FORMULA, FECHA_CREACION) VALUES
+(1, 5000, TRUE, 1, 1, '2025-03-22T14:53:00+01:00'),
+(2, 3000, FALSE, 2, 2, '2025-03-22T14:53:00+01:00'),
+(3, 7505, TRUE, 3, 3, '2025-03-22T14:53:00+01:00'),
+(4, 2000, FALSE, 4, 4, '2025-03-22T14:53:00+01:00'),
+(5, 10000, TRUE, 11, 5, '2025-03-22T14:53:00+01:00'),
+(6, 4500, TRUE, 6, 6, '2025-03-22T14:53:00+01:00'),
+(7, 6000, FALSE, 7, 7, '2025-03-22T14:53:00+01:00'),
+(9, 9000, FALSE, 9, 9, '2025-03-22T14:53:00+01:00'),
+(10, 1500, TRUE, 10, 10, '2025-03-22T14:53:00+01:00'),
+(11, 12000, FALSE, 11, 11, '2025-03-22T14:53:00+01:00'),
+(12, 3500, TRUE, 12, 12, '2025-03-22T14:53:00+01:00'),
+(13, 40000, FALSE, 12, 12, '2025-03-22T14:53:00+01:00'),
+(14, 35000, FALSE, 12, 12, '2025-03-22T14:53:00+01:00'),
+(15, 1500, TRUE, 12, 12, '2025-03-22T14:53:00+01:00'),
+(16, 3000, FALSE, 11, 5, '2025-03-22T14:53:00+01:00');
 
 -- INSERT VARIABLESECCION
 INSERT INTO VARIABLE (ID, NOMBRE, NUMERICO, RESOLUCION, ID_EVENTO) VALUES
-(1, 'goles', TRUE, NULL, 1),
-(2, 'puntos', TRUE, NULL, 2),
-(3, 'carreras', TRUE, NULL, 3),
-(4, 'goles', TRUE, NULL, 4),
-(5, 'toques', TRUE, NULL, 5),
-(6, 'sets', TRUE, NULL, 6),
-(7, 'puntos', TRUE, NULL, 7),
-(9, 'golpes', TRUE, NULL, 9),
-(13, 'hoyos', TRUE, NULL, 9),
-(14, 'promedio birdies', TRUE, NULL, 9),
-(10, 'torres destruidas', TRUE, NULL, 10),
-(11, 'rounds ganados', TRUE, NULL, 11),
+(1, 'Goles', TRUE, NULL, 1),
+(2, 'Puntos', TRUE, NULL, 2),
+(3, 'Carreras', TRUE, NULL, 3),
+(4, 'Goles', TRUE, NULL, 4),
+(5, 'Toques', TRUE, NULL, 5),
+(6, 'Sets', TRUE, NULL, 6),
+(7, 'Puntos', TRUE, NULL, 7),
+(9, 'Golpes', TRUE, NULL, 9),
+(13, 'Hoyos', TRUE, NULL, 9),
+(14, 'Promedio birdies', TRUE, NULL, 9),
+(10, 'Torres destruidas', TRUE, NULL, 10),
+(11, 'Rounds ganados', TRUE, NULL, 11),
 (12, 'mapas ganados', TRUE, NULL, 12);
 
 INSERT INTO VARIABLE (ID, NOMBRE, NUMERICO, RESOLUCION, ID_EVENTO) VALUES
-(15, 'numToquesEspaña', TRUE, NULL, 5),
-(16, 'numToquesRusia', TRUE, NULL, 5),
-(17, 'duracionCombateSegundos', TRUE, NULL, 5),
-(18, 'toquesDobles', TRUE, NULL, 5),
-(19, 'tarjetasAmarillasEspaña', TRUE, NULL, 5),
-(20, 'tarjetasAmarillasRusia', TRUE, NULL, 5),
-(21, 'tarjetasRojasEspaña', TRUE, NULL, 5),
-(22, 'tarjetasRojasRusia', TRUE, NULL, 5),
-(23, 'paradasEspaña', TRUE, NULL, 5),
-(24, 'paradasRusia', TRUE, NULL, 5);
+(15, 'NumToquesEspaña', TRUE, NULL, 5),
+(16, 'NumToquesRusia', TRUE, NULL, 5),
+(17, 'DuracionCombateSegundos', TRUE, NULL, 5),
+(18, 'ToquesDobles', TRUE, NULL, 5),
+(19, 'TarjetasAmarillasEspaña', TRUE, NULL, 5),
+(20, 'TarjetasAmarillasRusia', TRUE, NULL, 5),
+(21, 'TarjetasRojasEspaña', TRUE, NULL, 5),
+(22, 'TarjetasRojasRusia', TRUE, NULL, 5),
+(23, 'ParadasEspaña', TRUE, NULL, 5),
+(24, 'ParadasRusia', TRUE, NULL, 5);
+
+INSERT INTO VARIABLE_SECCION (ID, NOMBRE, NUMERICO, ID_SECCION) VALUES
+(1, 'Goles', TRUE, 1),
+(2, 'Goles-EquiA', TRUE, 1),
+(3, 'Goles-EquiB', TRUE, 1),
+(4, 'Amarillas', TRUE, 1),
+(5, 'Corners', TRUE, 1),
+(6, 'Rojas', TRUE, 1),
+(7, 'Puntos', TRUE, 2),
+(8, 'Puntos-EquiA', TRUE, 2),
+(9, 'Puntos-EquiB', TRUE, 2),
+(10, 'Triples', TRUE, 2),
+(11, 'Carreras', TRUE, 3),
+(12, 'Carreras-EquiA', TRUE, 3),
+(13, 'Carreras-EquiB', TRUE, 3),
+(14, 'Home-runs', TRUE, 3),
+(15, 'Goles', TRUE, 4),
+(16, 'Goles-EquiA', TRUE, 4),
+(17, 'Goles-EquiB', TRUE, 4),
+(18, 'Toques', TRUE, 5),
+(19, 'Toques-EquiA', TRUE, 5),
+(20, 'Toques-EquiB', TRUE, 5),
+(21, 'ToquesDobles', TRUE, 5),
+(22, 'Sets', TRUE, 6),
+(23, 'Sets-JugA', TRUE, 6),
+(24, 'Sets-JugB', TRUE, 6),
+(25, 'Roturas-de-servicio', TRUE, 6),
+(26, 'Aces', TRUE, 6),
+(27, 'Sets', TRUE, 7),
+(28, 'Sets-JugA', TRUE, 7),
+(29, 'Sets-JugB', TRUE, 7),
+(30, 'Faltas-de-saque', TRUE, 7),
+(31, 'Asaltos', TRUE, 8),
+(32, 'Ganador-JugA', TRUE, 8),
+(33, 'Ganador-JugB', TRUE, 8),
+(34, 'Golpes-lanzados', TRUE, 8);
+
 
 
 

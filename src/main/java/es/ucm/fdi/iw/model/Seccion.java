@@ -4,13 +4,22 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.util.List;
 
 @Entity
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@NamedQueries({
+    @NamedQuery(name="Seccion.getAll",
+            query="SELECT s FROM Seccion s WHERE s.enabled = true ORDER BY s.grupo ASC"),
+    @NamedQuery(name = "Seccion.countByNombre",
+            query = "SELECT COUNT(s) FROM Seccion s WHERE s.nombre = :nombre"),
+    @NamedQuery(name = "Seccion.getPorNombre",
+            query = "SELECT s FROM Seccion s WHERE s.nombre = :nombre"),
+})
+
 public class Seccion {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "gen")

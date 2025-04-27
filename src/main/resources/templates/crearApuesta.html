@@ -2,7 +2,8 @@
 <html class="h-100" xmlns:th="http://www.thymeleaf.org" data-bs-theme="dark">
 
 <head>
-    <th:block th:replace="fragments/head :: header"/>
+        <th:block th:replace="~{fragments/head :: header}" />
+
     <title>CREAR APUESTA</title>
 </head>
 
@@ -41,7 +42,7 @@
             </div>
 
             <button type="button" class="btn btn-primary d-none d-sm-block" id="boton-crear-formula" data-bs-toggle="modal" data-bs-target="#modalCrearApuesta" style="margin-left:10px; min-width:185px;">
-                crea tu propia apuesta
+                crea tu propia formula
             </button>
             <button type="button" class="btn btn-primary d-block d-sm-none" id="boton-crear-formula-reducido" data-bs-toggle="modal" data-bs-target="#modalCrearApuesta" style="margin-left:10px;">
                 <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-plus-circle" viewBox="0 0 16 16">
@@ -92,7 +93,7 @@
                                     <label for="variables" class="form-label mb-0 me-2">Variables:</label>
                                     <div id="lista-Variables-Cr" class="border w-100 scrollBarPerso">
                                         <span class="spanAdaptable">                                            
-                                            <span th:each="variable, iterStat : ${variables}" 
+                                            <span th:each="variable, iterStat : ${eventoSel.variables}" 
                                               th:text="${variable.nombre + (iterStat.last ? '' : ', ')}">
                                             </span>
                                         </span>

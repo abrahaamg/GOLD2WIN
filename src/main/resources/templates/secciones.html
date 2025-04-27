@@ -2,7 +2,8 @@
 <html class="h-100" xmlns:th="http://www.thymeleaf.org" data-bs-theme="dark">
 
 <head>
-    <th:block th:replace="fragments/head :: header"/>
+        <th:block th:replace="~{fragments/head :: header}" />
+
     <title>Secciones</title>
 </head>
 
@@ -93,7 +94,7 @@
 
     <div id="menuOpcionesSeccion">
         <a href="#">Editar seccion</a>
-        <a href="#" data-bs-toggle="modal" data-bs-target="#modalEliminarSeccion">Eliminar seccion</a>
+        <a id = "enlaceModalEliminarSeccion" href="#" data-bs-toggle="modal" data-bs-target="#modalEliminarSeccion">Eliminar seccion</a>
     </div>
 
     <th:block th:replace="fragments/footer.html :: footer" />

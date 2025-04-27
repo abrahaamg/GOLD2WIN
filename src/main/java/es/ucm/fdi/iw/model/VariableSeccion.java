@@ -4,7 +4,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 /*Estas variables no se pueden resolver solo son orientativas*/
 
@@ -12,6 +12,10 @@ import javax.persistence.*;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@NamedQueries({
+    @NamedQuery(name = "VarSeccion.filtrarPorNombre",
+            query = "SELECT v FROM VariableSeccion v WHERE v.nombre = :nombre"),
+})
 public class VariableSeccion {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "gen")
