@@ -244,25 +244,25 @@
 }
 
 .variableSeccion {
-    display: inline-block;   /* Ajusta el tamaño al contenido */
-    
-    height: auto;            /* Que crezca en altura si hace falta */
+    display: inline-block;   
+    height: auto;           
     border: 1px solid var(--bs-border-color);
     border-radius: var(--bs-border-radius);
 
     margin: 0px 15px 15px 15px;
 
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
 
-    
     background-color: #33373D;     
     color: #ffffff;
+
+    position: relative; /* Necesario para el botón de eliminar */
 }
 
 .variableSeccion span {
-    white-space: normal;   /* Permite saltos de línea normales */
-    word-wrap: break-word; /* Parte palabras largas si es necesario */         /* Que el span no crezca más que su contenedor */
+    white-space: normal;   
+    word-wrap: break-word; 
 }
 
 .nombreVariableSpan{
@@ -271,6 +271,15 @@
 
 .tipoVariableSpan{
     font-weight: bold;
+}
+
+.botonBasuraVariable {
+    border: none;
+    background-color: transparent;
+}
+
+.botonBasuraVariable:hover{
+    color: red
 }
 
 .variableSeccionAnt{
@@ -311,4 +320,4 @@
 
 .invalid-feedback {
     display: block !important;  /* Esto forzaría la visualización, aunque no es lo más recomendable */
-  }
+}

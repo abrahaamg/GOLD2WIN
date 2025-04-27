@@ -203,21 +203,27 @@ async function agregarDiv(event, seccionId) {
 
     console.log(seccionId);
     var isNombreVal = true;
-    if(seccionId != null) isNombreVal = await verificarNombreVariableSeccion(seccionId);
+    //if(seccionId != null) isNombreVal = await verificarNombreVariableSeccion(seccionId);
     if(isNombreVal) isNombreVal = evitarNombresVarRepetidos(); //verifica si el nombre ya existe en la seccion actual 
     if(isNombreVal && opcionSeleccionada != "Seleccione una" && nombre != "") {
         const nuevoDiv = document.createElement("div");
         nuevoDiv.className = "col-3 variableSeccion"; // Se organizan en 3 columnas por fila
-        nuevoDiv.setAttribute("data-bd", "false");
         nuevoDiv.innerHTML = `
-            <div id = "divEtiquetasVariables">
-                <span>Nombre:</span>
-                <span class = "nombreVariableSpan"> ${nombre}</span>
+            <div class = "d-flex flex-column">
+                <div id = "divEtiquetasVariables">
+                    <span>Nombre:</span>
+                    <span class = "nombreVariableSpan"> ${nombre}</span>
+                </div>
+                <div id = "divEtiquetasVariables">
+                    <span>Tipo:</span>
+                    <span class = "tipoVariableSpan">${opcionSeleccionada}</span>
+                </div>
             </div>
-            <div id = "divEtiquetasVariables">
-                <span>Tipo de variable:</span>
-                <span class = "tipoVariableSpan">${opcionSeleccionada}</span>
-            </div>
+            <button class="position-absolute end-0 top-0 botonBasuraVariable">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash3" viewBox="0 0 16 16">
+                    <path d="M6.5 1h3a.5.5 0 0 1 .5.5v1H6v-1a.5.5 0 0 1 .5-.5M11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3A1.5 1.5 0 0 0 5 1.5v1H1.5a.5.5 0 0 0 0 1h.538l.853 10.66A2 2 0 0 0 4.885 16h6.23a2 2 0 0 0 1.994-1.84l.853-10.66h.538a.5.5 0 0 0 0-1zm1.958 1-.846 10.58a1 1 0 0 1-.997.92h-6.23a1 1 0 0 1-.997-.92L3.042 3.5zm-7.487 1a.5.5 0 0 1 .528.47l.5 8.5a.5.5 0 0 1-.998.06L5 5.03a.5.5 0 0 1 .47-.53Zm5.058 0a.5.5 0 0 1 .47.53l-.5 8.5a.5.5 0 1 1-.998-.06l.5-8.5a.5.5 0 0 1 .528-.47M8 4.5a.5.5 0 0 1 .5.5v8.5a.5.5 0 0 1-1 0V5a.5.5 0 0 1 .5-.5"/>
+                </svg>
+            </button>
         `;
         contenedor.appendChild(nuevoDiv); // Agrega el div al contenedor
         document.getElementById('selectTipoVarNueva').selectedIndex = 0;
@@ -363,13 +369,13 @@ function evitarNombresVarRepetidos() { //esta funcion sirve para verificar vars 
 
         let existe = false;
         divs.forEach(div => {
-            if (div.dataset.bd != "true") {
+            
                 const nombreVarExistente = div.querySelector(".nombreVariableSpan").innerText;
                 console.log("nombreVarExistente: " + nombreVarExistente);
                 if(nombreVarExistente == nombreV) {
                     existe = true;
                 }
-            }
+            
         });
 
         if (existe) { //el nombre existe
@@ -412,11 +418,11 @@ async function editarSeccion() {
         const variables = [];
 
         divs.forEach(div => {
-            if (div.dataset.bd != "true") {
+            
                 const nombreV = div.querySelector(".nombreVariableSpan").innerText;
                 const tipoV = div.querySelector(".tipoVariableSpan").innerText;
                 variables.push({ nombreV, tipoV });
-            }
+            
         });
 
         const jsonData = {
@@ -446,3 +452,54 @@ if(variableSeccionesForm != null){
     });
 }
 
+document.addEventListener('DOMContentLoaded', function () {
+    // Escuchamos click en TODO el documento
+    document.addEventListener('click', function (event) {
+        if (event.target.closest('.botonBasuraVariable')) {
+            event.preventDefault(); // Muy importante, lo primero que haces
+            const boton = event.target.closest('.botonBasuraVariable');
+            const div = boton.closest('.variableSeccion');
+
+            //const idSeccion = document.getElementById('inputIdSeccion').value;
+            //const nombreVariable = boton.dataset.nombre;
+
+            if (div) {
+                div.remove();
+            }
+
+            /*if (div && div.dataset.bd === "true") {
+                const jsonData = {
+                    id: idSeccion,
+                    nombre: nombreVariable
+                };
+
+                // Aquí haces la llamada AJAX
+                go(`/admin/eliminarVariableSeccion`, "DELETE", jsonData)
+                    .then(data => {
+                        console.log("Respuesta recibida:", data.mensaje);
+                    })
+                    .catch(error => console.error("Error go:", error));
+            }*/
+        }
+    });
+});
+
+function eliminarVariableSeccion(boton, idSeccion, nombreVariable,event) {
+    event.preventDefault(); 
+    const div = boton.closest('.variableSeccion'); // busca el div más cercano, escalando en contenedores, con esa clase
+    div.remove();
+
+    // Si el div tiene el atributo data-bd="true", significa que ya está en la base de datos
+    if (div.dataset.bd === "true") { 
+        const jsonData = {
+            id: idSeccion,
+            nombre: nombreVariable
+        };
+        go(`/admin/eliminarVariableSeccion`, "DELETE", jsonData)
+        .then(data => {
+            console.log("Respuesta recibida:", data.mensaje);
+
+        })
+        .catch(error => console.error("Error go:", error));
+    }
+}

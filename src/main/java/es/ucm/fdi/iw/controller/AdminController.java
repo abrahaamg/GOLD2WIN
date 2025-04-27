@@ -18,6 +18,7 @@ import com.ezylang.evalex.*;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.aspectj.weaver.ast.Var;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -436,11 +437,19 @@ public class AdminController {
         entityManager.merge(seccion);
 
         JsonNode itemsNode = json.get("arrayVariables");
+
+        List<VariableSeccion> vars = entityManager.createNamedQuery("VarSeccion.filtrarPorSeccion", VariableSeccion.class).setParameter("seccion", seccion).getResultList();
+        for(VariableSeccion variable : vars) {
+            seccion.getPlantilla().remove(variable);
+            entityManager.persist(seccion);
+            
+            entityManager.remove(variable);
+        }
         if (itemsNode != null && itemsNode.isArray() && itemsNode.size() > 0) {
             //borrar las variables antiguas
             //String queryDelete = "DELETE FROM VariableSeccion v WHERE v.seccion = :seccion";
             //entityManager.createQuery(queryDelete).setParameter("seccion", seccion).executeUpdate();
-
+            
             for (JsonNode item : itemsNode) {
 
                 String nombreV = item.get("nombreV").asText();
@@ -512,6 +521,35 @@ public class AdminController {
             }
         }
         return ResponseEntity.ok().body("{\"existe\": " + false + "}");
+    }
+
+    @Transactional
+    @ResponseBody
+    @DeleteMapping("/eliminarVariableSeccion")
+    public ResponseEntity<JsonNode> eliminarVariableSeccion(@RequestBody JsonNode json) {
+        String nombre = json.get("nombre").asText();
+        Long id = json.get("id").asLong();
+
+        List<VariableSeccion> vars = entityManager.createNamedQuery("VarSeccion.filtrarPorNombre", VariableSeccion.class).setParameter("nombre", nombre).getResultList();
+        VariableSeccion variable = null;
+        for(VariableSeccion var : vars) {
+            if(var.getSeccion().getId() == id) {
+                variable = var;
+                break;
+            }
+        }
+        if (variable != null) {
+            Seccion seccion = variable.getSeccion();
+            seccion.getPlantilla().remove(variable);
+            entityManager.persist(seccion);
+            
+            entityManager.remove(variable);
+        }
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        ObjectNode response = objectMapper.createObjectNode();
+        response.put("mensaje", "Variable eliminada correctamente");
+        return ResponseEntity.ok(response);
     }
 
     public MultipartFile convertirBase64AMultipartFile(String base64, String filename) throws IOException {
