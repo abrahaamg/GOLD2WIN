@@ -21,7 +21,7 @@ INSERT INTO EVENTO (ID, CANCELADO, DETERMINADO, FECHA_CIERRE, FECHA_CREACION, NO
 (2, false, false, '2025-06-22 20:30:00', '2025-03-02 14:15:00', 'NBA Playoffs - Lakers vs Celtics', 2),
 (3, false, false, '2025-06-10 16:00:00', '2025-03-03 10:30:00', 'Serie Mundial de Beisbol', 3),
 (4, false, false, '2025-05-20 19:00:00', '2025-03-05 09:45:00', 'Copa Europa de Balonmano', 4),
-(5, false, false, '2025-1-02 15:00:00', '2025-03-06 08:00:00', 'Campeonato Mundial de Esgrima', 5),
+(5, false, false, '2025-06-03 15:00:00', '2025-01-02 08:00:00', 'Campeonato Mundial de Esgrima', 5),
 (6, false, false, '2025-06-22 21:00:00', '2025-03-07 13:20:00', 'Roland Garros - Final Masculina', 6),
 (7, false, false, '2025-06-23 11:00:00', '2025-03-08 07:30:00', 'Torneo Internacional de Ping Pong', 7),
 (8, false, false, '2025-05-20 13:00:00', '2025-05-10 15:15:00', 'Exhibición de mayo', 8),
@@ -29,7 +29,7 @@ INSERT INTO EVENTO (ID, CANCELADO, DETERMINADO, FECHA_CIERRE, FECHA_CREACION, NO
 (10, false, false, '2025-05-20 17:30:00', '2025-03-11 15:45:00', 'Worlds - League of Legends', 10),
 (11, false, false, '2025-06-08 19:00:00', '2025-03-12 10:50:00', 'Major de Counter Strike', 11),
 (12, false, false, '2025-06-08 20:00:00', '2025-03-13 14:25:00', 'Final de Valorant Champions', 12),
-(13, false, false, '2025-03-11 10:30:00', '2024-06-08 20:00:00', 'LEC: MDK vs FNC', 12);
+(13, false, false, '2025-03-11 10:30:00', '2024-12-08 20:00:00', 'LEC: MDK vs FNC', 12);
 
 -- inserta etiquetas
 INSERT INTO EVENTO_ETIQUETAS (EVENTO_ID, ETIQUETAS) VALUES
@@ -75,13 +75,13 @@ VALUES
 (5, 100, 30, 'ToquesDobles > 3', 'Total toquesDobles', 'INDETERMINADO', 5, 5, '2025-03-22 14:53:00'),
 (6, 0, 0, 'Sets Nadal > Sets Djokovic', 'Gana Nadal', 'INDETERMINADO', 6, 6, '2025-03-22 14:53:00'),
 (7, 0, 0, 'Puntos Wang > Puntos Lee', 'Gana Wang', 'INDETERMINADO', 7, 7, '2025-03-22 14:53:00'),
-(8, 0, 0, 'Número de asaltos > 3', 'Total asaltos', 'INDETERMINADO', 7, 7, '2025-03-13 22:31:00'),
+(8, 0, 0, 'Número de asaltos > 3', 'Total asaltos', 'INDETERMINADO', 8, 8, '2025-03-13 22:31:00'),
 (9, 0, 0, 'Golpes Woods > Golpes McIlroy', 'Gana Woods', 'INDETERMINADO', 9, 9, '2025-03-22 14:53:00'),
 (10, 0, 0, 'Torres destruidas G2 > Torres destruidas T1', 'Gana G2', 'INDETERMINADO', 10, 10, '2025-03-22 14:53:00'),
 (11, 0, 0, 'Rounds ganados NaVi > Rounds ganados Vitality', 'Victoria NaVi', 'INDETERMINADO', 11, 11, '2025-03-22 14:53:00'),
 (12, 50, 750, 'Mapas ganados Fnatic > Mapas ganados Sentinels', 'Gana Fnatic', 'PERDIDO', 12, 12, '2025-03-22 14:53:00'),
 (13, 0, 0, 'Hoyos Woods > Hoyos McIlroy', 'Gana Woods', 'INDETERMINADO', 9, 9, '2025-03-22 14:53:00'),
-(14, 0, 0, 'Promedio birdies Woods < PSromedio birdies McIlroy', 'Gana McIlroy', 'INDETERMINADO', 9, 9, '2025-03-22 14:53:00');
+(14, 0, 0, 'Promedio birdies Woods < Promedio birdies McIlroy', 'Gana McIlroy', 'INDETERMINADO', 9, 9, '2025-03-22 14:53:00');
 
 
 -- INSERT de 25 fórmulas de apuesta adicionales para el evento con ID 1
