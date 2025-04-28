@@ -18,9 +18,9 @@
         <div th:replace="fragments/menuAdmin.html :: navAdmin('Eventos')"></div>
     </div>
 
-    <button id = "botonCrearEvento" type="button" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#modalCrearEvento">
+    <!--<button id = "botonCrearEvento" type="button" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#modalCrearEvento">
         Crear evento
-    </button>
+    </button>-->
 
     <!-- Fuera de la tabla -->
     <div th:each="evento : ${eventos}">
@@ -246,8 +246,11 @@
                     const right = document.createElement("div");
                     const button = document.createElement("button");
                     button.className = "btn btn-success";
+                    button.id = "botonCrearEvento";
+                    button.type = "button";
+                    button.setAttribute("data-bs-toggle", "modal");
+                    button.setAttribute("data-bs-target", "#modalCrearEvento");
                     button.innerText = "Crear evento";
-                    button.onclick = () => location.href = "/eventos/crear";
                     right.appendChild(button);
 
                     // Limpiar y añadir en orden: buscador - spacer - botón
