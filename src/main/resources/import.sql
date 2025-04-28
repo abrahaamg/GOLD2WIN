@@ -146,7 +146,7 @@ INSERT INTO VARIABLE (ID, NOMBRE, NUMERICO, RESOLUCION, ID_EVENTO) VALUES
 (14, 'Promedio birdies', TRUE, NULL, 9),
 (10, 'Torres destruidas', TRUE, NULL, 10),
 (11, 'Rounds ganados', TRUE, NULL, 11),
-(12, 'mapas ganados', TRUE, NULL, 12);
+(12, 'Mapas ganados', TRUE, NULL, 12);
 
 INSERT INTO VARIABLE (ID, NOMBRE, NUMERICO, RESOLUCION, ID_EVENTO) VALUES
 (15, 'NumToquesEspaña', TRUE, NULL, 5),
