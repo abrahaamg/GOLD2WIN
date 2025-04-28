@@ -19,6 +19,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.FileCopyUtils;
@@ -57,6 +58,10 @@ public class RootController {
 
     private final AppConfig appConfig;
 
+    @Autowired
+	private PasswordEncoder passwordEncoder;
+
+
     private final AdminController adminController;
 
     @Autowired
@@ -73,6 +78,10 @@ public class RootController {
             model.addAttribute(name, session.getAttribute(name));
         }
     }
+
+    public String encodePassword(String rawPassword) {
+		return passwordEncoder.encode(rawPassword);
+	}
 
     RootController(AdminController adminController, AppConfig appConfig,
             AuthenticationManager authenticationManagerBean) {
@@ -120,7 +129,7 @@ public class RootController {
         User user = new User();
 
         user.setUsername(username);
-        user.setPassword(password); // Sustituye esto con la encriptación de contraseña
+        user.setPassword(encodePassword(password)); // Sustituye esto con la encriptación de contraseña
         user.setEmail(email);
         user.setFirstName(firstName);
         user.setLastName(lastName);

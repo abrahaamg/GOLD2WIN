@@ -213,8 +213,7 @@ public class AdminController {
     @GetMapping("/secciones")
     public String secciones(Model model) {
         // obtengo las secciones
-        String querySecciones = "SELECT s FROM Seccion s WHERE s.enabled = true ORDER BY s.grupo ASC";
-        List<Seccion> secciones = entityManager.createQuery(querySecciones).getResultList();
+        List<Seccion> secciones = entityManager.createNamedQuery("Seccion.getAll", Seccion.class).getResultList();
 
         model.addAttribute("secciones", secciones);
 
@@ -224,8 +223,7 @@ public class AdminController {
     @GetMapping("/secciones/{id}/editar")
     public String editarSeccion(@PathVariable long id, Model model, HttpSession session) {
         Seccion target = entityManager.find(Seccion.class, id);
-        String querySecciones = "SELECT s FROM Seccion s WHERE s.enabled = true ORDER BY s.grupo ASC";
-        List<Seccion> secciones = entityManager.createQuery(querySecciones).getResultList();
+        List<Seccion> secciones = entityManager.createNamedQuery("Seccion.getAll", Seccion.class).getResultList();
 
         model.addAttribute("seccionEditable", target);
         model.addAttribute("secciones", secciones);
@@ -236,8 +234,7 @@ public class AdminController {
     @GetMapping("/secciones-crearSeccion")
     public String seccionesCrear(Model model) {
         // obtengo las secciones
-        String querySecciones = "SELECT s FROM Seccion s WHERE s.enabled = true ORDER BY s.grupo ASC";
-        List<Seccion> secciones = entityManager.createQuery(querySecciones).getResultList();
+        List<Seccion> secciones = entityManager.createNamedQuery("Seccion.getAll", Seccion.class).getResultList();
 
         model.addAttribute("secciones", secciones);
 
@@ -453,10 +450,7 @@ public class AdminController {
         String nombre = seccionNode.get("nombre").asText();
         String grupo = seccionNode.get("tipo").asText();
 
-        TypedQuery<Seccion> queryEditarSeccion = entityManager.createQuery("SELECT u FROM Seccion u WHERE u.nombre = :nombre",Seccion.class);;
-        queryEditarSeccion.setParameter("nombre", nombre);
-
-        Seccion seccion = queryEditarSeccion.getSingleResult();
+        Seccion seccion = entityManager.createNamedQuery("Seccion.getPorNombre", Seccion.class).setParameter("nombre", nombre).getSingleResult();
 
         seccion.setGrupo(grupo);    
         entityManager.merge(seccion);
@@ -464,8 +458,8 @@ public class AdminController {
         JsonNode itemsNode = json.get("arrayVariables");
         if (itemsNode != null && itemsNode.isArray() && itemsNode.size() > 0) {
             //borrar las variables antiguas
-            String queryDelete = "DELETE FROM VariableSeccion v WHERE v.seccion = :seccion";
-            entityManager.createQuery(queryDelete).setParameter("seccion", seccion).executeUpdate();
+            //String queryDelete = "DELETE FROM VariableSeccion v WHERE v.seccion = :seccion";
+            //entityManager.createQuery(queryDelete).setParameter("seccion", seccion).executeUpdate();
 
             for (JsonNode item : itemsNode) {
 
@@ -517,14 +511,27 @@ public class AdminController {
     public ResponseEntity<?> verificarSeccion(@RequestParam String nombre) {
         nombre = nombre.trim(); 
 
-        TypedQuery<Long> query = entityManager.createQuery(
-                "SELECT COUNT(s) FROM Seccion s WHERE s.nombre = :nombre", Long.class);
-        query.setParameter("nombre", nombre);
-        Long count = query.getSingleResult();
+        Long count = entityManager.createNamedQuery("Seccion.countByNombre", Long.class).setParameter("nombre", nombre)
+                                .getSingleResult();
 
         boolean existe = count > 0; // Si el numero es mayor a 0, ya existe
 
         return ResponseEntity.ok().body("{\"existe\": " + existe + "}");
+    }
+
+    @GetMapping("/verificarVarSeccion")
+    public ResponseEntity<?> verificarVariableSeccion(@RequestParam String nombre, @RequestParam Long idSec) {
+        nombre = nombre.trim(); 
+
+        List<VariableSeccion> vars = entityManager.createNamedQuery("VarSeccion.filtrarPorNombre", VariableSeccion.class).setParameter("nombre", nombre).getResultList();
+        Seccion seccion = entityManager.find(Seccion.class, idSec);                
+
+        for(VariableSeccion variable : vars) {
+            if(variable.getSeccion().getId() == seccion.getId()) {
+                return ResponseEntity.ok().body("{\"existe\": " + true + "}");
+            }
+        }
+        return ResponseEntity.ok().body("{\"existe\": " + false + "}");
     }
 
     public MultipartFile convertirBase64AMultipartFile(String base64, String filename) throws IOException {

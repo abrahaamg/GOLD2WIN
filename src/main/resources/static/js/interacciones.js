@@ -186,21 +186,29 @@ if(menuOpcionesSeccionForm != null){
     });
 }
 
-var contenedorVariablesForm = document.getElementById("contenedorVariables");
-if(contenedorVariablesForm != null){
-    function agregarDiv() {
-        const contenedor = document.getElementById("contenedorVariables");
-        var nombre = document.getElementById('inputnombreVarNueva').value.trim();
-        var select = document.getElementById('selectTipoVarNueva');
-        var opcionSeleccionada = select.options[select.selectedIndex].text;
-    
-        if (opcionSeleccionada === "Seleccione una" || nombre === "") { //Si los campos están vacíos, no se añade el div
-            return;  
-        }
-    
-        // Crear un nuevo div con Bootstrap
+
+async function agregarDiv(event, seccionId) {
+    event.preventDefault();
+
+    let form = document.getElementById("variableSeccionForm");
+    if (!form.checkValidity()) { //esto sirve para los mensajes de required cuando arriba esta rel preventDefault
+        form.reportValidity(); 
+        return;
+    }
+   
+    const contenedor = document.getElementById("contenedorVariables");
+    var nombre = document.getElementById('inputnombreVarNueva').value.trim();
+    var select = document.getElementById('selectTipoVarNueva');
+    var opcionSeleccionada = select.options[select.selectedIndex].text;
+
+    console.log(seccionId);
+    var isNombreVal = true;
+    if(seccionId != null) isNombreVal = await verificarNombreVariableSeccion(seccionId);
+    if(isNombreVal) isNombreVal = evitarNombresVarRepetidos(); //verifica si el nombre ya existe en la seccion actual 
+    if(isNombreVal && opcionSeleccionada != "Seleccione una" && nombre != "") {
         const nuevoDiv = document.createElement("div");
         nuevoDiv.className = "col-3 variableSeccion"; // Se organizan en 3 columnas por fila
+        nuevoDiv.setAttribute("data-bd", "false");
         nuevoDiv.innerHTML = `
             <div id = "divEtiquetasVariables">
                 <span>Nombre:</span>
@@ -211,12 +219,15 @@ if(contenedorVariablesForm != null){
                 <span class = "tipoVariableSpan">${opcionSeleccionada}</span>
             </div>
         `;
-    
         contenedor.appendChild(nuevoDiv); // Agrega el div al contenedor
         document.getElementById('selectTipoVarNueva').selectedIndex = 0;
         document.getElementById('inputnombreVarNueva').value = '';
-    };
-}
+
+        const modal = bootstrap.Modal.getInstance(document.getElementById('modalCrearVariables'));
+        modal.hide();
+    }
+};        
+
 
 //window.eliminarSeccion = eliminarSeccion;
 //window.guardarSeccion = guardarSeccion;
@@ -244,7 +255,6 @@ async function guardarSeccion(event) {
     event.preventDefault();
 
     let formulario = document.getElementById("formularioSeccion");
-
     if (!formulario.checkValidity()) { //esto sirve para los mensajes de required cuando arriba esta rel preventDefault
         formulario.reportValidity(); 
         return;
@@ -261,7 +271,7 @@ async function guardarSeccion(event) {
 
         let base64Image = await toBase64(file);
 
-        if(nombreS != "" && tipoS != "" && file != null){
+        if(nombreS != "" && tipoS != "" ){//&& file != null){
             const divs = document.querySelectorAll("#contenedorVariables .variableSeccion");
             const variables = [];
 
@@ -302,31 +312,85 @@ async function guardarSeccion(event) {
 
 async function verificarNombreSeccion(){
     const nombreS = document.getElementById("inputNombreSeccion").value.trim();
-    if (nombreS === "") return; 
-  
     try {
         const response = await fetch(`/admin/verificarSeccion?nombre=${encodeURIComponent(nombreS)}`);
         const data = await response.json();
-    
-        if (data.existe) {
+
+        if (data.existe) {  //el nombre existe
           document.getElementById("inputNombreSeccion").classList.add("is-invalid");
           document.getElementById("mensajeError").classList.add("invalid-feedback");
           console.log("false");
-          return false; // Devolvemos false si el nombre existe.
-        } else {
+          return false; 
+        } else {    //el nombre no existe
           document.getElementById("inputNombreSeccion").classList.remove("is-invalid");
           document.getElementById("mensajeError").classList.remove("invalid-feedback");
           console.log("true");
-          return true; // Devolvemos true si el nombre no existe.
+          return true; 
         }
       } catch (error) {
         console.error("Error al verificar el nombre:", error);
-        return false; // Devuelve false en caso de error.
+        return false; 
       }
 }
 
-async function editarSeccion(event) {
+async function verificarNombreVariableSeccion(seccionId){
+    const nombreV = document.getElementById("inputnombreVarNueva").value.trim();
+    try {
+        const response = await fetch(`/admin/verificarVarSeccion?nombre=${encodeURIComponent(nombreV)}&idSec=${encodeURIComponent(seccionId)}`);
+        const data = await response.json();
 
+        if (data.existe) { //el nombre existe
+          document.getElementById("inputnombreVarNueva").classList.add("is-invalid");
+          document.getElementById("mensajeErrorVar").classList.add("invalid-feedback");
+          console.log("false");
+          return false; 
+        } else {    //el nombre no existe
+          document.getElementById("inputnombreVarNueva").classList.remove("is-invalid");
+          document.getElementById("mensajeErrorVar").classList.remove("invalid-feedback");
+          console.log("true");
+          return true; 
+        }
+      } catch (error) {
+        console.error("Error al verificar el nombre:", error);
+        return false; 
+      }
+}
+
+function evitarNombresVarRepetidos() { //esta funcion sirve para verificar vars que se acaben de crear y no esten todavia en la bd
+    const nombreV = document.getElementById("inputnombreVarNueva").value.trim();
+    try {     
+        const divs = document.querySelectorAll("#contenedorVariables .variableSeccion");
+
+        let existe = false;
+        divs.forEach(div => {
+            if (div.dataset.bd != "true") {
+                const nombreVarExistente = div.querySelector(".nombreVariableSpan").innerText;
+                console.log("nombreVarExistente: " + nombreVarExistente);
+                if(nombreVarExistente == nombreV) {
+                    existe = true;
+                }
+            }
+        });
+
+        if (existe) { //el nombre existe
+          document.getElementById("inputnombreVarNueva").classList.add("is-invalid");
+          document.getElementById("mensajeErrorVar").classList.add("invalid-feedback");
+          console.log("false");
+          return false; 
+        } else {    //el nombre no existe
+          document.getElementById("inputnombreVarNueva").classList.remove("is-invalid");
+          document.getElementById("mensajeErrorVar").classList.remove("invalid-feedback");
+          console.log("true");
+          return true; 
+        }
+      } catch (error) {
+        console.error("Error al verificar el nombre:", error);
+        return false; 
+      }
+}
+
+async function editarSeccion() {
+    event.preventDefault();     //solo sirve para q los test redireccionen bien 
     let formularioEditar = document.getElementById("formularioSeccion");
 
     if (!formularioEditar.checkValidity()) { //esto sirve para los mensajes de required cuando arriba esta rel preventDefault
@@ -348,9 +412,11 @@ async function editarSeccion(event) {
         const variables = [];
 
         divs.forEach(div => {
-            const nombreV = div.querySelector(".nombreVariableSpan").innerText;
-            const tipoV = div.querySelector(".tipoVariableSpan").innerText;
-            variables.push({ nombreV, tipoV });
+            if (div.dataset.bd != "true") {
+                const nombreV = div.querySelector(".nombreVariableSpan").innerText;
+                const tipoV = div.querySelector(".tipoVariableSpan").innerText;
+                variables.push({ nombreV, tipoV });
+            }
         });
 
         const jsonData = {
