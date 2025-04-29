@@ -320,19 +320,4 @@ public class RootController {
     public String tarjeta(Model model) {
         return "tarjeta";
     }
-
-    @GetMapping("/admin/usuarios")
-    public String usuarios(Model model) {
-        return "usuarios";
-    }
-
-    @GetMapping("/admin/usuarios/usuarioDetalles")
-    public String usuarioDetalles(Model model) {
-        return "usuarioDetalles";
-    }
-
-    @GetMapping("/admin/usuarios/transacciones")
-    public String transacciones(Model model) {
-        return "transacciones";
-    }
 }

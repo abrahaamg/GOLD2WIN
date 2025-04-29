@@ -3,7 +3,7 @@ package external;
 import com.intuit.karate.junit5.Karate;
 
 class ExternalRunner {
-    
+
     @Karate.Test
     Karate testLogin() {
         return Karate.run("login").relativeTo(getClass());
@@ -14,7 +14,6 @@ class ExternalRunner {
         return Karate.run("ws").relativeTo(getClass());
     }  
 
-    
     @Karate.Test
     Karate testCrearFormulaApuesta() {
         return Karate.run("crearFormulaApuesta").relativeTo(getClass());
@@ -33,5 +32,10 @@ class ExternalRunner {
     @Karate.Test
     Karate testProbarSeccion() {  
         return Karate.run("crear-editarSeccion").relativeTo(getClass());
+    }
+
+    @Karate.Test
+    Karate testCrearEliminarSeccion() {
+        return Karate.run("crearEliminarSeccion").relativeTo(getClass());
     }
 }
