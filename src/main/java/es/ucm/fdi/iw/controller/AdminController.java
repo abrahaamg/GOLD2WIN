@@ -528,50 +528,6 @@ public class AdminController {
         return ResponseEntity.ok().body("{\"existe\": " + existe + "}");
     }
 
-    @GetMapping("/verificarVarSeccion")
-    public ResponseEntity<?> verificarVariableSeccion(@RequestParam String nombre, @RequestParam Long idSec) {
-        nombre = nombre.trim(); 
-
-        List<VariableSeccion> vars = entityManager.createNamedQuery("VarSeccion.filtrarPorNombre", VariableSeccion.class).setParameter("nombre", nombre).getResultList();
-        Seccion seccion = entityManager.find(Seccion.class, idSec);                
-
-        for(VariableSeccion variable : vars) {
-            if(variable.getSeccion().getId() == seccion.getId()) {
-                return ResponseEntity.ok().body("{\"existe\": " + true + "}");
-            }
-        }
-        return ResponseEntity.ok().body("{\"existe\": " + false + "}");
-    }
-
-    @Transactional
-    @ResponseBody
-    @DeleteMapping("/eliminarVariableSeccion")
-    public ResponseEntity<JsonNode> eliminarVariableSeccion(@RequestBody JsonNode json) {
-        String nombre = json.get("nombre").asText();
-        Long id = json.get("id").asLong();
-
-        List<VariableSeccion> vars = entityManager.createNamedQuery("VarSeccion.filtrarPorNombre", VariableSeccion.class).setParameter("nombre", nombre).getResultList();
-        VariableSeccion variable = null;
-        for(VariableSeccion var : vars) {
-            if(var.getSeccion().getId() == id) {
-                variable = var;
-                break;
-            }
-        }
-        if (variable != null) {
-            Seccion seccion = variable.getSeccion();
-            seccion.getPlantilla().remove(variable);
-            entityManager.persist(seccion);
-            
-            entityManager.remove(variable);
-        }
-
-        ObjectMapper objectMapper = new ObjectMapper();
-        ObjectNode response = objectMapper.createObjectNode();
-        response.put("mensaje", "Variable eliminada correctamente");
-        return ResponseEntity.ok(response);
-    }
-
     public MultipartFile convertirBase64AMultipartFile(String base64, String filename) throws IOException {
 
         byte[] imageBytes = Base64.getDecoder().decode(base64.split(",")[1]);

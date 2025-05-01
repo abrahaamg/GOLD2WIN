@@ -148,7 +148,7 @@ if(botonDrsecciones != null){
 var inputImagenSeccionesForm = document.getElementById("inputImagenSecciones");
 if(inputImagenSeccionesForm != null){
     document.getElementById('inputImagenSecciones').addEventListener('change', function(event) {
-        var file = event.target.files[0]; // Obtener el archivo seleccionado
+        var file = event.target.files[0]; 
         if (file) {
             var reader = new FileReader(); 
             reader.onload = function(e) {
@@ -187,7 +187,7 @@ if(menuOpcionesSeccionForm != null){
 }
 
 
-async function agregarDiv(event, seccionId) {
+function agregarDiv(event, seccionId) {
     event.preventDefault();
 
     let form = document.getElementById("variableSeccionForm");
@@ -203,7 +203,6 @@ async function agregarDiv(event, seccionId) {
 
     console.log(seccionId);
     var isNombreVal = true;
-    //if(seccionId != null) isNombreVal = await verificarNombreVariableSeccion(seccionId);
     if(isNombreVal) isNombreVal = evitarNombresVarRepetidos(); //verifica si el nombre ya existe en la seccion actual 
     if(isNombreVal && opcionSeleccionada != "Seleccione una" && nombre != "") {
         const nuevoDiv = document.createElement("div");
@@ -233,10 +232,6 @@ async function agregarDiv(event, seccionId) {
         modal.hide();
     }
 };        
-
-
-//window.eliminarSeccion = eliminarSeccion;
-//window.guardarSeccion = guardarSeccion;
     
 function eliminarSeccion() {
     //event.preventDefault();
@@ -247,6 +242,10 @@ function eliminarSeccion() {
     })
     .catch(error => console.error("Error al eliminar la sección:", error));
 }    
+
+function redireccionarEditarSeccion(){
+    window.location.href = `/admin/secciones/${seccionSeleccionadaId}/editar`;
+}
 
 function toBase64(file) {
     return new Promise((resolve, reject) => {
@@ -277,7 +276,7 @@ async function guardarSeccion(event) {
 
         let base64Image = await toBase64(file);
 
-        if(nombreS != "" && tipoS != "" ){//&& file != null){
+        if(nombreS != "" && tipoS != "" && file != null){
             const divs = document.querySelectorAll("#contenedorVariables .variableSeccion");
             const variables = [];
 
@@ -299,13 +298,6 @@ async function guardarSeccion(event) {
             go(`/admin/guardarSeccion`, "POST", jsonData)
             .then(data => {
                 console.log("Respuesta recibida:", data.mensaje);
-                //formulario.reset();
-                //document.getElementById("mostrarImagenSeccionesForm").style.display = "none";
-                //document.getElementById("contenedorVariables").innerHTML = `
-                //<button id = "botonCrearVariable" style="min-height: 30px; max-height: 80px;" class = "col-3 btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalCrearVariables" type = "button"> 
-                //    Crear variable
-                //</button>
-                //`;
                 window.location.href = "/admin/secciones";
             })
             .catch(error => console.error("Error go:", error));
@@ -339,30 +331,7 @@ async function verificarNombreSeccion(){
       }
 }
 
-async function verificarNombreVariableSeccion(seccionId){
-    const nombreV = document.getElementById("inputnombreVarNueva").value.trim();
-    try {
-        const response = await fetch(`/admin/verificarVarSeccion?nombre=${encodeURIComponent(nombreV)}&idSec=${encodeURIComponent(seccionId)}`);
-        const data = await response.json();
-
-        if (data.existe) { //el nombre existe
-          document.getElementById("inputnombreVarNueva").classList.add("is-invalid");
-          document.getElementById("mensajeErrorVar").classList.add("invalid-feedback");
-          console.log("false");
-          return false; 
-        } else {    //el nombre no existe
-          document.getElementById("inputnombreVarNueva").classList.remove("is-invalid");
-          document.getElementById("mensajeErrorVar").classList.remove("invalid-feedback");
-          console.log("true");
-          return true; 
-        }
-      } catch (error) {
-        console.error("Error al verificar el nombre:", error);
-        return false; 
-      }
-}
-
-function evitarNombresVarRepetidos() { //esta funcion sirve para verificar vars que se acaben de crear y no esten todavia en la bd
+function evitarNombresVarRepetidos() { //esta funcion sirve para verificarnombres de variables repetidos en la misma seccion
     const nombreV = document.getElementById("inputnombreVarNueva").value.trim();
     try {     
         const divs = document.querySelectorAll("#contenedorVariables .variableSeccion");
@@ -434,7 +403,6 @@ async function editarSeccion() {
             arrayVariables: variables
         };
 
-        console.log("pregoEditar");
         go(`/admin/editarSeccion`, "POST", jsonData)
         .then(data => {
             console.log("Respuesta recibida:", data.mensaje);
@@ -445,7 +413,6 @@ async function editarSeccion() {
 }
 
 var variableSeccionesForm = document.getElementById("variableSeccionForm");
-
 if(variableSeccionesForm != null){
     document.getElementById("variableSeccionForm").addEventListener("submit", function(event) {
         event.preventDefault();
@@ -453,53 +420,15 @@ if(variableSeccionesForm != null){
 }
 
 document.addEventListener('DOMContentLoaded', function () {
-    // Escuchamos click en TODO el documento
     document.addEventListener('click', function (event) {
         if (event.target.closest('.botonBasuraVariable')) {
-            event.preventDefault(); // Muy importante, lo primero que haces
+            event.preventDefault(); 
             const boton = event.target.closest('.botonBasuraVariable');
             const div = boton.closest('.variableSeccion');
-
-            //const idSeccion = document.getElementById('inputIdSeccion').value;
-            //const nombreVariable = boton.dataset.nombre;
 
             if (div) {
                 div.remove();
             }
-
-            /*if (div && div.dataset.bd === "true") {
-                const jsonData = {
-                    id: idSeccion,
-                    nombre: nombreVariable
-                };
-
-                // Aquí haces la llamada AJAX
-                go(`/admin/eliminarVariableSeccion`, "DELETE", jsonData)
-                    .then(data => {
-                        console.log("Respuesta recibida:", data.mensaje);
-                    })
-                    .catch(error => console.error("Error go:", error));
-            }*/
         }
     });
 });
-
-function eliminarVariableSeccion(boton, idSeccion, nombreVariable,event) {
-    event.preventDefault(); 
-    const div = boton.closest('.variableSeccion'); // busca el div más cercano, escalando en contenedores, con esa clase
-    div.remove();
-
-    // Si el div tiene el atributo data-bd="true", significa que ya está en la base de datos
-    if (div.dataset.bd === "true") { 
-        const jsonData = {
-            id: idSeccion,
-            nombre: nombreVariable
-        };
-        go(`/admin/eliminarVariableSeccion`, "DELETE", jsonData)
-        .then(data => {
-            console.log("Respuesta recibida:", data.mensaje);
-
-        })
-        .catch(error => console.error("Error go:", error));
-    }
-}
