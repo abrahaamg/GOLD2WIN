@@ -14,6 +14,11 @@
 border-bottom: 2px solid #007BFF; /* azul bootstrap */
 }
 
+#inputNombreEvento:disabled {
+    background-color: inherit; 
+    color: inherit;
+}
+
 /*ESTILOS PARA EL BOTON DE CERRAR*/
 
 #cerrarModalCrearEvento {
@@ -144,6 +149,13 @@ border-bottom: 2px solid #007BFF; /* azul bootstrap */
     display: none;
 }
 
+.selectDiscreto:disabled{
+    opacity: 1;
+    pointer-events: none;
+    color: inherit;
+    background: none;
+}
+
 /*ESTILO PARA CAMPO DE TEXTO DE MODAL*/
 .input-texto-discreto {
     border: none;
@@ -156,11 +168,11 @@ border-bottom: 2px solid #007BFF; /* azul bootstrap */
     outline: none;
 }
 
-.input-texto-discreto:hover {
+.input-texto-discreto:hover:not(:disabled) {
     background-color: rgba(128, 128, 128, 0.1);
 }
 
-.input-texto-discreto:focus {
+.input-texto-discreto:focus:not(:disabled) {
     border-bottom: 2px solid #0d6efd; /* azul Bootstrap */
     background-color: rgba(128, 128, 128, 0.1); /* opcional si quieres mantener el hover */
 }
