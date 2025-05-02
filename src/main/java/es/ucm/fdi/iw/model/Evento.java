@@ -84,4 +84,9 @@ public class Evento implements Transferable<Evento.Transfer> {
         this.cancelado = cancelado;
     }
 
+    @Transient
+    public boolean isPasado() {
+        return fechaCierre.isBefore(OffsetDateTime.now());
+    }
+
 }

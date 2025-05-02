@@ -7,6 +7,7 @@ var cargando = false;
 const appRoot = document.getElementById("root").value;
 
 var creando = false; //Indica si se está creando evento o editando uno existente
+var viendoMas = false;
 var id_evento_editado = -1;
 
 var _datepicker;
@@ -83,6 +84,7 @@ function configurarflatpickr(fecha){
 
 function modalModoCreacion(){
     if(cargando == false){
+        viendoMas = false;
         creando = true;
         id_evento_editado = -1;
         resetearModal();
@@ -91,14 +93,18 @@ function modalModoCreacion(){
         campoTitulo.disabled = false;
         campoTitulo.tabIndex = 0;
         document.getElementById('seccionSelect').disabled = false;
+        document.getElementById('inputEtiqueta').disabled = false;
+        document.getElementById("textoFechaModal").classList.add("resaltaHover"); 
+        document.getElementById("inputEtiqueta").classList.add("resaltaHover"); 
+        document.getElementById("textoVariablesModal").classList.add("resaltaHover"); 
+        document.getElementById("submit-form-eventos").classList.remove("invisible");
+        document.getElementById("textoVariablesModal").textContent = "Añadir variable"; 
     }
 }
 
 function modalModoEdicion(id){
-    console.log("modo edicion");
-    console.log(cargando);
     if(cargando == false){
-        console.log("modo edicion 2");
+        viendoMas = false;
         creando = false;
         id_evento_editado = id;
         resetearModal();
@@ -107,16 +113,21 @@ function modalModoEdicion(id){
         campoTitulo.disabled  = true;
         campoTitulo.tabIndex = -1;
         document.getElementById('seccionSelect').disabled = true;
+        document.getElementById('inputEtiqueta').disabled = false;
+        document.getElementById("textoFechaModal").classList.add("resaltaHover"); 
+        document.getElementById("inputEtiqueta").classList.add("resaltaHover"); 
+        document.getElementById("textoVariablesModal").classList.add("resaltaHover"); 
+        document.getElementById("submit-form-eventos").classList.remove("invisible");
+        document.getElementById("textoVariablesModal").textContent = "Añadir variable"; 
     
         cargando = true;
         go(appRoot + 'admin/eventos/cargarDatosEvento/' + id_evento_editado, 'GET').then((data) => {
-            console.log(data);
             campoTitulo.value = data.nombre;
             configurarflatpickr(new Date(data.fechaCierre));
             document.getElementById('seccionSelect').value = data.seccion;
 
             data.etiquetas.forEach((etiqueta) => {
-                anadirEtiquetaAlModal(etiqueta);
+                anadirEtiquetaAlModal(etiqueta, true);
             });
 
             data.variables.forEach((variable) => {
@@ -131,17 +142,63 @@ function modalModoEdicion(id){
     }
 }
 
+function modalModoVerMas(id){
+    if(cargando == false){
+        creando = false;
+        viendoMas = true;
+        id_evento_editado = -1;
+        resetearModal();
+        
+        const campoTitulo = document.getElementById("inputNombreEvento");
+        campoTitulo.disabled  = true;
+        campoTitulo.tabIndex = -1;
+        document.getElementById('seccionSelect').disabled = true;
+        document.getElementById('inputEtiqueta').disabled = true;
+        document.getElementById("textoFechaModal").classList.remove("resaltaHover");
+        document.getElementById("inputEtiqueta").classList.remove("resaltaHover");
+        document.getElementById("textoVariablesModal").classList.remove("resaltaHover"); 
+        document.getElementById("textoVariablesModal").textContent = "Todas las variables"; 
+        document.getElementById("inputEtiqueta").value = "Todas las etiquetas";
+        document.getElementById("submit-form-eventos").classList.add("invisible");
+    
+        cargando = true;
+        go(appRoot + 'admin/eventos/cargarDatosEvento/' + id, 'GET').then((data) => {
+            campoTitulo.value = data.nombre;
+            configurarflatpickr(new Date(data.fechaCierre));
+            document.getElementById('seccionSelect').value = data.seccion;
+
+            data.etiquetas.forEach((etiqueta) => {
+                anadirEtiquetaAlModal(etiqueta,false);
+            });
+
+            data.variables.forEach((variable) => {
+                anadirVariableAlModal({"nombre":variable.nombre,"numerica":variable.numerico}, false);
+            });
+
+            cargando = false;
+        }).catch((error) => {
+            console.log(error);
+            cargando = false;
+        });
+
+    }
+}
+
 /*FUNCIONES PARA EL MENU DEL MODAL*/
 document.getElementById("textoFechaModal").addEventListener("click", function() {
-    document.getElementById("textoFechaModal").style.display = "none";
-    document.getElementById("inputsFechaModal").style.display = "flex";
-    document.getElementById('timepicker').focus();
+    if(!viendoMas){
+        document.getElementById("textoFechaModal").style.display = "none";
+        document.getElementById("inputsFechaModal").style.display = "flex";
+        document.getElementById('timepicker').focus();
+    }
 });
 
-document.getElementById("textoEtiquetasModal").addEventListener("click", function() {
-    document.getElementById("textoEtiquetasModal").style.display = "none";
-    document.getElementById("inputsEtiquetasModal").style.display = "flex";
-    document.getElementById('inputVariable').focus();
+document.getElementById("textoVariablesModal").addEventListener("click", function() {
+    if(!viendoMas){
+        document.getElementById("textoVariablesModal").style.display = "none";
+        document.getElementById("inputsEtiquetasModal").style.display = "flex";
+        document.getElementById('inputVariable').focus();
+    }
 });
 
 function actualizarTextoFecha(){
@@ -210,7 +267,7 @@ document.getElementById("botonVariables").addEventListener("click", function() {
 });
 
 function cambiarMenu(paginaElegida){
-    document.getElementById("textoEtiquetasModal").style.display = "flex";
+    document.getElementById("textoVariablesModal").style.display = "flex";
     document.getElementById("inputsEtiquetasModal").style.display = "none";
 
     document.getElementById("textoFechaModal").style.display = "flex";
@@ -230,7 +287,7 @@ const inputVariable = document.getElementById("inputVariable");
 inputEtiqueta.addEventListener("keydown", function(event) {
     if (event.key === 'Enter' && inputEtiqueta.value.trim() !== "") {
         inputEtiqueta.value = inputEtiqueta.value.replace(/\s+/g, "_");
-        anadirEtiquetaAlModal(inputEtiqueta.value.trim());
+        anadirEtiquetaAlModal(inputEtiqueta.value.trim(),true);
         inputEtiqueta.value = "";
     }
 });
@@ -244,7 +301,7 @@ inputVariable.addEventListener("keydown", function(event) {
     }
 });
 
-function anadirEtiquetaAlModal(texto){
+function anadirEtiquetaAlModal(texto, eliminable){
     const contenedor = document.getElementById("listaEtiquetasModal");
 
     if(listaEtiquetas.has(texto))
@@ -276,10 +333,17 @@ function anadirEtiquetaAlModal(texto){
 
     const botonEliminar = componenteEtiqueta.querySelector("button");
 
-    botonEliminar.addEventListener("click", function() {
-        contenedor.removeChild(componenteEtiqueta);
-        listaEtiquetas.delete(texto);
-    });
+    if(eliminable){
+        botonEliminar.addEventListener("click", function() {
+            contenedor.removeChild(componenteEtiqueta);
+            listaEtiquetas.delete(texto);
+        });
+    }
+    else{
+        botonEliminar.remove();
+        componenteEtiqueta.style.backgroundColor = "rgba(0, 0, 252, 0.1)";
+    }
+    
 }
 
 //variable tiene que estar en formato: {nombre: "nombre", numerica: true}

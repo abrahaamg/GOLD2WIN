@@ -168,11 +168,11 @@ border-bottom: 2px solid #007BFF; /* azul bootstrap */
     outline: none;
 }
 
-.input-texto-discreto:hover {
+.input-texto-discreto:hover:not(:disabled) {
     background-color: rgba(128, 128, 128, 0.1);
 }
 
-.input-texto-discreto:focus {
+.input-texto-discreto:focus:not(:disabled) {
     border-bottom: 2px solid #0d6efd; /* azul Bootstrap */
     background-color: rgba(128, 128, 128, 0.1); /* opcional si quieres mantener el hover */
 }
