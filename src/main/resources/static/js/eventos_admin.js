@@ -6,25 +6,39 @@ var tipoVariableModal = true; // false = texto, true = numerico
 var cargando = false;
 const appRoot = document.getElementById("root").value;
 
+var creando = false; //Indica si se está creando evento o editando uno existente
+var id_evento_editado = -1;
+
 var _datepicker;
 var _timepicker;
 
-configurarflatpickr();
+configurarflatpickr(new Date());
 
 document.querySelectorAll(".cambiadorTema").forEach(elemento => {
     elemento.addEventListener("click", function () {
-        isDarkMode = !isDarkMode;
-        configurarflatpickr();
+        const idEvento = btn.getAttribute("data-id-evento");
+        if(id_evento_editado != idEvento){
+            id_evento_editado = idEvento;
+
+            if (isDarkMode) {
+                document.documentElement.setAttribute("data-bs-theme", "light");
+                isDarkMode = false;
+            } else {
+                document.documentElement.setAttribute("data-bs-theme", "dark");
+                isDarkMode = true;
+            }
+            configurarflatpickr(new Date());
+        }
     });
 });
 
-function configurarflatpickr(){
+function configurarflatpickr(fecha){
     _datepicker = flatpickr("#datepicker", {
         locale: "es",  
         dateFormat: "Y-m-d",         
         altInput: true,
         minDate: new Date(),
-        defaultDate: new Date(),    
+        defaultDate: fecha,    
         altFormat: "j \\de F \\de Y",               
         allowInput: false,
         theme: isDarkMode ? "dark" : "light",
@@ -33,6 +47,12 @@ function configurarflatpickr(){
         },
         onClose: function(selectedDates, dateStr, instance) {
             instance.input.classList.remove("focused");
+        },
+        onChange: function(selectedDates, dateStr, instance) {
+            actualizarTextoFecha();
+        },
+        onReady: function(selectedDates, dateStr, instance) {
+            actualizarTextoFecha();
         }
     });
     
@@ -40,7 +60,7 @@ function configurarflatpickr(){
         viewMode: 'clock',
         enableTime: true,
         noCalendar: true,
-        defaultDate: new Date(), 
+        defaultDate: fecha, 
         dateFormat: "H:i", 
         time_24hr: true ,  
         theme: isDarkMode ? "dark" : "light",
@@ -49,10 +69,69 @@ function configurarflatpickr(){
         },
         onClose: function(selectedDates, dateStr, instance) {
             instance.input.classList.remove("focused");
+        },
+        onChange: function(selectedDates, dateStr, instance) {
+            actualizarTextoFecha();
+        },
+        onReady: function(selectedDates, dateStr, instance) {
+            actualizarTextoFecha();
         }
     });
 }
 
+/*FUNCIONES PARA ALTERNAR EL MODO EDICION Y EL MODO CREACION DEL MODAL*/
+
+function modalModoCreacion(){
+    if(cargando == false){
+        creando = true;
+        id_evento_editado = -1;
+        resetearModal();
+
+        const campoTitulo = document.getElementById("inputNombreEvento");
+        campoTitulo.disabled = false;
+        campoTitulo.tabIndex = 0;
+        document.getElementById('seccionSelect').disabled = false;
+    }
+}
+
+function modalModoEdicion(id){
+    console.log("modo edicion");
+    console.log(cargando);
+    if(cargando == false){
+        console.log("modo edicion 2");
+        creando = false;
+        id_evento_editado = id;
+        resetearModal();
+        
+        const campoTitulo = document.getElementById("inputNombreEvento");
+        campoTitulo.disabled  = true;
+        campoTitulo.tabIndex = -1;
+        document.getElementById('seccionSelect').disabled = true;
+    
+        cargando = true;
+        go(appRoot + 'admin/eventos/cargarDatosEvento/' + id_evento_editado, 'GET').then((data) => {
+            console.log(data);
+            campoTitulo.value = data.nombre;
+            configurarflatpickr(new Date(data.fechaCierre));
+            document.getElementById('seccionSelect').value = data.seccion;
+
+            data.etiquetas.forEach((etiqueta) => {
+                anadirEtiquetaAlModal(etiqueta);
+            });
+
+            data.variables.forEach((variable) => {
+                anadirVariableAlModal({"nombre":variable.nombre,"numerica":variable.numerico}, false);
+            });
+
+            cargando = false;
+        }).catch((error) => {
+            console.log(error);
+            cargando = false;
+        });
+    }
+}
+
+/*FUNCIONES PARA EL MENU DEL MODAL*/
 document.getElementById("textoFechaModal").addEventListener("click", function() {
     document.getElementById("textoFechaModal").style.display = "none";
     document.getElementById("inputsFechaModal").style.display = "flex";
@@ -64,16 +143,6 @@ document.getElementById("textoEtiquetasModal").addEventListener("click", functio
     document.getElementById("inputsEtiquetasModal").style.display = "flex";
     document.getElementById('inputVariable').focus();
 });
-
-document.getElementById("timepicker").addEventListener("change", function() {
-    actualizarTextoFecha();
-});
-
-document.getElementById("datepicker").addEventListener("change", function() {
-    actualizarTextoFecha();
-});
-
-actualizarTextoFecha();
 
 function actualizarTextoFecha(){
     const opciones = {
@@ -106,7 +175,6 @@ function formatearHora(hora){
         salida += " pm";
 
     console.log(salida);
-    console.log("entra");
 
     return salida;
 }
@@ -115,8 +183,10 @@ function formatearHora(hora){
 const select = document.getElementById('seccionSelect');
 
 select.addEventListener('focus', () => {
-    select.classList.remove('selectDiscreto');
-    select.classList.remove('resaltaHover');
+    if(creando){
+        select.classList.remove('selectDiscreto');
+        select.classList.remove('resaltaHover');
+    }
 });
 
 select.addEventListener('blur', () => {
@@ -169,7 +239,7 @@ inputEtiqueta.addEventListener("keydown", function(event) {
 inputVariable.addEventListener("keydown", function(event) {
     if (event.key === 'Enter' && inputVariable.value.trim() !== "") {
         inputVariable.value = inputVariable.value.replace(/\s+/g, "_");
-        anadirVariableAlModal({"nombre":inputVariable.value.trim(),"numerica":tipoVariableModal});
+        anadirVariableAlModal({"nombre":inputVariable.value.trim(),"numerica":tipoVariableModal}, true);
         inputVariable.value = "";
     }
 });
@@ -213,15 +283,15 @@ function anadirEtiquetaAlModal(texto){
 }
 
 //variable tiene que estar en formato: {nombre: "nombre", numerica: true}
-function anadirVariableAlModal(variable){
+function anadirVariableAlModal(variable, eliminable){
     const contenedor = document.getElementById("listaVariablesModal");
 
     if(listaNombresVariables.has(variable.nombre.toLowerCase()))
         return;
 
-    listaVariables.add(variable);
+    listaVariables.add({nombre: variable.nombre, numerica: variable.numerica, eliminable: eliminable});
     listaNombresVariables.add(variable.nombre.toLowerCase());
-
+    
     var html = `           
         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-box-seam my-auto" viewBox="0 0 16 16">
             <path d="M8.186 1.113a.5.5 0 0 0-.372 0L1.846 3.5l2.404.961L10.404 2zm3.564 1.426L5.596 5 8 5.961 14.154 3.5zm3.25 1.7-6.5 2.6v7.922l6.5-2.6V4.24zM7.5 14.762V6.838L1 4.239v7.923zM7.443.184a1.5 1.5 0 0 1 1.114 0l7.129 2.852A.5.5 0 0 1 16 3.5v8.662a1 1 0 0 1-.629.928l-7.185 2.874a.5.5 0 0 1-.372 0L.63 13.09a1 1 0 0 1-.63-.928V3.5a.5.5 0 0 1 .314-.464z"/>
@@ -243,15 +313,21 @@ function anadirVariableAlModal(variable){
     var componenteVariable = document.createElement("div");
     componenteVariable.className = "d-flex flex-grow-1";
     componenteVariable.innerHTML = html;
-    contenedor.insertBefore(componenteVariable, contenedor.firstChild);
-
     const botonEliminar = componenteVariable.querySelector("button");
 
-    botonEliminar.addEventListener("click", function() {
-        contenedor.removeChild(componenteVariable);
-        listaVariables.delete(variable);
-        listaNombresVariables.delete(variable.nombre.toLowerCase());
-    });
+    if(eliminable){
+        botonEliminar.addEventListener("click", function() {
+            contenedor.removeChild(componenteVariable);
+            listaVariables.delete(variable);
+            listaNombresVariables.delete(variable.nombre.toLowerCase());
+        });
+    }
+    else{
+        botonEliminar.remove();
+        componenteVariable.style.backgroundColor = "rgba(0, 0, 252, 0.1)";
+    }
+
+    contenedor.insertBefore(componenteVariable, contenedor.firstChild);
 }
 
 /*TOGLE TIPO DE VARIABLE*/
@@ -264,6 +340,26 @@ document.getElementById("tipoVariableModal").addEventListener("click", function(
         componente.textContent = "Texto";
 });
 
+/*funciones para limpiar modal*/
+function eliminarVariablesModal(){
+    const contenedorVariables = document.getElementById("listaVariablesModal");
+    while (contenedorVariables.firstChild) {
+        contenedorVariables.removeChild(contenedorVariables.firstChild);
+    }
+
+    listaVariables.clear();
+    listaNombresVariables.clear();
+}
+
+function eliminarEtiquetasModal(){
+    const contenedorEtiquetas = document.getElementById("listaEtiquetasModal");
+    while (contenedorEtiquetas.firstChild) {
+        contenedorEtiquetas.removeChild(contenedorEtiquetas.firstChild);
+    }
+
+    listaEtiquetas.clear();
+}
+
 function resetearModal(){
     document.getElementById("inputNombreEvento").value = "";
     document.getElementById("inputEtiqueta").value = "";
@@ -271,22 +367,10 @@ function resetearModal(){
     document.getElementById("seccionSelect").selectedIndex = 0;
 
     cambiarMenu("Eventos");
-    configurarflatpickr();
-    actualizarTextoFecha();
+    configurarflatpickr(new Date());
 
-    const contenedorEtiquetas = document.getElementById("listaEtiquetasModal");
-    while (contenedorEtiquetas.firstChild) {
-        contenedorEtiquetas.removeChild(contenedorEtiquetas.firstChild);
-    }
-
-    const contenedorVariables = document.getElementById("listaVariablesModal");
-    while (contenedorVariables.firstChild) {
-        contenedorVariables.removeChild(contenedorVariables.firstChild);
-    }
-
-    listaEtiquetas.clear();
-    listaVariables.clear();
-    listaNombresVariables.clear();
+    eliminarEtiquetasModal();
+    eliminarVariablesModal();
 }
 
 //Funcion para que al seleccionar seccion se pongan las variables de la plantilla
@@ -310,7 +394,7 @@ document.getElementById("seccionSelect").addEventListener("change", function() {
     
                 for (let key in data) {
                     const esNumerica = data[key];
-                    anadirVariableAlModal({"nombre":key,"numerica":esNumerica});
+                    anadirVariableAlModal({"nombre":key,"numerica":esNumerica}, true);
                 }
             }).catch((error) => {
                 console.log(error);
@@ -330,7 +414,7 @@ document.getElementById("submit-form-eventos").addEventListener("click", functio
         const hora = _timepicker.selectedDates[0];
         const seccion = document.getElementById("seccionSelect").value;
         const etiquetas = Array.from(listaEtiquetas);
-        const variables = Array.from(listaVariables);
+        const variables = Array.from(listaVariables).filter(variable => variable.eliminable);
         const textoError = document.getElementById("notificacion-error");
 
         if (!dia || !hora) {
@@ -383,7 +467,8 @@ document.getElementById("submit-form-eventos").addEventListener("click", functio
             fecha: fecha.toISOString(),
             seccion: parseInt(seccion),
             etiquetas: etiquetas,
-            variables: variables
+            variables: variables,
+            idEvento: id_evento_editado
         }).then((data) => {
             cargando = false;
             if(data.success)

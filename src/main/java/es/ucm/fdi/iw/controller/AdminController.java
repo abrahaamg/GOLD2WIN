@@ -13,13 +13,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 import java.util.HashSet;
 
 import com.ezylang.evalex.*;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.aspectj.weaver.ast.Var;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -54,7 +54,6 @@ import es.ucm.fdi.iw.model.User;
 import es.ucm.fdi.iw.model.Variable;
 import es.ucm.fdi.iw.model.VariableSeccion;
 import jakarta.persistence.EntityManager;
-import jakarta.persistence.TypedQuery;
 import jakarta.servlet.http.HttpSession;
 import jakarta.transaction.Transactional;
 
@@ -230,11 +229,16 @@ public class AdminController {
     }
 
     /*
-     *  codigos de error:
+     * LA FUNCION CREA UN EVENTO EN EL CASO DE QUE EL ID SEA -1. EN OTRO CASO INTENTA EDITAR
+     * UN EVENTO QUE YA EXISTE. 
+     *  
+     * codigos de error:
      * 1: no se han definido variables
      * 2: la fecha del evento no puede ser anterior a la actual
      * 3: seccion no valida
      * 4: no se han definido etiquetas
+     * 5: el nombre de la variable no puede contener espacios
+     * 6: el nombre de la variable debe ser unico
      */
     @PostMapping(path = "/eventos/crearEvento", produces = "application/json")
     @ResponseBody
@@ -242,69 +246,157 @@ public class AdminController {
     public Map<String, Object> crearEvento(@RequestBody JsonNode o) {
         Map<String, Object> resultado = new HashMap<>();
         OffsetDateTime fecha = OffsetDateTime.parse(o.get("fecha").asText());
-        long seccion = o.get("seccion").asLong();
-        String nombre = o.get("nombre").asText();
+        long id = o.get("idEvento").asLong();
         List<String> etiquetas = new ArrayList<>();
         List<Variable> variables = new ArrayList<>();
+        Evento evento = new Evento();
 
-        for (JsonNode etiqueta : o.get("etiquetas")) {
-            etiquetas.add(etiqueta.asText());
+        if(id != -1) {
+            evento = entityManager.find(Evento.class, id);
+
+            if (evento == null) {
+                resultado.put("success", false);
+                resultado.put("errorCode", 8);
+                resultado.put("error", "Evento no encontrado");
+                return resultado;
+            }
         }
 
-        for(JsonNode varJsonNode : o.get("variables")) {
+        // Verificamos que no hay 2 etiquetas con el mismo nombre
+        Set<String> etiquetaNames = new HashSet<>();
+        for (JsonNode etiqueta : o.get("etiquetas")) {
+            String nombreEtiqueta = etiqueta.asText();
+
+            if (!etiquetaNames.add(nombreEtiqueta)) {
+                resultado.put("success", false);
+                resultado.put("errorCode", 7);
+                resultado.put("error", "El nombre de la etiqueta debe ser único: " + nombreEtiqueta);
+                return resultado;
+            }
+            else
+                etiquetas.add(nombreEtiqueta);
+        }
+
+        //Verificamos que no hay 2 variables con el mismo nombre y que una variable no puede tener espacios en blanco
+        Set<String> variableNames = new HashSet<>();
+
+        if(id != -1)
+            variableNames = evento.getVariables().stream().map(Variable::getNombre).collect(Collectors.toSet());
+
+        for (JsonNode varJsonNode : o.get("variables")) {
+            String nombreVariable = varJsonNode.get("nombre").asText();
+            if (nombreVariable.contains(" ")) {
+                resultado.put("success", false);
+                resultado.put("errorCode", 5);
+                resultado.put("error", "El nombre de la variable no puede contener espacios: " + nombreVariable);
+                return resultado;
+            }
+
+            if (!variableNames.add(nombreVariable)) {
+                resultado.put("success", false);
+                resultado.put("errorCode", 6);
+                resultado.put("error", "El nombre de la variable debe ser único: " + nombreVariable);
+                return resultado;
+            }
+
             Variable var = new Variable();
-            var.setNombre(varJsonNode.get("nombre").asText());
+            var.setNombre(nombreVariable);
             var.setNumerico(varJsonNode.get("numerica").asBoolean());
             variables.add(var);
         }
 
+        //Si se esta creando un evento nuevo
+        if(id == -1){
+            long seccion = o.get("seccion").asLong();
+            Seccion seccionObj = null;
+            String nombre = o.get("nombre").asText();
+
+            //Puedes modificar un evento existente sin añadir ninguna variable nueva
+            if(variables.size() == 0 ) {
+                resultado.put("success", false);
+                resultado.put("errorCode", 1);
+                resultado.put("error", "No se han definido variables para el evento");
+                return resultado;
+            }
+
+            //Puedes modificar un evento existente como que ya ha pasado
+            if(OffsetDateTime.now().isAfter(fecha) ) {
+                resultado.put("success", false);
+                resultado.put("errorCode", 2);
+                resultado.put("error", "La fecha del evento no puede ser anterior a la actual");
+                return resultado;
+            }
+
+            seccionObj = entityManager.find(Seccion.class, seccion);
+            if (seccionObj == null) {
+                resultado.put("success", false);
+                resultado.put("errorCode", 3);
+                resultado.put("error", "Sección no válida");
+                return resultado;
+            }
+
+            //Puedes modificar un evento existente sin añadir ninguna etiqueta nueva
+            if(etiquetas.size() == 0 && id == -1) {
+                resultado.put("success", false);
+                resultado.put("errorCode", 4);
+                resultado.put("error", "No se han definido etiquetas para el evento");
+                return resultado;
+            }
+
+            evento.setNombre(nombre);
+            evento.setFechaCierre(fecha);
+            evento.setFechaCreacion(OffsetDateTime.now());
+            evento.setCancelado(false);
+            evento.setDeterminado(false);
+            evento.setSeccion(seccionObj);
+            evento.setEtiquetas(etiquetas);
+    
+            entityManager.persist(evento);
+
+            for(Variable variable : variables) {
+                variable.setEvento(evento);
+                entityManager.persist(variable);
+            }
+        }
+        else{ //si se esta editando un evento existente
+            evento.setFechaCierre(fecha);
+            evento.setEtiquetas(etiquetas);
+            
+            for(Variable variable : variables) {
+                variable.setEvento(evento);
+                entityManager.persist(variable);
+            }
+
+            entityManager.merge(evento);
+        }
+
+        entityManager.flush();
         resultado.put("success", true);
 
+        return resultado;
+    }
 
-        if(variables.size() == 0) {
-            resultado.put("success", false);
-            resultado.put("errorCode", 1);
-            resultado.put("error", "No se han definido variables para el evento");
-            return resultado;
+    @GetMapping(path = "/eventos/cargarDatosEvento/{id}", produces = "application/json")
+    @ResponseBody
+    public Map<String, Object> cargarDatosEvento(@PathVariable long id) {
+        Map<String, Object> resultado = new HashMap<>();
+
+        Evento evento = entityManager.find(Evento.class, id);
+        List<Variable.Transfer> variables = new ArrayList<>();
+
+        if (evento == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Evento no encontrado");
         }
 
-        if(OffsetDateTime.now().isAfter(fecha)) {
-            resultado.put("success", false);
-            resultado.put("errorCode", 2);
-            resultado.put("error", "La fecha del evento no puede ser anterior a la actual");
-            return resultado;
-        }
+        evento.getVariables().forEach(variable -> {
+            variables.add(variable.toTransfer());
+        });
 
-        Seccion seccionObj = entityManager.find(Seccion.class, seccion);
-        if (seccionObj == null) {
-            resultado.put("success", false);
-            resultado.put("errorCode", 3);
-            resultado.put("error", "Sección no válida");
-            return resultado;
-        }
-
-        if(etiquetas.size() == 0) {
-            resultado.put("success", false);
-            resultado.put("errorCode", 4);
-            resultado.put("error", "No se han definido etiquetas para el evento");
-            return resultado;
-        }
-
-        Evento evento = new Evento();
-        evento.setNombre(nombre);
-        evento.setFechaCierre(fecha);
-        evento.setFechaCreacion(OffsetDateTime.now());
-        evento.setCancelado(false);
-        evento.setDeterminado(false);
-        evento.setSeccion(seccionObj);
-        evento.setEtiquetas(etiquetas);
-
-        entityManager.persist(evento);
-
-        for(Variable variable : variables) {
-            variable.setEvento(evento);
-            entityManager.persist(variable);
-        }
+        resultado.put("nombre", evento.getNombre());
+        resultado.put("fechaCierre", evento.getFechaCierre().toString());
+        resultado.put("seccion", evento.getSeccion().getId());
+        resultado.put("etiquetas", evento.getEtiquetas());
+        resultado.put("variables", variables);
 
         return resultado;
     }

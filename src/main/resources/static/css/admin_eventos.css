@@ -14,6 +14,11 @@
 border-bottom: 2px solid #007BFF; /* azul bootstrap */
 }
 
+#inputNombreEvento:disabled {
+    background-color: inherit; 
+    color: inherit;
+}
+
 /*ESTILOS PARA EL BOTON DE CERRAR*/
 
 #cerrarModalCrearEvento {
@@ -142,6 +147,13 @@ border-bottom: 2px solid #007BFF; /* azul bootstrap */
 
 .selectDiscreto:focus::-ms-expand {
     display: none;
+}
+
+.selectDiscreto:disabled{
+    opacity: 1;
+    pointer-events: none;
+    color: inherit;
+    background: none;
 }
 
 /*ESTILO PARA CAMPO DE TEXTO DE MODAL*/

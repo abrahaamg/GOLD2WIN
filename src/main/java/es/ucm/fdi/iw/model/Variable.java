@@ -1,6 +1,7 @@
 package es.ucm.fdi.iw.model;
 
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 
@@ -10,7 +11,7 @@ import jakarta.persistence.*;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Variable {
+public class Variable implements Transferable<Variable.Transfer>{
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "gen")
     @SequenceGenerator(name = "gen", sequenceName = "gen")
@@ -23,4 +24,15 @@ public class Variable {
     @ManyToOne
     @JoinColumn(name = "id_evento")
     private Evento evento;
+
+    @Getter
+    @AllArgsConstructor
+    public static class Transfer {
+		private String nombre;
+        private boolean numerico;
+    }
+
+    public Transfer toTransfer() {
+        return new Transfer(nombre, numerico);
+    }
 }
