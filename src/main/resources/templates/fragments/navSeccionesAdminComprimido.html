@@ -8,7 +8,7 @@
 <body class="d-flex flex-column h-100">
     <nav th:fragment="navSeccionesAdminComprimido" class="navSeccionesAdminComprimido d-flex d-md-none pt-2" >
         <th:block th:each="seccion,i: ${secciones}">
-            <a th:href="@{/admin/secciones/{id}/editar(id=${seccion.id})}" class="nav-link d-flex flex-column m-0 justify-content-center align-items-center enlaceSeccionAdmin" style="padding: 0px 12px;">
+            <a th:if = "'enlaceSeccion-' + ${seccion.id}" th:href="@{/admin/secciones/{id}/editar(id=${seccion.id})}" class="nav-link d-flex flex-column m-0 justify-content-center align-items-center enlaceSeccionAdmin" style="padding: 0px 12px;">
                 <img width="25" height="25" th:src="@{/seccion/{id}/pic(id=${seccion.id})}">
                 <span class="text-nowrap" style="font-size: 11px;" th:text="${seccion.nombre}">texto</span>
             </a>

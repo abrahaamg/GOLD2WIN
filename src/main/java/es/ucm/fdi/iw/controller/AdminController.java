@@ -18,6 +18,7 @@ import com.ezylang.evalex.*;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.aspectj.weaver.ast.Var;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -83,6 +84,26 @@ public class AdminController {
     @GetMapping("/")
     public String index(Model model) {
         return "admin";
+    }
+
+    @GetMapping("/usuarios")
+    public String usuarios(Model model){
+        String queryUsuarios = "SELECT u FROM User u";
+        List<User> usuarios = entityManager.createQuery(queryUsuarios, User.class).getResultList();
+
+        model.addAttribute("usuarios", usuarios);
+
+        return "usuarios";
+    }
+
+    @GetMapping("/usuarios/usuarioDetalles")
+    public String usuarioDetalles(Model model){
+        return "usuarioDetalles";
+    }
+
+    @GetMapping("/usuarios/transacciones")
+    public String transacciones(Model model){
+        return "transacciones";
     }
 
     @GetMapping("/reportes")
@@ -193,8 +214,7 @@ public class AdminController {
     @GetMapping("/secciones")
     public String secciones(Model model) {
         // obtengo las secciones
-        String querySecciones = "SELECT s FROM Seccion s WHERE s.enabled = true ORDER BY s.grupo ASC";
-        List<Seccion> secciones = entityManager.createQuery(querySecciones).getResultList();
+        List<Seccion> secciones = entityManager.createNamedQuery("Seccion.getAll", Seccion.class).getResultList();
 
         model.addAttribute("secciones", secciones);
 
@@ -204,8 +224,7 @@ public class AdminController {
     @GetMapping("/secciones/{id}/editar")
     public String editarSeccion(@PathVariable long id, Model model, HttpSession session) {
         Seccion target = entityManager.find(Seccion.class, id);
-        String querySecciones = "SELECT s FROM Seccion s WHERE s.enabled = true ORDER BY s.grupo ASC";
-        List<Seccion> secciones = entityManager.createQuery(querySecciones).getResultList();
+        List<Seccion> secciones = entityManager.createNamedQuery("Seccion.getAll", Seccion.class).getResultList();
 
         model.addAttribute("seccionEditable", target);
         model.addAttribute("secciones", secciones);
@@ -216,8 +235,7 @@ public class AdminController {
     @GetMapping("/secciones-crearSeccion")
     public String seccionesCrear(Model model) {
         // obtengo las secciones
-        String querySecciones = "SELECT s FROM Seccion s WHERE s.enabled = true ORDER BY s.grupo ASC";
-        List<Seccion> secciones = entityManager.createQuery(querySecciones).getResultList();
+        List<Seccion> secciones = entityManager.createNamedQuery("Seccion.getAll", Seccion.class).getResultList();
 
         model.addAttribute("secciones", secciones);
 
@@ -433,20 +451,25 @@ public class AdminController {
         String nombre = seccionNode.get("nombre").asText();
         String grupo = seccionNode.get("tipo").asText();
 
-        TypedQuery<Seccion> queryEditarSeccion = entityManager.createQuery("SELECT u FROM Seccion u WHERE u.nombre = :nombre",Seccion.class);;
-        queryEditarSeccion.setParameter("nombre", nombre);
-
-        Seccion seccion = queryEditarSeccion.getSingleResult();
+        Seccion seccion = entityManager.createNamedQuery("Seccion.getPorNombre", Seccion.class).setParameter("nombre", nombre).getSingleResult();
 
         seccion.setGrupo(grupo);    
         entityManager.merge(seccion);
 
         JsonNode itemsNode = json.get("arrayVariables");
+
+        List<VariableSeccion> vars = entityManager.createNamedQuery("VarSeccion.filtrarPorSeccion", VariableSeccion.class).setParameter("seccion", seccion).getResultList();
+        for(VariableSeccion variable : vars) {
+            seccion.getPlantilla().remove(variable);
+            entityManager.persist(seccion);
+            
+            entityManager.remove(variable);
+        }
         if (itemsNode != null && itemsNode.isArray() && itemsNode.size() > 0) {
             //borrar las variables antiguas
-            String queryDelete = "DELETE FROM VariableSeccion v WHERE v.seccion = :seccion";
-            entityManager.createQuery(queryDelete).setParameter("seccion", seccion).executeUpdate();
-
+            //String queryDelete = "DELETE FROM VariableSeccion v WHERE v.seccion = :seccion";
+            //entityManager.createQuery(queryDelete).setParameter("seccion", seccion).executeUpdate();
+            
             for (JsonNode item : itemsNode) {
 
                 String nombreV = item.get("nombreV").asText();
@@ -497,10 +520,8 @@ public class AdminController {
     public ResponseEntity<?> verificarSeccion(@RequestParam String nombre) {
         nombre = nombre.trim(); 
 
-        TypedQuery<Long> query = entityManager.createQuery(
-                "SELECT COUNT(s) FROM Seccion s WHERE s.nombre = :nombre", Long.class);
-        query.setParameter("nombre", nombre);
-        Long count = query.getSingleResult();
+        Long count = entityManager.createNamedQuery("Seccion.countByNombre", Long.class).setParameter("nombre", nombre)
+                                .getSingleResult();
 
         boolean existe = count > 0; // Si el numero es mayor a 0, ya existe
 

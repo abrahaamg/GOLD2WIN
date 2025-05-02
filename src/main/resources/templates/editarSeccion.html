@@ -27,7 +27,7 @@
             <form id = "formularioSeccion" class = "mt-2 mt-md-4 scrollBarPerso">
                 <div class = "zonaDatos row">
                     <div class = "col-6">
-                        <input type="hidden" name="id" th:value="${seccionEditable.id}">
+                        <input type="hidden" name="id" id="inputIdSeccion" th:value="${seccionEditable.id}">
                         <label for="inputNombreSeccion" class="form-label">Nombre de la sección:</label>
                         <input class="form-control" id="inputNombreSeccion" name="nombreSeccion" th:value="${seccionEditable.nombre}" readonly>
                         <label for="inputTipoSeccion" class="form-label mt-5">Nombre del tipo de sección:</label>
@@ -53,11 +53,24 @@
                             Crear variable
                         </button>
 
-                        <div th:each="variable,i: ${seccionEditable.plantilla}" class="col-3 variableSeccionAnt">
-                            <span th:text="'Nombre: ' + ${variable.nombre}"></span>
-                            <span th:if="${variable.numerico}">Tipo de variable: Valor numérico</span>
-                            <span th:if="${!variable.numerico}">Tipo de variable: Texto</span>
+                        <div th:each="variable,i: ${seccionEditable.plantilla}" class="col-3 variableSeccion">
+                            <div class = "d-flex flex-column">
+                                <div>
+                                    <span th:text="'Nombre: '"></span>
+                                    <span th:text = "${variable.nombre}" class = "nombreVariableSpan pe-4"></span>
+                                </div>
+                                <div>
+                                    <span th:text="'Tipo: '"></span>
+                                    <span th:if="${variable.numerico}" class = "tipoVariableSpan">Valor numérico</span>
+                                    <span th:if="${!variable.numerico}" class = "tipoVariableSpan">Texto</span>
+                                </div>
+                            </div>
                             
+                            <button type="button" class="position-absolute end-0 top-0 botonBasuraVariable" th:data-nombre="${variable.nombre}">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash3" viewBox="0 0 16 16">
+                                        <path d="M6.5 1h3a.5.5 0 0 1 .5.5v1H6v-1a.5.5 0 0 1 .5-.5M11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3A1.5 1.5 0 0 0 5 1.5v1H1.5a.5.5 0 0 0 0 1h.538l.853 10.66A2 2 0 0 0 4.885 16h6.23a2 2 0 0 0 1.994-1.84l.853-10.66h.538a.5.5 0 0 0 0-1zm1.958 1-.846 10.58a1 1 0 0 1-.997.92h-6.23a1 1 0 0 1-.997-.92L3.042 3.5zm-7.487 1a.5.5 0 0 1 .528.47l.5 8.5a.5.5 0 0 1-.998.06L5 5.03a.5.5 0 0 1 .47-.53Zm5.058 0a.5.5 0 0 1 .47.53l-.5 8.5a.5.5 0 1 1-.998-.06l.5-8.5a.5.5 0 0 1 .528-.47M8 4.5a.5.5 0 0 1 .5.5v8.5a.5.5 0 0 1-1 0V5a.5.5 0 0 1 .5-.5"/>
+                                    </svg>
+                            </button>
                         </div>
                     </div>
                     
@@ -66,7 +79,7 @@
                             <button style="min-height: 30px;"  class="btn btn-secondary mt-4 w-100">Cancelar</button>
                         </a>
                         
-                        <button style="min-height: 30px; " class = "col-3 btn btn-success mt-4 ms-5"  data-bs-toggle="modal" data-bs-target="#modalAvisoVariables" type = "button"> 
+                        <button id = "botonDefEditarSeccion" style="min-height: 30px; " class = "col-3 btn btn-success mt-4 ms-5" onclick="editarSeccion()" type = "button"> 
                             Confirmar cambios
                         </button>
                     </div>
@@ -90,12 +103,13 @@
                             
                             <div class="mb-3">
                                 <label for="inputnombreVarNueva" class="form-label">Nombre de la variable:</label>
-                                <input class="form-control" id="inputnombreVarNueva" name="nombreVar" >
+                                <input class="form-control" id="inputnombreVarNueva" name="nombreVar" required>
+                                <div id="mensajeErrorVar" class="mensaje-error" style="display: none;">Este nombre ya está en uso</div>
                             </div>
         
                             <div class="mb-3">
                                 <label for="selectTipoVarNueva" class="form-label">Tipo de variable:</label>
-                                <select class="form-select" id="selectTipoVarNueva" name="tipoVar">
+                                <select class="form-select" id="selectTipoVarNueva" name="tipoVar" required>
                                     <option value="">Seleccione una</option>
                                     <option value="1">Valor numérico</option>
                                     <option value="2">Texto</option>
@@ -105,31 +119,7 @@
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                            <button class="btn btn-success" onclick="agregarDiv()" data-bs-dismiss="modal">Añadir variable</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="modal fade" id="modalAvisoVariables" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modal-fullscreen-sm-down">
-            <div class="modal-content" style="position: relative;">
-                <div id="ocultador-formulario">
-                    <form id="variableSeccionForm">
-                        <div class="modal-header">
-                            <h5 class="modal-title">Borrado de variables</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-                        </div>
-                    
-                        <div class="modal-body">
-                            <span> Si ha creado alguna variable nueva se sobreescribirán las variables guardadas,
-                                ¿está seguro que quiere continuar?</span>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                            <button class="btn btn-success" onclick="editarSeccion()" data-bs-dismiss="modal">Confirmar cambios</button>
+                            <button id="botonAnhadirVariableSeccion" class="btn btn-success" onclick="agregarDiv(event, document.getElementById('inputIdSeccion').value)"> Añadir variable </button>
                         </div>
                     </form>
                 </div>
@@ -160,10 +150,9 @@
         </div>
     </div>
 
-
     <div id="menuOpcionesSeccion">
-        <a href="#">Editar seccion</a>
-        <a href="#" data-bs-toggle="modal" data-bs-target="#modalEliminarSeccion">Eliminar seccion</a>
+        <a href="#" onclick="redireccionarEditarSeccion()">Editar seccion</a>
+        <a id = "enlaceModalEliminarSeccion" href="#" data-bs-toggle="modal" data-bs-target="#modalEliminarSeccion">Eliminar seccion</a>
     </div>
 
     <th:block th:replace="fragments/footer.html :: footer" />

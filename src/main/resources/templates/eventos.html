@@ -1,5 +1,5 @@
 <!DOCTYPE html >
-<html class="h-100" xmlns:th="http://www.thymeleaf.org" data-bs-theme="dark">
+<html class="h-100" xmlns:th="http://www.thymeleaf.org" >
 
 <head>  
     <link rel="stylesheet" th:href="@{/css/simple-datatables-10.css}" href="/css/simple-datatables-10.css" type="text/css" />
@@ -18,9 +18,9 @@
         <div th:replace="fragments/menuAdmin.html :: navAdmin('Eventos')"></div>
     </div>
 
-    <button type="button" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#modalCrearEvento">
+    <!--<button id = "botonCrearEvento" type="button" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#modalCrearEvento">
         Crear evento
-    </button>
+    </button>-->
 
     <!-- Fuera de la tabla -->
     <div th:each="evento : ${eventos}">
@@ -48,36 +48,49 @@
         </div>
     </div>
     
-    <table id="myTable" class="display">
-        <thead>
-            <tr>
-                <th>Nombre </th>
-                <th>Fecha de Creación </th>
-                <th>Fecha de Cierre </th>
-                <th> </th>
-                <th> </th>
-            </tr>
-        </thead>
-        <tbody id = "myTableBody">
-            <tr th:each="evento : ${eventos}">
-                <td th:text="${evento.nombre}"></td>
-                <td th:text="${evento.fechaCreacion}"></td>
-                <td th:text="${evento.fechaCierre}"></td>
-                <td>
-                    <a th:href="@{eventos/determinar/{id}(id=${evento.id})}">
-                        <button th:id = "'botonDeterminarEvento-' + ${evento.id}" class="btn btn-primary" type="button" data-bs-toggle="modal" data-bs-target="#determinarEventoModal">
-                            Determinar
-                        </button>
-                    </a>
-                </td>
-                <td>
-                    <button class="btn btn-danger" type="button" data-bs-toggle="modal" th:attr="data-bs-target='#cancelarEventoModal-' + ${evento.id}">
-                        Cancelar
-                    </button>
-                </td>
-            </tr>
-        </tbody>
-    </table>
+    <div style = "width: 90%" class = "mx-auto">
+        <table id="myTable" class="display">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nombre</th>
+                    <th>Fecha de Cierre</th>
+                    <th>Estado</th>
+                    <th>Sección</th>
+                    <th> </th> <!-- columna para el menú de 3 puntos -->
+                </tr>
+            </thead>
+            
+            <tbody id="myTableBody">
+                <tr th:each="evento : ${eventos}">
+                    <td th:text="${evento.id}"></td>
+                    <td th:text="${evento.nombre}"></td>
+                    <td th:text="${#temporals.format(evento.fechaCierre, 'dd-MM-yyyy')}"></td>
+                    <td>
+                        <span th:if="${evento.cancelado}">Cancelado</span>
+                        <span th:if="${!evento.cancelado} and ${evento.determinado}">Determinado</span>
+                        <span th:if="${!evento.cancelado} and ${!evento.determinado}">Pendiente</span>
+                    </td>                
+                    <td th:text="${evento.seccion.nombre}"></td>
+                    <td>
+                        <div class="dropdown">
+                            <button class="btn btn-sm" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-three-dots-vertical" viewBox="0 0 16 16">
+                                    <path d="M9.5 13a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0"/>
+                                  </svg>
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton">
+                                <li><a class="dropdown-item" href="#" th:href="@{/eventos/detalle/{id}(id=${evento.id})}">Ver Detalles</a></li>
+                                <li><a class="dropdown-item" href="#" th:href="@{/eventos/determinar/{id}(id=${evento.id})}">Determinar</a></li>
+                                <li><button class="dropdown-item text-danger" type="button" data-bs-toggle="modal" th:attr="data-bs-target='#cancelarEventoModal-' + ${evento.id}">Eliminar</button></li>
+                            </ul>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    
 
     <!-- Modal para crear evento -->
     <div class="modal fade" id="modalCrearEvento" tabindex="-1" aria-hidden="true">
@@ -190,7 +203,74 @@
 
     <script type="module">
         import { DataTable } from "../js/simple-datatables-10.js"
-        new DataTable("#myTable");
+        const table = new DataTable("#myTable", {
+        searchable: true,
+        perPageSelect: false,
+        perPage: 9,
+        sortable: true,
+        labels: {
+            placeholder: "Buscar...",
+            perPage: "{select} resultados por página",
+            noRows: "No hay registros",
+            noResults: "No se encontraron resultados",
+            info: "Mostrando {start} a {end} de {rows} entradas"
+        }
+        });
+
+        table.on("datatable.init", () => {
+            // Ocultar texto info
+            const tableElement = document.querySelector("#myTable");
+
+            let wrapper = tableElement?.parentElement;
+            while (wrapper && !wrapper.classList.contains("datatable-wrapper")) {
+                wrapper = wrapper.parentElement;
+            }
+
+            if (wrapper) {
+                const info = wrapper.querySelector(".datatable-info");
+                if (info) info.style.display = "none";
+
+                const top = wrapper.querySelector(".datatable-top");
+                if (top) {
+                    top.classList.add("d-flex", "align-items-center");
+
+                    const search = top.querySelector(".datatable-search");
+                    const left = document.createElement("div");
+                    if (search) left.appendChild(search);
+
+                    // Spacer que empuja el botón hacia la derecha
+                    const spacer = document.createElement("div");
+                    spacer.style.flex = "1";
+
+                    // Botón "Crear evento"
+                    const right = document.createElement("div");
+                    const button = document.createElement("button");
+                    button.className = "btn btn-success";
+                    button.id = "botonCrearEvento";
+                    button.type = "button";
+                    button.setAttribute("data-bs-toggle", "modal");
+                    button.setAttribute("data-bs-target", "#modalCrearEvento");
+                    button.innerText = "Crear evento";
+                    right.appendChild(button);
+
+                    // Limpiar y añadir en orden: buscador - spacer - botón
+                    top.innerHTML = "";
+                    top.appendChild(left);
+                    top.appendChild(spacer);
+                    top.appendChild(right);
+                }
+            }
+        });
+        table.on("datatable.init", () => {
+            const paginacion = document.querySelector(".datatable-wrapper .datatable-bottom");
+            if (paginacion) {
+                paginacion.style.display = "flex";
+                paginacion.style.justifyContent = "center";
+                paginacion.style.alignItems = "center";
+                paginacion.style.gap = "1rem";
+                paginacion.style.flexWrap = "wrap";
+            }
+        });
     </script>
     
     <th:block th:replace="fragments/footer.html :: footer" />

@@ -19,10 +19,8 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.authentication.AuthenticationManager;
-<<<<<<< HEAD
 import org.springframework.security.crypto.password.PasswordEncoder;
-=======
->>>>>>> main
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.FileCopyUtils;
@@ -322,20 +320,5 @@ public class RootController {
     @GetMapping("/cartera/ingresar/tarjeta")
     public String tarjeta(Model model) {
         return "tarjeta";
-    }
-
-    @GetMapping("/admin/usuarios")
-    public String usuarios(Model model) {
-        return "usuarios";
-    }
-
-    @GetMapping("/admin/usuarios/usuarioDetalles")
-    public String usuarioDetalles(Model model) {
-        return "usuarioDetalles";
-    }
-
-    @GetMapping("/admin/usuarios/transacciones")
-    public String transacciones(Model model) {
-        return "transacciones";
     }
 }

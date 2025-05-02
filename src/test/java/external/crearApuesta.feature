@@ -5,18 +5,18 @@ Feature: Testeo UI con Karate
     
     * click('#debugButtonA')
     # Se va a la parte de todos los eventos disponibles
-    * click('#enlaceNavTodosEventos')
+    #* click('#enlaceNavTodosEventos')
     # Clicka en el evento de Sede Mundial de Beisbol
     * click('#contenedorEvento-3')
     # Se añade una cantidad a una formula para crear una apuesta
     * delay(1000)
     And input('#cantidad-3', '15')
-    * delay(2000)
+    * delay(1000)
     * click('.botonApostarFavorable')
-    * delay(4000)
+    * delay(2000)
 
     # Se va a la parte de mis apuestas y se despliega la apuesta creada
     * click('#enlaceNavMisApuestas')
     * click('#bettingBox-975')
-    * delay(7000)
+    * delay(3000)
     

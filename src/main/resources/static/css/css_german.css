@@ -1,27 +1,3 @@
-#divResetearFiltros{
-    display: flex;
-    align-items: center;
-}
-
-#botonResetearFiltros{
-    border: 1px solid var(--bs-border-color);
-    border-radius: var(--bs-border-radius);
-
-    display: flex;
-    justify-content: center;
-    
-    width: 70%;
-
-    hyphens: auto;
-    word-break: break-word;
-}
-#tablaReportesMensajes{
-    margin-left: 65px;
-    margin-right: 65px;
-    margin-top: 40px;
-    margin-bottom: 20px;
-}
-
 .encabezadoTablaReportes{
     display: flex;
     justify-content: center;
@@ -50,19 +26,6 @@
     border: 1px solid var(--bs-border-color);
 }
 
-#saltoPaginaReportes{
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.iconoReportes{
-    margin: 2px;
-}
-.iconoReportes:hover{
-    color: #A78BFA;
-}
-
 .motivoReporte{
     border: 1px solid var(--bs-border-color);
     border-radius: var(--bs-border-radius);
@@ -83,25 +46,6 @@
     display: flex;
     justify-content: center;
 }
-
-#cuerpoTablaReportes{
-    overflow-y: auto;
-    overflow-x: hidden;
-    max-height: 400px;
-    padding: 0px 16px 0px 0px;
-    border-left: 1px solid var(--bs-border-color);
-}
-
-.filaEncabezadoReportes{
-    width: 100%;
-    margin: 0px;
-    padding: 0px;
-}
-
-.filaTablaReportes{
-    margin-left: 0px;
-}
-
 
 #flecha-atras-apuesta{
     transform: translate(5px, 5px); 
@@ -211,8 +155,6 @@
 }
 
 .formularioVariables {
-   
-
     display: flex;
     flex-direction: column;
 
@@ -234,7 +176,6 @@
     word-break: break-word;
 }
 
-
 .encabezadoVariables {
     display: flex;
     justify-content: center;
@@ -244,27 +185,42 @@
 }
 
 .variableSeccion {
+    display: inline-block;   
+    height: auto;           
     border: 1px solid var(--bs-border-color);
     border-radius: var(--bs-border-radius);
 
     margin: 0px 15px 15px 15px;
 
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
 
-    max-height: 80px;
+    background-color: #33373D;     
+    color: #ffffff;
+
+    position: relative; /* Necesario para el botón de eliminar */
 }
 
-.variableSeccionAnt{
-    border: 1px solid var(--bs-border-color);
-    border-radius: var(--bs-border-radius);
+.variableSeccion span {
+    white-space: normal;   
+    word-wrap: break-word; 
+}
 
-    margin: 0px 15px 15px 15px;
+.nombreVariableSpan{
+    font-weight: bold;
+}
 
-    display: flex;
-    flex-direction: column;
+.tipoVariableSpan{
+    font-weight: bold;
+}
 
-    max-height: 80px;
+.botonBasuraVariable {
+    border: none;
+    background-color: transparent;
+}
+
+.botonBasuraVariable:hover{
+    color: red
 }
 
 #mostrarImagenSeccionesForm {
@@ -286,11 +242,6 @@
     border-top: 1px solid var(--bs-border-color);
 }
 
-#divEtiquetasVariables{
-    word-wrap: break-word;
-    overflow: hidden;
-}
-
 .invalid-feedback {
-    display: block !important;  /* Esto forzaría la visualización, aunque no es lo más recomendable */
-  }
+    display: block !important;  
+}

@@ -93,8 +93,8 @@
     </div>
 
     <div id="menuOpcionesSeccion">
-        <a href="#">Editar seccion</a>
-        <a href="#" data-bs-toggle="modal" data-bs-target="#modalEliminarSeccion">Eliminar seccion</a>
+        <a href="#" onclick="redireccionarEditarSeccion()">Editar seccion</a>
+        <a id = "enlaceModalEliminarSeccion" href="#" data-bs-toggle="modal" data-bs-target="#modalEliminarSeccion">Eliminar seccion</a>
     </div>
 
     <th:block th:replace="fragments/footer.html :: footer" />
