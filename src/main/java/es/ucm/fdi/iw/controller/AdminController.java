@@ -7,6 +7,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.time.OffsetDateTime;
+import java.util.ArrayList;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
@@ -146,6 +147,23 @@ public class AdminController {
         return "determinarEvento";
     }
 
+    @GetMapping(path = "/eventos/getVariablesSeccion/{id}", produces = "application/json")
+    @ResponseBody
+    public Map<String, Boolean> getVariablesSeccion(@PathVariable long id,Model model) {
+        Map<String, Boolean> variables = new HashMap<>();
+        Seccion seccion = entityManager.find(Seccion.class, id);
+
+        if (seccion == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Seccion no encontrada");
+        }
+
+        seccion.getPlantilla().forEach(variable -> {
+            variables.put(variable.getNombre(), variable.isNumerico());
+        });
+
+        return variables;
+    }
+
     @PostMapping(path = "/eventos/determinar/{id}", produces = "application/json")
     @ResponseBody
     @Transactional
@@ -211,6 +229,86 @@ public class AdminController {
         return response;
     }
 
+    /*
+     *  codigos de error:
+     * 1: no se han definido variables
+     * 2: la fecha del evento no puede ser anterior a la actual
+     * 3: seccion no valida
+     * 4: no se han definido etiquetas
+     */
+    @PostMapping(path = "/eventos/crearEvento", produces = "application/json")
+    @ResponseBody
+    @Transactional
+    public Map<String, Object> crearEvento(@RequestBody JsonNode o) {
+        Map<String, Object> resultado = new HashMap<>();
+        OffsetDateTime fecha = OffsetDateTime.parse(o.get("fecha").asText());
+        long seccion = o.get("seccion").asLong();
+        String nombre = o.get("nombre").asText();
+        List<String> etiquetas = new ArrayList<>();
+        List<Variable> variables = new ArrayList<>();
+
+        for (JsonNode etiqueta : o.get("etiquetas")) {
+            etiquetas.add(etiqueta.asText());
+        }
+
+        for(JsonNode varJsonNode : o.get("variables")) {
+            Variable var = new Variable();
+            var.setNombre(varJsonNode.get("nombre").asText());
+            var.setNumerico(varJsonNode.get("numerica").asBoolean());
+            variables.add(var);
+        }
+
+        resultado.put("success", true);
+
+
+        if(variables.size() == 0) {
+            resultado.put("success", false);
+            resultado.put("errorCode", 1);
+            resultado.put("error", "No se han definido variables para el evento");
+            return resultado;
+        }
+
+        if(OffsetDateTime.now().isAfter(fecha)) {
+            resultado.put("success", false);
+            resultado.put("errorCode", 2);
+            resultado.put("error", "La fecha del evento no puede ser anterior a la actual");
+            return resultado;
+        }
+
+        Seccion seccionObj = entityManager.find(Seccion.class, seccion);
+        if (seccionObj == null) {
+            resultado.put("success", false);
+            resultado.put("errorCode", 3);
+            resultado.put("error", "Sección no válida");
+            return resultado;
+        }
+
+        if(etiquetas.size() == 0) {
+            resultado.put("success", false);
+            resultado.put("errorCode", 4);
+            resultado.put("error", "No se han definido etiquetas para el evento");
+            return resultado;
+        }
+
+        Evento evento = new Evento();
+        evento.setNombre(nombre);
+        evento.setFechaCierre(fecha);
+        evento.setFechaCreacion(OffsetDateTime.now());
+        evento.setCancelado(false);
+        evento.setDeterminado(false);
+        evento.setSeccion(seccionObj);
+        evento.setEtiquetas(etiquetas);
+
+        entityManager.persist(evento);
+
+        for(Variable variable : variables) {
+            variable.setEvento(evento);
+            entityManager.persist(variable);
+        }
+
+        return resultado;
+    }
+
     @GetMapping("/secciones")
     public String secciones(Model model) {
         // obtengo las secciones
@@ -246,8 +344,11 @@ public class AdminController {
     public String eventos(Model model) {
         String queryEventos = "SELECT e FROM Evento e WHERE e.cancelado = false";
         List<Evento> eventos = entityManager.createQuery(queryEventos, Evento.class).getResultList();
+        List<Seccion> secciones = entityManager.createNamedQuery("Seccion.getAll",Seccion.class).getResultList();
 
         model.addAttribute("eventos", eventos);
+        model.addAttribute("secciones", secciones);
+        
 
         return "eventos";
     }

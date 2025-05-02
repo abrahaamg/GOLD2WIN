@@ -14,6 +14,10 @@
 <body>
     <header th:replace="fragments/nav.html :: nav('administrar')"></header>
 
+    <form style="display: none;" id="datos">
+        <input type="hidden" id="root" name="root" th:value="@{/}">
+    </form>
+
     <div class="ms-4">
         <div th:replace="fragments/menuAdmin.html :: navAdmin('Eventos')"></div>
     </div>
@@ -82,7 +86,7 @@
                             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton">
                                 <li><a class="dropdown-item" href="#" th:href="@{/eventos/detalle/{id}(id=${evento.id})}">Ver Detalles</a></li>
                                 <li><a class="dropdown-item" href="#" th:href="@{/eventos/determinar/{id}(id=${evento.id})}">Determinar</a></li>
-                                <li><button class="dropdown-item text-danger" type="button" data-bs-toggle="modal" th:attr="data-bs-target='#cancelarEventoModal-' + ${evento.id}">Eliminar</button></li>
+                                <li><button class="dropdown-item text-danger" type="button" data-bs-toggle="modal" th:attr="data-bs-target='#cancelarEventoModal-' + ${evento.id}">Cancelar</button></li>
                             </ul>
                         </div>
                     </td>
@@ -91,7 +95,6 @@
         </table>
     </div>
     
-
     <!-- Modal para crear evento -->
     <div class="modal fade" id="modalCrearEvento" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
@@ -144,10 +147,8 @@
                             </div>
 
                             <select id="seccionSelect" class="form-select selectDiscreto resaltaHover flex-grow-1 p-2 m-0" style="cursor: pointer; border-radius: 7px; position: relative;" aria-label="Default select example">
-                                <option selected>Selecciona una sección</option>
-                                <option value="1">Sección 1</option>
-                                <option value="2">Sección 2</option>
-                                <option value="3">Sección 3</option>
+                                <option value="" selected>Selecciona una sección</option>
+                                <option th:each="seccion : ${secciones}" th:value="${seccion.id}" th:text="${seccion.nombre}"></option>
                             </select>
                         </div>
                     </div>
@@ -188,9 +189,9 @@
                         <div class="d-flex flex-column scrollBarPerso pt-2" id="listaVariablesModal" style="padding-left:64px;"></div>
                     </div>
 
-                    <div class="d-flex mt-auto ">
-                        <button id="submit-form-eventos"class="btn btn-primary m-3 ms-auto" style="border-radius:20px;" type="button" data-bs-toggle="modal" data-bs-target="#modalCrearEvento">Guardar</button>
-                        <span class="text-danger" style="display: none;font-size: 14px;">error<span>
+                    <div class="d-flex mt-auto flex-column">
+                        <button id="submit-form-eventos"class="btn btn-primary mx-3 ms-auto" style="border-radius:20px;" type="button">Guardar</button>
+                        <span id="notificacion-error" class="text-danger mt-2 me-3 text-end" style="font-size: 16px; display: none;">error</span>              
                     </div>
                 </div>
             </div>

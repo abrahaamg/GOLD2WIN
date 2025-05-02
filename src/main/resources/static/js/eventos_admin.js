@@ -3,6 +3,11 @@ var listaEtiquetas = new Set([]);;
 var listaVariables = new Set([]);;
 var listaNombresVariables = new Set([]);;
 var tipoVariableModal = true; // false = texto, true = numerico
+var cargando = false;
+const appRoot = document.getElementById("root").value;
+
+var _datepicker;
+var _timepicker;
 
 configurarflatpickr();
 
@@ -14,7 +19,7 @@ document.querySelectorAll(".cambiadorTema").forEach(elemento => {
 });
 
 function configurarflatpickr(){
-    flatpickr("#datepicker", {
+    _datepicker = flatpickr("#datepicker", {
         locale: "es",  
         dateFormat: "Y-m-d",         
         altInput: true,
@@ -31,7 +36,7 @@ function configurarflatpickr(){
         }
     });
     
-    flatpickr("#timepicker", {
+    _timepicker = flatpickr("#timepicker", {
         viewMode: 'clock',
         enableTime: true,
         noCalendar: true,
@@ -257,4 +262,141 @@ document.getElementById("tipoVariableModal").addEventListener("click", function(
         componente.textContent = "Numérica";
     else 
         componente.textContent = "Texto";
+});
+
+function resetearModal(){
+    document.getElementById("inputNombreEvento").value = "";
+    document.getElementById("inputEtiqueta").value = "";
+    document.getElementById("inputVariable").value = "";
+    document.getElementById("seccionSelect").selectedIndex = 0;
+
+    cambiarMenu("Eventos");
+    configurarflatpickr();
+    actualizarTextoFecha();
+
+    const contenedorEtiquetas = document.getElementById("listaEtiquetasModal");
+    while (contenedorEtiquetas.firstChild) {
+        contenedorEtiquetas.removeChild(contenedorEtiquetas.firstChild);
+    }
+
+    const contenedorVariables = document.getElementById("listaVariablesModal");
+    while (contenedorVariables.firstChild) {
+        contenedorVariables.removeChild(contenedorVariables.firstChild);
+    }
+
+    listaEtiquetas.clear();
+    listaVariables.clear();
+    listaNombresVariables.clear();
+}
+
+//Funcion para que al seleccionar seccion se pongan las variables de la plantilla
+document.getElementById("seccionSelect").addEventListener("change", function() {
+    if(!cargando){
+        cargando = true;
+
+        const seccionSeleccionada = this.value;
+        const contenedorVariables = document.getElementById("listaVariablesModal");
+
+        while (contenedorVariables.firstChild) {
+            contenedorVariables.removeChild(contenedorVariables.firstChild);
+        }
+
+        listaNombresVariables.clear();
+
+        if (seccionSeleccionada !== "") {
+            
+            go(appRoot + 'admin/eventos/getVariablesSeccion/' + seccionSeleccionada, 'GET').then((data) => {
+                cargando = false;
+    
+                for (let key in data) {
+                    const esNumerica = data[key];
+                    anadirVariableAlModal({"nombre":key,"numerica":esNumerica});
+                }
+            }).catch((error) => {
+                console.log(error);
+                cargando = false;
+            });
+        }
+    }
+    
+});
+
+/* FUNCION PARA CREAR EVENTO */
+
+document.getElementById("submit-form-eventos").addEventListener("click", function() {
+    if(cargando == false){
+        const nombreEvento = document.getElementById("inputNombreEvento").value.trim();
+        const dia = _datepicker.selectedDates[0];
+        const hora = _timepicker.selectedDates[0];
+        const seccion = document.getElementById("seccionSelect").value;
+        const etiquetas = Array.from(listaEtiquetas);
+        const variables = Array.from(listaVariables);
+        const textoError = document.getElementById("notificacion-error");
+
+        if (!dia || !hora) {
+            return null; // Si alguno no está seleccionado
+        }
+
+        const fecha = new Date(
+            dia.getFullYear(),
+            dia.getMonth(),
+            dia.getDate(),
+            hora.getHours(),
+            hora.getMinutes()
+        );
+
+        if (fecha <= new Date()) {
+            textoError.textContent = "La fecha y hora deben ser posteriores a la actual.";
+            textoError.style.display = "block";
+            return;
+        }
+
+        if (seccion === "") {
+            textoError.textContent = "Debe seleccionar una sección.";
+            textoError.style.display = "block";
+            return;
+        }
+
+        if (etiquetas.length < 1) {
+            textoError.textContent = "Debe añadir al menos una etiqueta.";
+            textoError.style.display = "block";
+            return;
+        }
+
+        if (variables.length < 1) {
+            textoError.textContent = "Debe añadir al menos una variable.";
+            textoError.style.display = "block";
+            return;
+        }
+
+        if(nombreEvento.length < 1){
+            textoError.textContent = "El nombre del evento no puede estar vacío.";
+            textoError.style.display = "block";
+            return;
+        }
+
+        //El go es lo unico asincrono
+        cargando = true;
+
+        go(appRoot + 'admin/eventos/crearEvento', 'POST', {
+            nombre: nombreEvento,
+            fecha: fecha.toISOString(),
+            seccion: parseInt(seccion),
+            etiquetas: etiquetas,
+            variables: variables
+        }).then((data) => {
+            cargando = false;
+            if(data.success)
+                //se ha guardado con exito
+                location.reload(true)
+            else{
+                //algun error al comprobar los datos en el servidor
+                textoError.textContent = data.error;
+                textoError.style.display = "block";
+            }
+        }).catch((error) => {
+            console.log(error);
+            cargando = false;
+        });
+    }
 });
