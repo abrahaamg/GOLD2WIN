@@ -34,11 +34,12 @@ document.querySelectorAll(".cambiadorTema").forEach(elemento => {
 });
 
 function configurarflatpickr(fecha){
+
     _datepicker = flatpickr("#datepicker", {
         locale: "es",  
         dateFormat: "Y-m-d",         
         altInput: true,
-        minDate: new Date(),
+        minDate: creando ? new Date(): null,
         defaultDate: fecha,    
         altFormat: "j \\de F \\de Y",               
         allowInput: false,
@@ -493,31 +494,31 @@ document.getElementById("submit-form-eventos").addEventListener("click", functio
             hora.getMinutes()
         );
 
-        if (fecha <= new Date()) {
+        if (fecha <= new Date() && creando) {
             textoError.textContent = "La fecha y hora deben ser posteriores a la actual.";
             textoError.style.display = "block";
             return;
         }
 
-        if (seccion === "") {
+        if (seccion === "" && creando) {
             textoError.textContent = "Debe seleccionar una sección.";
             textoError.style.display = "block";
             return;
         }
 
-        if (etiquetas.length < 1) {
+        if (etiquetas.length < 1 && creando) {
             textoError.textContent = "Debe añadir al menos una etiqueta.";
             textoError.style.display = "block";
             return;
         }
 
-        if (variables.length < 1) {
+        if (variables.length < 1 && creando) {
             textoError.textContent = "Debe añadir al menos una variable.";
             textoError.style.display = "block";
             return;
         }
 
-        if(nombreEvento.length < 1){
+        if(nombreEvento.length < 1 && creando){
             textoError.textContent = "El nombre del evento no puede estar vacío.";
             textoError.style.display = "block";
             return;
