@@ -634,3 +634,21 @@ a.botonOvalado.nav-link:hover{
     background-color: #8A2BE2;
     font-weight: bold;
 }
+
+/*ESTILO PARA EL NAV DE CHATS*/
+.navChats{
+    overflow-y: auto;
+    height: 100%;
+    width: 400px;
+    padding: 0px 15px 0 25px;
+    border-right: 1px solid var(--bs-tertiary-color);
+}
+
+/*Estilo para los mensajes*/
+[data-bs-theme="dark"] .mensaje {
+    --bbColor: #313338;
+}
+
+.mensaje{
+    --bbColor: #e8e4fc;
+}
