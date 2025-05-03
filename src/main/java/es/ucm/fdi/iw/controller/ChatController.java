@@ -1,6 +1,10 @@
 package es.ucm.fdi.iw.controller;
 
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import jakarta.persistence.EntityManager;
 import jakarta.servlet.http.HttpSession;
@@ -11,35 +15,59 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import es.ucm.fdi.iw.model.Chat;
 import es.ucm.fdi.iw.model.Evento;
 import es.ucm.fdi.iw.model.Mensaje;
+import es.ucm.fdi.iw.model.ParticipacionChat;
 import es.ucm.fdi.iw.model.Seccion;
+import es.ucm.fdi.iw.model.Transferable;
 import es.ucm.fdi.iw.model.User;
 
 @Controller
+@RequestMapping("chats")
 public class ChatController {
 
     @Autowired
     private EntityManager entityManager;
 
     // Este método carga los eventos disponibles para los chats y los pasa al modelo
-   @GetMapping("/chats")
-   public String chats(Model model) {
-    // obtengo las secciones
-    List<Seccion> secciones = entityManager.createNamedQuery("Seccion.getAll",Seccion.class).getResultList();
+    @GetMapping("/")
+    public String chats(Model model) {
+        // obtengo las secciones
+        List<Seccion> secciones = entityManager.createNamedQuery("Seccion.getAll", Seccion.class).getResultList();
 
-    // añado los eventos y las secciones al modelo
-    model.addAttribute("secciones", secciones);
-    model.addAttribute("selectedSeccion", -1);
+        // añado los eventos y las secciones al modelo
+        model.addAttribute("secciones", secciones);
+        model.addAttribute("selectedSeccion", -1);
 
-    return "chats";
-}
+        return "chats";
+    }
 
+    @GetMapping(path = "/cargarChats", produces = "application/json")
+    @ResponseBody
+    public Map<String, Object> cargarChats(HttpSession session) {
+        User user = (User) session.getAttribute("u");
+        Map<String, Object> response = new HashMap<>();
+
+        List<ParticipacionChat> participacionChat = entityManager.createNamedQuery("User.getChats", ParticipacionChat.class)
+            .setParameter("id", user.getId())
+            .getResultList();
+
+        List<ParticipacionChat.Transfer> transferibles = participacionChat.stream()
+            .map(Transferable::toTransfer)
+            .sorted(Comparator.comparingInt(ParticipacionChat.Transfer::getMensajesNoLeidos).reversed()) // mayor a menor
+            .collect(Collectors.toList());
+        
+        response.put("chats", transferibles);
+        
+        return response; // Este es el nombre de la vista para mostrar los chats
+    }
 
     // Este método es para ver un chat específico de un evento
-    @GetMapping("/chats/{chatId}")
+    @GetMapping("/{chatId}")
     @Transactional
     public String verChat(@PathVariable long chatId, Model model, HttpSession session) {
         // Verificar si el usuario está logueado
@@ -57,8 +85,8 @@ public class ChatController {
 
         // Obtener los mensajes asociados a ese chat
         List<Mensaje> mensajes = entityManager.createNamedQuery("Mensaje.findByChat", Mensaje.class)
-                                               .setParameter("chatId", chatId)
-                                               .getResultList();
+                .setParameter("chatId", chatId)
+                .getResultList();
 
         // Agregar los mensajes al modelo
         model.addAttribute("mensajes", mensajes);

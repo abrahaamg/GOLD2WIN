@@ -19,29 +19,28 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @NamedQueries({
-        @NamedQuery(name="User.byUsername",
-                query="SELECT u FROM User u "
-                        + "WHERE u.username = :username AND u.enabled = TRUE"),
-        @NamedQuery(name="User.hasUsername",
-                query="SELECT COUNT(u) "
-                        + "FROM User u "
-                        + "WHERE u.username = :username"),
-    @NamedQuery(name = "User.topics", query = "SELECT t.key "
-        + "FROM Topic t JOIN t.members u "
-        + "WHERE u.id = :id")
+        @NamedQuery(name = "User.byUsername", query = "SELECT u FROM User u "
+                + "WHERE u.username = :username AND u.enabled = TRUE"),
+        @NamedQuery(name = "User.hasUsername", query = "SELECT COUNT(u) "
+                + "FROM User u "
+                + "WHERE u.username = :username"),
+        @NamedQuery(name = "User.topics", query = "SELECT t.key "
+                + "FROM Topic t JOIN t.members u "
+                + "WHERE u.id = :id"),
+        @NamedQuery(name = "User.getChats", query = "SELECT e FROM User u JOIN u.chats e WHERE u.id = :id")
 })
-@Table(name="IWUser")
+@Table(name = "IWUser")
 public class User implements Transferable<User.Transfer> {
 
     public enum Role {
-        USER,			// normal users 
-        ADMIN,          // admin users
+        USER, // normal users
+        ADMIN, // admin users
     }
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "gen")
     @SequenceGenerator(name = "gen", sequenceName = "gen")
-	private long id;
+    private long id;
 
     @Column(nullable = false, unique = true)
     private String username;
@@ -59,27 +58,25 @@ public class User implements Transferable<User.Transfer> {
     private int dineroRetenido; // En centimos
 
     @ManyToMany
-    @JoinTable(
-        name = "pertenece_a_chat", 
-        joinColumns = @JoinColumn(name = "id_usuario"), 
-        inverseJoinColumns = @JoinColumn(name = "id_evento"))
+    @JoinTable(name = "pertenece_a_chat", joinColumns = @JoinColumn(name = "id_usuario"), inverseJoinColumns = @JoinColumn(name = "id_evento"))
     private List<Evento> chats;
 
-    @OneToMany(mappedBy = "apostador")
-    private List<Apuesta> apuestas;
+    @OneToMany(mappedBy = "usuario")
+    private List<ParticipacionChat> apuestas;
 
     @OneToMany(mappedBy = "remitente")
     private List<Mensaje> mensajes;
 
-	@OneToMany
-	@JoinColumn(name = "sender_id")
-	private List<Message> sent = new ArrayList<>();
-	@OneToMany
-	@JoinColumn(name = "recipient_id")	
-	private List<Message> received = new ArrayList<>();		
+    @OneToMany
+    @JoinColumn(name = "sender_id")
+    private List<Message> sent = new ArrayList<>();
+    @OneToMany
+    @JoinColumn(name = "recipient_id")
+    private List<Message> received = new ArrayList<>();
 
     /**
      * Checks whether this user has a given role.
+     * 
      * @param role to check
      * @return true iff this user has that role.
      */
@@ -91,20 +88,19 @@ public class User implements Transferable<User.Transfer> {
     @Getter
     @AllArgsConstructor
     public static class Transfer {
-		private long id;
+        private long id;
         private String username;
-		private int totalReceived;
-		private int totalSent;
+        private int totalReceived;
+        private int totalSent;
     }
 
-	@Override
+    @Override
     public Transfer toTransfer() {
-		return new Transfer(id,	username, received.size(), sent.size());
-	}
-	
-	@Override
-	public String toString() {
-		return toTransfer().toString();
-	}
-}
+        return new Transfer(id, username, received.size(), sent.size());
+    }
 
+    @Override
+    public String toString() {
+        return toTransfer().toString();
+    }
+}

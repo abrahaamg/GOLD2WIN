@@ -6,11 +6,9 @@ import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 
 import jakarta.persistence.*;
-import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Entity
 @Data
@@ -42,10 +40,11 @@ public class Evento implements Transferable<Evento.Transfer> {
     private Seccion seccion;
 
     @OneToMany(mappedBy = "evento")
+    @OrderBy("fechaEnvio ASC")
     private List<Mensaje> mensajes;
 
-    @ManyToMany(mappedBy = "chats")
-    private List<User> usuariosDelChat;
+    @OneToMany(mappedBy = "evento")
+    private List<ParticipacionChat> usuariosDelChat;
 
     @OneToMany(mappedBy = "evento")
     private List<FormulaApuesta> formulasApuestas;

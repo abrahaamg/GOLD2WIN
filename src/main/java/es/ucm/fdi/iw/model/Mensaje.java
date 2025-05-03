@@ -5,7 +5,7 @@ import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 
 import jakarta.persistence.*;
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.List;
 
 @Entity
@@ -24,7 +24,10 @@ public class Mensaje {
     private User remitente;
 
     private String contenido;
-    private LocalDateTime fechaEnvio;
+
+    @Column(name = "fechaEnvio")
+    private OffsetDateTime fechaEnvio;
+
     private boolean enabled;
 
     // El evento en el que se envía el mensaje (puede ser null si es en chat)

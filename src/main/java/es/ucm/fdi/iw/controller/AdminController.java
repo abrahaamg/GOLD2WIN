@@ -81,11 +81,6 @@ public class AdminController {
         }
     }
 
-    @GetMapping("/")
-    public String index(Model model) {
-        return "admin";
-    }
-
     @GetMapping("/usuarios")
     public String usuarios(Model model){
         String queryUsuarios = "SELECT u FROM User u";
