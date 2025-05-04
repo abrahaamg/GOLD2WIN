@@ -179,7 +179,7 @@ function seleccionarChat(chat,componente){
 //chat: {idEvento, mensajesNoLeidos, ultimoMensaje, fechaUltimoMensaje, nombreEvento}
 //Añado un chat a la lista de chats, ordenandolo por fecha de ultimo mensaje
 function anadirChat(chat){
-    let textoNumMensajes = chat.mensajesNoLeidos == 0 ? '' : chat.mensajesNoLeidos >= 100 ? '99+' : chat.mensajesNoLeidos; //si hay muchos mensajes se pone 99+
+    let textoNumMensajes = chat.mensajesNoLeidos >= 100 ? '99+' : chat.mensajesNoLeidos; //si hay muchos mensajes se pone 99+
     let chatDiv = document.createElement('div');
     chatDiv.setAttribute('data-fecha', chat.fechaUltimoMensaje); //guardamos la fecha en el HTML para ordenar previamente sin variables extras en el JS
     chatDiv.setAttribute('data-idEvento', chat.idEvento); //No se usa pero por si acaso hace falta en el futuro
