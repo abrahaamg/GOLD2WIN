@@ -95,7 +95,55 @@ function suscribirseWebSocketChat(chat){
                 go(appRoot + 'chats/notificar/' + chat.idEvento, 'POST').then(function (data) {}).catch(function (error) {console.log(error);});
             }
         }
+        else if(data.tipoEvento == 'eliminarMensaje'){
+            eliminarMensaje(data.idMensaje);
+        }
     });
+}
+
+function eliminarMensaje(idMensaje){
+    let mensajeDiv = document.querySelector(`[data-idMensaje="${idMensaje}"]`);
+    if(!mensajeDiv) return; //si no existe el mensaje no se hace nada
+    let padreDiv = mensajeDiv.parentNode; 
+
+    if(padreDiv.childElementCount == 1){
+        let abueloDiv = padreDiv.parentNode;
+        let etiquetaArriba = false;
+        let etiquetaAbajo = false;
+        let elementos = Array.from(abueloDiv.parentNode.children); //obtenemos los hijos del padre (los mensajes)
+        let posicion = elementos.indexOf(abueloDiv);
+
+         //si es el unico mensaje del dia se elimina el separador
+        if((elementos[0] !== abueloDiv && elementos[posicion-1].classList.contains("separadorMensajes")) && (elementos[elementos.length-1] === abueloDiv || elementos[posicion+1].classList.contains("separadorMensajes"))){
+            elementos[posicion-1].remove(); //eliminamos el separador de arriba
+            
+            //hay que cambiar el ultimo contenedor (el siguiente mensaje tendrá que introducir uno nuevo)
+            if(elementos.length-1 === posicion){
+                ultimaFecha = new Date(0); 
+                ultimoContenedorMensaje = null;
+                idUltimoEmisor = -1;
+            }
+        }
+        else if(elementos.length-1 === posicion){
+            ultimoContenedorMensaje = elementos[posicion-1];
+            idUltimoEmisor = ultimoContenedorMensaje.getAttribute('data-idUsuario');
+        }
+
+        abueloDiv.remove(); //eliminamos el mensaje
+    }
+    else{
+        let hijosDirectos = Array.from(padreDiv.children);
+        if(hijosDirectos.indexOf(mensajeDiv) === 0){
+            //si es el primer hijo del padre (el mensaje) se elimina el separador de arriba
+            hijosDirectos[1].setAttribute('atop', '');
+            if(mensajeDiv.hasAttribute('pleft'))
+                hijosDirectos[1].setAttribute('pleft', '');
+            if(mensajeDiv.hasAttribute('pright')) 
+                hijosDirectos[1].setAttribute('pright', '');
+        }
+
+        mensajeDiv.remove(); //Elimino el mensaje del chat
+    }
 }
 
 //Enviar mensaje
@@ -270,6 +318,7 @@ function anadirMensajeAbajo(mensaje){
     const propio = mensaje.idEmisor == userId; //si el mensaje es del usuario logueado
     var nuevoMensajeDiv = document.createElement('div');
     nuevoMensajeDiv.setAttribute('class', 'mensaje mt-1 pb-1 pt-2 text-wrap text-break');
+    nuevoMensajeDiv.setAttribute('data-idMensaje', mensaje.id); //guardo el id del mensaje para poder eliminarlo si es necesario
 
     if(propio) nuevoMensajeDiv.classList.add('ms-auto');
     else nuevoMensajeDiv.classList.add('me-auto');
@@ -357,6 +406,7 @@ function insertarGrupoMensajes(idUsuario,propio){
     const contenedorMensajes = document.getElementById("contenedorMensajes");
     var contenedorGlobal = document.createElement('div');
     contenedorGlobal.setAttribute('class', 'd-flex flex-row mt-2');
+    contenedorGlobal.setAttribute('data-idUsuario', idUsuario);
 
     contenedorGlobal.innerHTML = `<img class="flex-shrink-0" width="40" height="40" src="/user/${idUsuario}/pic" style="border-radius: 50%;">`;
 

@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 @Entity
 @Data
@@ -26,7 +27,7 @@ public class Reporte {
     private Mensaje mensajeReportado;
     
     private String motivo;
-    private LocalDateTime fechaEnvio;
+    private OffsetDateTime fechaEnvio;
     private boolean resuelto;
-    private LocalDateTime fechaResolucion;
+    private OffsetDateTime fechaResolucion;
 }
