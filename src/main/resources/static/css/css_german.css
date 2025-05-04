@@ -245,3 +245,10 @@
 .invalid-feedback {
     display: block !important;  
 }
+
+@media (min-width: 769px) {
+    #contenedorVariables.limitar > div {
+      max-height: 80px;
+      overflow-y: auto;
+    }
+}

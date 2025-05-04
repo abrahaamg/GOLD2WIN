@@ -25,13 +25,18 @@ class ExternalRunner {
     }
 
     @Karate.Test
-    Karate testDeterminarEvento() {  //esta prueba da error porque el go del boton de determinar da error
+    Karate testDeterminarEvento() {  
         return Karate.run("determinarEvento").relativeTo(getClass());
     }
 
     @Karate.Test
     Karate testProbarSeccion() {  
         return Karate.run("crear-editarSeccion").relativeTo(getClass());
+    }
+
+    @Karate.Test
+    Karate testProbarEvento() {  
+        return Karate.run("crearEvento").relativeTo(getClass());
     }
 
     @Karate.Test

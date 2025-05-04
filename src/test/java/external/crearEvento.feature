@@ -6,7 +6,14 @@ Feature: Testeo UI con Karate
     * click('#debugButtonA')
     # Se va a la parte de mis apuestas y se despliegan las apuestas relacionadas con Campeonato Mundial de Esgrima
     * click('#enlaceNavAdmin')
-    * delay(500)
+    * delay(300)
     * click('#menuAdminEventos')
-    * delay(1000)
+    * delay(300)
     * click('#botonCrearEvento')
+    * delay(300)
+    And input('#inputNombreEvento', 'EventoPrueba')
+    * delay(500)
+    * click('#textoFechaModal')
+    * eval document.querySelector('.arrowUp').style.display = 'block'
+    * waitFor('.arrowUp').click()  
+    * delay(5000)
