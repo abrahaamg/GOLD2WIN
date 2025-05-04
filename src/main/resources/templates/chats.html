@@ -16,10 +16,10 @@
     </form>
 
     <main class="d-flex flex-grow-1 overflow-hidden">
-        <div class="navChats d-md-flex flex-column pt-2 border-end border-bottom border-1 border-secondary" >
+        <div id="contenedorMenuListaChats" class="navChats d-none d-lg-flex flex-column pt-2 border-end border-bottom border-top border-left border-secondary paginaChatsActiva">
             <h4 id="tituloChats" class="text-start pe-3">Chats</h4>
 
-            <div class="barraBuscador mt-2 pe-3">
+            <div class="barraBuscador mt-2 pe-3 mw-100">
                 <svg viewBox="0 0 24 24" aria-hidden="true" class="iconoBuscador">
                 <g>
                     <path
@@ -42,11 +42,15 @@
         </div>
 
         <div class="d-none flex-column w-100" id="chatContainer">
-            <div class="d-flex flex-row justify-content-between align-items-center w-100 p-2 border-bottom border-1 border-secondary" style="min-height:85px;">
-                <div class="d-flex flex-row align-items-center ms-3">
-                    <img id="imagenCabeceraChat" width="45" height="45" src="/user/1/pic" style="border-radius: 50%;">
-                    <h5 id="tituloCabeceraChat"class="m-0 ms-3">Nombre</h5>
-                </div>
+            <div class="d-flex flex-row justify-content-between align-items-center ps-4 p-2 border-bottom border-1 border-secondary" style="min-height:85px; max-height: 100%;">
+
+                <svg id="botonRetroceder" role= "button" xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-arrow-left  me-3 d-block d-lg-none" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8"/>
+                </svg>
+
+                <img id="imagenCabeceraChat" width="45" height="45" src="/user/1/pic" style="border-radius: 50%;">
+                <h5 id="tituloCabeceraChat"class="m-0 ms-3 text-nowrap text-truncate" style="width: calc(100% - 255px);">Nombre</h5>
+
                 <div id="botonApostarCabecera" class="d-flex flex-row ms-auto me-3 btn boton-dinamico" role="button">
                     <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-clipboard2-data" viewBox="0 0 16 16">
                         <path d="M9.5 0a.5.5 0 0 1 .5.5.5.5 0 0 0 .5.5.5.5 0 0 1 .5.5V2a.5.5 0 0 1-.5.5h-5A.5.5 0 0 1 5 2v-.5a.5.5 0 0 1 .5-.5.5.5 0 0 0 .5-.5.5.5 0 0 1 .5-.5z"/>
