@@ -60,8 +60,9 @@ function suscribirseWebSocketChat(chat){
             if(idEventoSeleccionado != chat.idEvento){
                 //El chat no esta abierto +1 mensaje no leido y se reintroduce ordenado
                 let chatDiv = document.querySelector(`[data-idEvento="${chat.idEvento}"]`);
+                let mensajesNoLeidos =  parseInt(chatDiv.querySelector('.badge').textContent);
                 if(chatDiv){ //por si se ha eliminado el chat
-                    anadirChat({idEvento:chat.idEvento, mensajesNoLeidos: chat.mensajesNoLeidos+1, ultimoMensaje:data.mensaje.contenido, fechaUltimoMensaje:data.mensaje.fecha, nombreEvento:chat.nombreEvento});
+                    anadirChat({idEvento:chat.idEvento, mensajesNoLeidos: mensajesNoLeidos+1, ultimoMensaje:data.mensaje.contenido, fechaUltimoMensaje:data.mensaje.fecha, nombreEvento:chat.nombreEvento});
                     chatDiv.remove();
                 }
                 
