@@ -374,7 +374,7 @@ public class RootController {
         int cantDecimal = json.get("decimal").asInt(); 
         int total = (cantEntera * 100) + cantDecimal; 
 
-        if(total > user.getDineroDisponible()+1) {
+        if(total > user.getDineroDisponible()) {
             response.put("mensaje", "No tienes suficiente dinero disponible para retirar: " + total);
             return ResponseEntity.badRequest().body(response);
         }
@@ -382,10 +382,7 @@ public class RootController {
             response.put("mensaje", "La cantidad a retirar debe estar entre 5 y 1000 euros: " + total);
             return ResponseEntity.badRequest().body(response);
         }
-        if(total == user.getDineroDisponible()+1){
-            user.setDineroDisponible(0); 
-        }
-        else user.setDineroDisponible(user.getDineroDisponible() - total); 
+        user.setDineroDisponible(user.getDineroDisponible() - total); 
         entityManager.merge(user);
 
         response.put("mensaje", "Dinero retirado correctamente: " + total);
