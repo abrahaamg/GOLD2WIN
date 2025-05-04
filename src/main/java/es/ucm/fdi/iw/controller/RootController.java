@@ -340,6 +340,12 @@ public class RootController {
         return "tarjeta";
     }
 
+    @GetMapping("/perfil")
+    public String perfil(Model model) {
+        return "user";
+    }
+    
+
     @Transactional
     @ResponseBody
     @PostMapping("/cartera/ingresarDinero")
