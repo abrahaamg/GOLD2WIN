@@ -590,6 +590,14 @@ a.botonOvalado.nav-link:hover{
     background: rgba(255, 255, 255, 0.1);
 }
 
+.resaltaHoverSelected{
+    background: rgba(0, 0, 0, 0.1) !important; 
+}
+
+[data-bs-theme="dark"] .resaltaHoverSelected{
+    background: rgba(255, 255, 255, 0.1) !important;
+}
+
 .botonVerMas{
     max-width: 250px;
     border-radius: 20px;
@@ -633,4 +641,29 @@ a.botonOvalado.nav-link:hover{
     color: var(--bs-body-bg);
     background-color: #8A2BE2;
     font-weight: bold;
+}
+
+/*ESTILO PARA EL NAV DE CHATS*/
+.navChats{
+    height: 100%;
+    width: 400px;
+    padding: 0px 0px 0 25px;
+    border-right: 1px solid var(--bs-tertiary-color);
+}
+
+/*Estilo para los mensajes*/
+[data-bs-theme="dark"] .mensaje {
+    --bbColor: #313338;
+}
+
+.mensaje{
+    --bbColor: #e8e4fc;
+}
+
+.separadorMensajes{
+    background-color: #b8b8b8;
+}
+
+[data-bs-theme="dark"] .separadorMensajes{
+    background-color: #1b1b1b;
 }

@@ -1,6 +1,7 @@
 package es.ucm.fdi.iw.model;
 
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 
@@ -12,7 +13,7 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Mensaje {
+public class Mensaje implements Transferable<Mensaje.Transfer> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "gen")
@@ -35,11 +36,21 @@ public class Mensaje {
     @JoinColumn(name = "id_evento")
     private Evento evento;
 
-    // El chat en el que se envía el mensaje (puede ser null si es en evento)
-    @ManyToOne
-    @JoinColumn(name = "chat_id")
-    private Chat chat;
-
     @OneToMany(mappedBy = "mensajeReportado")
     private List<Reporte> reportes;
+
+    @Getter
+    @AllArgsConstructor
+    public static class Transfer {
+        private long id;
+        private long idEmisor;
+        private String emisor;
+        private String contenido;
+        private String fecha; //tiene que ser String porque jackson no sabe serializar OffsetDateTime
+    }
+
+    @Override
+    public Transfer toTransfer() {
+        return new Transfer(id, remitente.getId(), remitente.getUsername(), contenido, fechaEnvio.toString());
+    }
 }

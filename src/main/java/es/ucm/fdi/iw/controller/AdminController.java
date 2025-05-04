@@ -453,7 +453,6 @@ public class AdminController {
         }
 
         // calculo si las diferentes formulas se han cumplido y reparto el dinero
-
         Map<String, Variable> variablesEvento = new HashMap<>();
         for (Variable variable : evento.getVariables()) {
             variablesEvento.put(variable.getNombre(), variable);

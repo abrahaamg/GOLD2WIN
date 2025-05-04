@@ -197,7 +197,27 @@ INSERT INTO VARIABLE_SECCION (ID, NOMBRE, NUMERICO, ID_SECCION) VALUES
 (34, 'Golpes-lanzados', TRUE, 8);
 
 
+INSERT INTO PARTICIPACION_CHAT (EVENTO_ID, ULTIMA_VISITA, USUARIO_ID) VALUES
+(4, '1000-01-01 00:00:00', 11),
+(8, '1000-01-01 00:00:00', 11),
+(11, '1000-01-01 00:00:00', 11),
+(4, '1000-01-01 00:00:00', 12),
+(8, '1000-01-01 00:00:00', 12),
+(11, '1000-01-01 00:00:00', 12);
 
+INSERT INTO MENSAJE (ENABLED, FECHA_ENVIO, ID, ID_EVENTO, REMITENTE, CONTENIDO) VALUES
+(1, '2025-05-03 08:15:00', 1, 4, 11, 'Mensaje enviado por el usuario 11 en el evento 4'),
+(1, '2025-05-03 09:30:00', 2, 8, 11, 'Mensaje enviado por el usuario 11 en el evento 8'),
+(1, '2025-05-03 10:45:00', 3, 11, 11, 'Mensaje enviado por el usuario 11 en el evento 11'),
+(1, '2025-05-03 11:00:00', 4, 4, 12, 'Mensaje enviado por el usuario 12 en el evento 4'),
+(1, '2025-05-03 12:15:00', 5, 8, 12, 'Mensaje enviado por el usuario 12 en el evento 8'),
+(1, '2025-05-03 13:30:00', 6, 11, 12, 'Mensaje enviado por el usuario 12 en el evento 11'),
+(1, '2025-03-02 14:00:00', 7, 4, 11, 'Mensaje enviado por el usuario 11 en el evento 4'),
+(1, '2025-03-02 15:15:00', 8, 8, 11, 'Mensaje enviado por el usuario 11 en el evento 8'),
+(1, '2025-03-02 16:30:00', 9, 11, 11, 'Mensaje enviado por el usuario 11 en el evento 11'),
+(1, '2025-03-02 17:00:00', 10, 4, 12, 'Mensaje enviado por el usuario 12 en el evento 4'),
+(1, '2025-03-02 18:15:00', 11, 8, 12, 'Mensaje enviado por el usuario 12 en el evento 8'),
+(1, '2025-03-02 19:30:00', 12, 11, 12, 'Mensaje enviado por el usuario 12 en el evento 11');
 
 -- start id numbering from a value that is larger than any assigned above
 ALTER SEQUENCE "PUBLIC"."GEN" RESTART WITH 1024;
