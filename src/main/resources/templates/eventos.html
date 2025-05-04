@@ -74,7 +74,7 @@
                     <td th:text="${evento.seccion.nombre}"></td>
                     <td>
                         <div class="dropdown">
-                            <button class="btn btn-sm" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                            <button class="btn btn-sm" type="button" th:id="'dropdownMenuButton-' + ${evento.id}" data-bs-toggle="dropdown" aria-expanded="false">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-three-dots-vertical" viewBox="0 0 16 16">
                                     <path d="M9.5 13a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0"/>
                                   </svg>
@@ -82,7 +82,7 @@
                             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton">
                                 <li><button class="dropdown-item boton-editar" th:onclick="'modalModoEdicion(' + ${evento.id} + ')'" type="button" data-bs-toggle="modal" data-bs-target="#modalCrearEvento">Editar</button></li>
                                 <li><button class="dropdown-item boton-editar" th:onclick="'modalModoVerMas(' + ${evento.id} + ')'" type="button" data-bs-toggle="modal" data-bs-target="#modalCrearEvento">Ver detalles</button></li>
-                                <li><a class="dropdown-item" href="#" th:classappend="${!evento.isPasado()} ? ' disabled' : ''" th:href="@{/admin/eventos/determinar/{id}(id=${evento.id})}">Determinar</a></li>
+                                <li><a class="dropdown-item" th:id="'botonDropdownDeterminarEvento-' + ${evento.id}" href="#" th:classappend="${!evento.isPasado()} ? ' disabled' : ''" th:href="@{/admin/eventos/determinar/{id}(id=${evento.id})}">Determinar</a></li>
                                 <li><button class="dropdown-item text-danger" type="button" data-bs-toggle="modal" th:attr="data-bs-target='#cancelarEventoModal-' + ${evento.id}">Cancelar</button></li>
                             </ul>
                         </div>

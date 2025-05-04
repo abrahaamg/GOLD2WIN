@@ -11,7 +11,7 @@
 
     <div class="d-flex justify-content-center align-items-center" style="min-height: 100vh;">
         <div class="saldo-box">
-            <div class="saldo-header">SALDO:      0€</div>
+            <div class="saldo-header" th:text = "'SALDO: '+ ${parteEntera} + ',' + ${parteDecimal}+ '€'" ></div>
             <div class="divider"></div>
 
             <div class="dropdown">

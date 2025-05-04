@@ -7,12 +7,24 @@
 
 <body class="d-flex flex-column h-100">
     <nav th:fragment="navSeccionesAdminComprimido" class="navSeccionesAdminComprimido d-flex d-md-none pt-2" >
-        <th:block th:each="seccion,i: ${secciones}">
+        <div id="btnIzSecciones" role="button"  class="h-100 d-flex align-items-center resaltaHover" style="min-width:30; max-width:30">
+            <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-chevron-compact-left" viewBox="0 0 16 16">
+                <path fill-rule="evenodd" d="M9.224 1.553a.5.5 0 0 1 .223.67L6.56 8l2.888 5.776a.5.5 0 1 1-.894.448l-3-6a.5.5 0 0 1 0-.448l3-6a.5.5 0 0 1 .67-.223"/>
+            </svg>
+        </div>
+        <div id="menuSeccionesComprimido" class="navSeccionescomprimido d-flex flex-grow-1 scroll-bar-oculta" style="scroll-behavior: smooth;">
+            <th:block th:each="seccion,i: ${secciones}">
             <a th:if = "'enlaceSeccion-' + ${seccion.id}" th:href="@{/admin/secciones/{id}/editar(id=${seccion.id})}" class="nav-link d-flex flex-column m-0 justify-content-center align-items-center enlaceSeccionAdmin" style="padding: 0px 12px;">
                 <img width="25" height="25" th:src="@{/seccion/{id}/pic(id=${seccion.id})}">
                 <span class="text-nowrap" style="font-size: 11px;" th:text="${seccion.nombre}">texto</span>
             </a>
         </th:block>
+        </div>
+        <div role="button" id="btnDrSecciones" class="h-100 d-flex align-items-center resaltaHover" style="min-width:30; max-width:30">
+            <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-chevron-right " viewBox="0 0 16 16">
+                <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708"/>
+            </svg>
+        </div>
     </nav>
 </body>
 
