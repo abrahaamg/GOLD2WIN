@@ -652,3 +652,11 @@ a.botonOvalado.nav-link:hover{
 .mensaje{
     --bbColor: #e8e4fc;
 }
+
+.separadorMensajes{
+    background-color: #b8b8b8;
+}
+
+[data-bs-theme="dark"] .separadorMensajes{
+    background-color: #1b1b1b;
+}

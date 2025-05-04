@@ -36,16 +36,18 @@ public class ParticipacionChat implements Transferable<ParticipacionChat.Transfe
     @Getter
     @AllArgsConstructor
     public static class Transfer {
-        private Evento.Transfer evento;
-        private OffsetDateTime ultimaVisita;
+        private long idEvento;
+        private String nombreEvento;
         private OffsetDateTime fechaUltimoMensaje;
+        private String ultimoMensaje;
         private int mensajesNoLeidos;
     }
 
     @Override
     public Transfer toTransfer() {
         int mensajesNoLeidos = 0;
-        OffsetDateTime ultimoMensaje = OffsetDateTime.MIN;
+        OffsetDateTime fechaUltimo = evento.getFechaCreacion();
+        String ultimoMensaje = "Creacion chat";
 
         int i = 0; 
         while(evento.getMensajes().size() > i && evento.getMensajes().get(i).getFechaEnvio().isBefore(ultimaVisita)) {
@@ -54,9 +56,10 @@ public class ParticipacionChat implements Transferable<ParticipacionChat.Transfe
         }
 
         if (evento.getMensajes().size() != 0){
-            ultimoMensaje = evento.getMensajes().get(0).getFechaEnvio();
+            Mensaje mensaje = evento.getMensajes().get(0);
+            fechaUltimo = mensaje.getFechaEnvio();
         }
 
-        return new Transfer(getEvento().toTransfer(), ultimaVisita,ultimoMensaje, mensajesNoLeidos);
+        return new Transfer(evento.getId(), evento.getNombre(), fechaUltimo, ultimoMensaje, mensajesNoLeidos);
     }
 }
