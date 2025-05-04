@@ -590,6 +590,14 @@ a.botonOvalado.nav-link:hover{
     background: rgba(255, 255, 255, 0.1);
 }
 
+.resaltaHoverSelected{
+    background: rgba(0, 0, 0, 0.1) !important; 
+}
+
+[data-bs-theme="dark"] .resaltaHoverSelected{
+    background: rgba(255, 255, 255, 0.1) !important;
+}
+
 .botonVerMas{
     max-width: 250px;
     border-radius: 20px;
@@ -637,10 +645,9 @@ a.botonOvalado.nav-link:hover{
 
 /*ESTILO PARA EL NAV DE CHATS*/
 .navChats{
-    overflow-y: auto;
     height: 100%;
     width: 400px;
-    padding: 0px 15px 0 25px;
+    padding: 0px 0px 0 25px;
     border-right: 1px solid var(--bs-tertiary-color);
 }
 
