@@ -648,7 +648,6 @@ a.botonOvalado.nav-link:hover{
     height: 100%;
     width: 400px;
     padding: 0px 0px 0 25px;
-    border-right: 1px solid var(--bs-tertiary-color);
 }
 
 /*Estilo para los mensajes*/
@@ -666,4 +665,12 @@ a.botonOvalado.nav-link:hover{
 
 [data-bs-theme="dark"] .separadorMensajes{
     background-color: #1b1b1b;
+}
+
+@media (max-width: 991.98px) {
+    .paginaChatsActiva{
+        display: flex !important;
+        width: 100%;
+        border-right: 0px !important;
+    }
 }

@@ -17,6 +17,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const buscador = document.getElementById('queryEventos');
     const inputMensaje = document.getElementById('campoMensaje');
     const botonEnviar = document.getElementById('botonEnviar');
+    const botonRetroceder = document.getElementById('botonRetroceder');
 
     if (botonApostarCabecera) {
         botonApostarCabecera.addEventListener('click', function () {
@@ -44,6 +45,13 @@ document.addEventListener('DOMContentLoaded', function () {
     if(botonEnviar){
         botonEnviar.addEventListener('click', function () {
             enviarMensaje();
+        });
+    }
+
+    if(botonRetroceder){
+        botonRetroceder.addEventListener('click', function () {
+            document.getElementById("chatContainer").classList.remove('paginaChatsActiva'); //foco en el input de mensaje
+            document.getElementById("contenedorMenuListaChats").classList.add('paginaChatsActiva'); //foco en el input de mensaje
         });
     }
 
@@ -156,8 +164,7 @@ function seleccionarChat(chat,componente){
     const tituloCabeceraChat = document.getElementById("tituloCabeceraChat");
 
     //Cambio la barra de cabecera de chat
-    chatContainer.classList.remove("d-none");
-    chatContainer.classList.add("d-flex", "flex-column");
+    chatContainer.classList.add("d-lg-flex", "flex-column");
 
     imagenCabeceraChat.setAttribute("src", appRoot + "seccion/" + chat.idEvento + "/pic");
     tituloCabeceraChat.textContent = chat.nombreEvento;
@@ -187,8 +194,8 @@ function anadirChat(chat){
     chatDiv.setAttribute('role', 'button');
     chatDiv.setAttribute('class', 'd-flex w-100 mt-2 p-2 resaltaHover');
     chatDiv.setAttribute('style', 'border-radius: 15px;');
-    chatDiv.innerHTML= `<img width="55" height="55" src="${appRoot}seccion/${chat.idEvento}/pic" style="border-radius: 50%;">
-                        <div class="d-flex flex-column h-100 justify-content-center ms-2 flex-grow-1" style="max-width: 287px;">
+    chatDiv.innerHTML= `<img class="flex-shrink-0" width="55" height="55" src="${appRoot}seccion/${chat.idEvento}/pic" style="border-radius: 50%;">
+                        <div class="d-flex flex-column h-100 justify-content-center ms-2 flex-grow-1" style="width: calc(100% - 71px);">
                             <div class="d-flex flex-row justify-content-between">
                                 <h5 class="m-0 text-nowrap text-truncate">${chat.nombreEvento}</h5>
                                 <span class="ms-auto mb-auto px-1" style="font-size: 14px;"> ${formatearFechaMensaje(chat.fechaUltimoMensaje)}</span>
@@ -210,6 +217,8 @@ function anadirChat(chat){
 
         seleccionarChat(chat, chatDiv);
         cargarMensajes(chat.idEvento);
+        document.getElementById("chatContainer").classList.add('paginaChatsActiva'); //foco en el input de mensaje
+        document.getElementById("contenedorMenuListaChats").classList.remove('paginaChatsActiva'); //foco en el input de mensaje
     });
 
     //si ya hay una busqueda hecha cuando se añade se verifica si tiene que ser visible o no
@@ -349,7 +358,7 @@ function insertarGrupoMensajes(idUsuario,propio){
     var contenedorGlobal = document.createElement('div');
     contenedorGlobal.setAttribute('class', 'd-flex flex-row mt-2');
 
-    contenedorGlobal.innerHTML = `<img width="40" height="40" src="/user/${idUsuario}/pic" style="border-radius: 50%;">`;
+    contenedorGlobal.innerHTML = `<img class="flex-shrink-0" width="40" height="40" src="/user/${idUsuario}/pic" style="border-radius: 50%;">`;
 
     ultimoContenedorMensaje = document.createElement('div');
     if(propio) ultimoContenedorMensaje.setAttribute('class', 'd-flex flex-column mx-2 ms-auto');
