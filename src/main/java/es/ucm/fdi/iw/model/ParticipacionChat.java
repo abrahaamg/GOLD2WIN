@@ -57,6 +57,7 @@ public class ParticipacionChat implements Transferable<ParticipacionChat.Transfe
         if (evento.getMensajes().size() != 0){
             Mensaje mensaje = evento.getMensajes().get(evento.getMensajes().size() - 1);
             fechaUltimo = mensaje.getFechaEnvio();
+            ultimoMensaje = mensaje.getContenido();
         }
 
         return new Transfer(evento.getId(), evento.getNombre(), fechaUltimo, ultimoMensaje, mensajesNoLeidos);
