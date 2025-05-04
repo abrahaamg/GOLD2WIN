@@ -21,7 +21,7 @@ INSERT INTO EVENTO (ID, CANCELADO, DETERMINADO, FECHA_CIERRE, FECHA_CREACION, NO
 (2, false, false, '2025-06-22 20:30:00', '2025-03-02 14:15:00', 'NBA Playoffs - Lakers vs Celtics', 2),
 (3, false, false, '2025-06-10 16:00:00', '2025-03-03 10:30:00', 'Serie Mundial de Beisbol', 3),
 (4, false, false, '2025-05-20 19:00:00', '2025-03-05 09:45:00', 'Copa Europa de Balonmano', 4),
-(5, false, false, '2025-01-02 15:00:00', '2025-03-06 08:00:00', 'Campeonato Mundial de Esgrima', 5),
+(5, false, false, '2025-06-03 15:00:00', '2025-01-02 08:00:00', 'Campeonato Mundial de Esgrima', 5),
 (6, false, false, '2025-06-22 21:00:00', '2025-03-07 13:20:00', 'Roland Garros - Final Masculina', 6),
 (7, false, false, '2025-06-23 11:00:00', '2025-03-08 07:30:00', 'Torneo Internacional de Ping Pong', 7),
 (8, false, false, '2025-05-20 13:00:00', '2025-05-10 15:15:00', 'Exhibición de mayo', 8),
@@ -29,7 +29,7 @@ INSERT INTO EVENTO (ID, CANCELADO, DETERMINADO, FECHA_CIERRE, FECHA_CREACION, NO
 (10, false, false, '2025-05-20 17:30:00', '2025-03-11 15:45:00', 'Worlds - League of Legends', 10),
 (11, false, false, '2025-06-08 19:00:00', '2025-03-12 10:50:00', 'Major de Counter Strike', 11),
 (12, false, false, '2025-06-08 20:00:00', '2025-03-13 14:25:00', 'Final de Valorant Champions', 12),
-(13, false, false, '2025-03-11 10:30:00', '2024-06-08 20:00:00', 'LEC: MDK vs FNC', 12);
+(13, false, false, '2025-03-11 10:30:00', '2024-12-08 20:00:00', 'LEC: MDK vs FNC', 12);
 
 -- inserta etiquetas
 INSERT INTO EVENTO_ETIQUETAS (EVENTO_ID, ETIQUETAS) VALUES
@@ -75,13 +75,13 @@ VALUES
 (5, 100, 30, 'ToquesDobles > 3', 'Total toquesDobles', 'INDETERMINADO', 5, 5, '2025-03-22 14:53:00'),
 (6, 0, 0, 'Sets Nadal > Sets Djokovic', 'Gana Nadal', 'INDETERMINADO', 6, 6, '2025-03-22 14:53:00'),
 (7, 0, 0, 'Puntos Wang > Puntos Lee', 'Gana Wang', 'INDETERMINADO', 7, 7, '2025-03-22 14:53:00'),
-(8, 0, 0, 'Número de asaltos > 3', 'Total asaltos', 'INDETERMINADO', 7, 7, '2025-03-13 22:31:00'),
+(8, 0, 0, 'Número de asaltos > 3', 'Total asaltos', 'INDETERMINADO', 8, 8, '2025-03-13 22:31:00'),
 (9, 0, 0, 'Golpes Woods > Golpes McIlroy', 'Gana Woods', 'INDETERMINADO', 9, 9, '2025-03-22 14:53:00'),
 (10, 0, 0, 'Torres destruidas G2 > Torres destruidas T1', 'Gana G2', 'INDETERMINADO', 10, 10, '2025-03-22 14:53:00'),
 (11, 0, 0, 'Rounds ganados NaVi > Rounds ganados Vitality', 'Victoria NaVi', 'INDETERMINADO', 11, 11, '2025-03-22 14:53:00'),
 (12, 50, 750, 'Mapas ganados Fnatic > Mapas ganados Sentinels', 'Gana Fnatic', 'PERDIDO', 12, 12, '2025-03-22 14:53:00'),
 (13, 0, 0, 'Hoyos Woods > Hoyos McIlroy', 'Gana Woods', 'INDETERMINADO', 9, 9, '2025-03-22 14:53:00'),
-(14, 0, 0, 'Promedio birdies Woods < PSromedio birdies McIlroy', 'Gana McIlroy', 'INDETERMINADO', 9, 9, '2025-03-22 14:53:00');
+(14, 0, 0, 'Promedio birdies Woods < Promedio birdies McIlroy', 'Gana McIlroy', 'INDETERMINADO', 9, 9, '2025-03-22 14:53:00');
 
 
 -- INSERT de 25 fórmulas de apuesta adicionales para el evento con ID 1
@@ -146,7 +146,7 @@ INSERT INTO VARIABLE (ID, NOMBRE, NUMERICO, RESOLUCION, ID_EVENTO) VALUES
 (14, 'Promedio birdies', TRUE, NULL, 9),
 (10, 'Torres destruidas', TRUE, NULL, 10),
 (11, 'Rounds ganados', TRUE, NULL, 11),
-(12, 'mapas ganados', TRUE, NULL, 12);
+(12, 'Mapas ganados', TRUE, NULL, 12);
 
 INSERT INTO VARIABLE (ID, NOMBRE, NUMERICO, RESOLUCION, ID_EVENTO) VALUES
 (15, 'NumToquesEspaña', TRUE, NULL, 5),
@@ -196,35 +196,42 @@ INSERT INTO VARIABLE_SECCION (ID, NOMBRE, NUMERICO, ID_SECCION) VALUES
 (33, 'Ganador-JugB', TRUE, 8),
 (34, 'Golpes-lanzados', TRUE, 8);
 
-INSERT INTO MENSAJE (ENABLED, FECHA_ENVIO, ID, ID_EVENTO, REMITENTE, CONTENIDO)
-VALUES 
-(TRUE, '2025-05-01', 100, 12, 2, 'Este mensaje contiene lenguaje ofensivo.'),
-(TRUE, '2025-05-02', 101, 1, 3, 'Oferta especial, gana dinero fácil ahora mismo!!!'),
-(TRUE, '2025-04-28', 102, 2, 4, 'Truco para manipular las votaciones del sistema.'),
-(TRUE, '2025-04-20', 103, 3, 5, 'Palabras groseras y sin respeto aquí.'),
-(TRUE, '2025-05-03', 104, 4, 2, 'Odio hacia cierto grupo mencionado.'),
-(TRUE, '2025-04-15', 105, 5, 6, 'Compra ahora, publicidad especial solo para ti!'),
-(TRUE, '2025-05-04', 106, 6, 3, 'Si no haces caso te voy a encontrar.'),
-(TRUE, '2025-04-10', 107, 7, 7, 'Yo soy el administrador, dame tu contraseña.'),
-(TRUE, '2025-05-04', 108, 8, 4, 'Noticias falsas sobre evento importante.'),
-(TRUE, '2025-05-04', 109, 9, 5, 'Imagen explícita sin previo aviso.'),
-(TRUE, '2025-04-01', 110, 10, 8, 'Incumpliendo las reglas comunitarias claramente.'),
-(TRUE, '2025-03-28', 111, 11, 9, 'Abuso verbal directo a otro usuario.');
+INSERT INTO PARTICIPACION_CHAT (EVENTO_ID, ULTIMA_VISITA, USUARIO_ID) VALUES
+(4, '1000-01-01 00:00:00', 11),
+(8, '1000-01-01 00:00:00', 11),
+(11, '1000-01-01 00:00:00', 11),
+(4, '1000-01-01 00:00:00', 12),
+(8, '1000-01-01 00:00:00', 12),
+(11, '1000-01-01 00:00:00', 12);
+
+INSERT INTO MENSAJE (ENABLED, FECHA_ENVIO, ID, ID_EVENTO, REMITENTE, CONTENIDO) VALUES
+(1, '2025-05-03 08:15:00', 1, 4, 11, 'Mensaje enviado por el usuario 11 en el evento 4'),
+(1, '2025-05-03 09:30:00', 2, 8, 11, 'Mensaje enviado por el usuario 11 en el evento 8'),
+(1, '2025-05-03 10:45:00', 3, 11, 11, 'Mensaje enviado por el usuario 11 en el evento 11'),
+(1, '2025-05-03 11:00:00', 4, 4, 12, 'Mensaje enviado por el usuario 12 en el evento 4'),
+(1, '2025-05-03 12:15:00', 5, 8, 12, 'Mensaje enviado por el usuario 12 en el evento 8'),
+(1, '2025-05-03 13:30:00', 6, 11, 12, 'Mensaje enviado por el usuario 12 en el evento 11'),
+(1, '2025-03-02 14:00:00', 7, 4, 11, 'Mensaje enviado por el usuario 11 en el evento 4'),
+(1, '2025-03-02 15:15:00', 8, 8, 11, 'Mensaje enviado por el usuario 11 en el evento 8'),
+(1, '2025-03-02 16:30:00', 9, 11, 11, 'Mensaje enviado por el usuario 11 en el evento 11'),
+(1, '2025-03-02 17:00:00', 10, 4, 12, 'Mensaje enviado por el usuario 12 en el evento 4'),
+(1, '2025-03-02 18:15:00', 11, 8, 12, 'Mensaje enviado por el usuario 12 en el evento 8'),
+(1, '2025-03-02 19:30:00', 12, 11, 12, 'Mensaje enviado por el usuario 12 en el evento 11');
 
 INSERT INTO REPORTE (RESUELTO, FECHA_ENVIO, FECHA_RESOLUCION, ID, ID_MENSAJE, ID_REPORTADOR, MOTIVO)
 VALUES 
-(FALSE, '2025-05-01', NULL, 1, 100, 2, 'Contenido ofensivo en el mensaje'),
-(FALSE, '2025-05-02', NULL, 2, 101, 3, 'Spam repetitivo detectado'),
-(TRUE, '2025-04-28', '2025-05-03', 3, 102, 4, 'Manipulación de resultados en mensaje'),
-(TRUE, '2025-04-20', '2025-04-22', 4, 103, 5, 'Lenguaje inapropiado'),
-(FALSE, '2025-05-03', NULL, 5, 104, 2, 'Incitación al odio'),
-(TRUE, '2025-04-15', '2025-04-18', 6, 105, 6, 'Publicidad no solicitada'),
-(FALSE, '2025-05-04', NULL, 7, 106, 3, 'Amenazas en el mensaje'),
-(TRUE, '2025-04-10', '2025-04-12', 8, 107, 7, 'Suplantación de identidad'),
-(FALSE, '2025-05-04', NULL, 9, 108, 4, 'Contenido falso'),
-(FALSE, '2025-05-04', NULL, 10, 109, 5, 'Contenido explícito sin aviso'),
-(TRUE, '2025-04-01', '2025-04-05', 11, 110, 8, 'Violación de normas comunitarias'),
-(TRUE, '2025-03-28', '2025-03-30', 12, 111, 9, 'Abuso verbal en conversación');
+(FALSE, '2025-05-01', NULL, 1, 1, 2, 'Contenido ofensivo en el mensaje'),
+(FALSE, '2025-05-02', NULL, 2, 2, 3, 'Spam repetitivo detectado'),
+(TRUE, '2025-04-28', '2025-05-03', 3, 3, 4, 'Manipulación de resultados en mensaje'),
+(TRUE, '2025-04-20', '2025-04-22', 4, 4, 5, 'Lenguaje inapropiado'),
+(FALSE, '2025-05-03', NULL, 5, 5, 2, 'Incitación al odio'),
+(TRUE, '2025-04-15', '2025-04-18', 6, 6, 6, 'Publicidad no solicitada'),
+(FALSE, '2025-05-04', NULL, 7, 7, 3, 'Amenazas en el mensaje'),
+(TRUE, '2025-04-10', '2025-04-12', 8, 8, 7, 'Suplantación de identidad'),
+(FALSE, '2025-05-04', NULL, 9, 9, 4, 'Contenido falso'),
+(FALSE, '2025-05-04', NULL, 10, 10, 5, 'Contenido explícito sin aviso'),
+(TRUE, '2025-04-01', '2025-04-05', 11, 11, 8, 'Violación de normas comunitarias'),
+(TRUE, '2025-03-28', '2025-03-30', 12, 12, 9, 'Abuso verbal en conversación');
 
 -- start id numbering from a value that is larger than any assigned above
 ALTER SEQUENCE "PUBLIC"."GEN" RESTART WITH 1024;

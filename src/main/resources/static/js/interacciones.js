@@ -148,7 +148,7 @@ if(botonDrsecciones != null){
 var inputImagenSeccionesForm = document.getElementById("inputImagenSecciones");
 if(inputImagenSeccionesForm != null){
     document.getElementById('inputImagenSecciones').addEventListener('change', function(event) {
-        var file = event.target.files[0]; // Obtener el archivo seleccionado
+        var file = event.target.files[0]; 
         if (file) {
             var reader = new FileReader(); 
             reader.onload = function(e) {
@@ -187,7 +187,7 @@ if(menuOpcionesSeccionForm != null){
 }
 
 
-async function agregarDiv(event, seccionId) {
+function agregarDiv(event, seccionId) {
     event.preventDefault();
 
     let form = document.getElementById("variableSeccionForm");
@@ -203,21 +203,26 @@ async function agregarDiv(event, seccionId) {
 
     console.log(seccionId);
     var isNombreVal = true;
-    if(seccionId != null) isNombreVal = await verificarNombreVariableSeccion(seccionId);
     if(isNombreVal) isNombreVal = evitarNombresVarRepetidos(); //verifica si el nombre ya existe en la seccion actual 
     if(isNombreVal && opcionSeleccionada != "Seleccione una" && nombre != "") {
         const nuevoDiv = document.createElement("div");
         nuevoDiv.className = "col-3 variableSeccion"; // Se organizan en 3 columnas por fila
-        nuevoDiv.setAttribute("data-bd", "false");
         nuevoDiv.innerHTML = `
-            <div id = "divEtiquetasVariables">
-                <span>Nombre:</span>
-                <span class = "nombreVariableSpan"> ${nombre}</span>
+            <div class = "d-flex flex-column">
+                <div id = "divEtiquetasVariables">
+                    <span>Nombre:</span>
+                    <span class = "nombreVariableSpan"> ${nombre}</span>
+                </div>
+                <div id = "divEtiquetasVariables">
+                    <span>Tipo:</span>
+                    <span class = "tipoVariableSpan">${opcionSeleccionada}</span>
+                </div>
             </div>
-            <div id = "divEtiquetasVariables">
-                <span>Tipo de variable:</span>
-                <span class = "tipoVariableSpan">${opcionSeleccionada}</span>
-            </div>
+            <button class="position-absolute end-0 top-0 botonBasuraVariable">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash3" viewBox="0 0 16 16">
+                    <path d="M6.5 1h3a.5.5 0 0 1 .5.5v1H6v-1a.5.5 0 0 1 .5-.5M11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3A1.5 1.5 0 0 0 5 1.5v1H1.5a.5.5 0 0 0 0 1h.538l.853 10.66A2 2 0 0 0 4.885 16h6.23a2 2 0 0 0 1.994-1.84l.853-10.66h.538a.5.5 0 0 0 0-1zm1.958 1-.846 10.58a1 1 0 0 1-.997.92h-6.23a1 1 0 0 1-.997-.92L3.042 3.5zm-7.487 1a.5.5 0 0 1 .528.47l.5 8.5a.5.5 0 0 1-.998.06L5 5.03a.5.5 0 0 1 .47-.53Zm5.058 0a.5.5 0 0 1 .47.53l-.5 8.5a.5.5 0 1 1-.998-.06l.5-8.5a.5.5 0 0 1 .528-.47M8 4.5a.5.5 0 0 1 .5.5v8.5a.5.5 0 0 1-1 0V5a.5.5 0 0 1 .5-.5"/>
+                </svg>
+            </button>
         `;
         contenedor.appendChild(nuevoDiv); // Agrega el div al contenedor
         document.getElementById('selectTipoVarNueva').selectedIndex = 0;
@@ -227,10 +232,6 @@ async function agregarDiv(event, seccionId) {
         modal.hide();
     }
 };        
-
-
-//window.eliminarSeccion = eliminarSeccion;
-//window.guardarSeccion = guardarSeccion;
     
 function eliminarSeccion() {
     //event.preventDefault();
@@ -241,6 +242,10 @@ function eliminarSeccion() {
     })
     .catch(error => console.error("Error al eliminar la sección:", error));
 }    
+
+function redireccionarEditarSeccion(){
+    window.location.href = `/admin/secciones/${seccionSeleccionadaId}/editar`;
+}
 
 function toBase64(file) {
     return new Promise((resolve, reject) => {
@@ -271,7 +276,7 @@ async function guardarSeccion(event) {
 
         let base64Image = await toBase64(file);
 
-        if(nombreS != "" && tipoS != "" ){//&& file != null){
+        if(nombreS != "" && tipoS != "" && file != null){
             const divs = document.querySelectorAll("#contenedorVariables .variableSeccion");
             const variables = [];
 
@@ -293,13 +298,6 @@ async function guardarSeccion(event) {
             go(`/admin/guardarSeccion`, "POST", jsonData)
             .then(data => {
                 console.log("Respuesta recibida:", data.mensaje);
-                //formulario.reset();
-                //document.getElementById("mostrarImagenSeccionesForm").style.display = "none";
-                //document.getElementById("contenedorVariables").innerHTML = `
-                //<button id = "botonCrearVariable" style="min-height: 30px; max-height: 80px;" class = "col-3 btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalCrearVariables" type = "button"> 
-                //    Crear variable
-                //</button>
-                //`;
                 window.location.href = "/admin/secciones";
             })
             .catch(error => console.error("Error go:", error));
@@ -333,43 +331,20 @@ async function verificarNombreSeccion(){
       }
 }
 
-async function verificarNombreVariableSeccion(seccionId){
-    const nombreV = document.getElementById("inputnombreVarNueva").value.trim();
-    try {
-        const response = await fetch(`/admin/verificarVarSeccion?nombre=${encodeURIComponent(nombreV)}&idSec=${encodeURIComponent(seccionId)}`);
-        const data = await response.json();
-
-        if (data.existe) { //el nombre existe
-          document.getElementById("inputnombreVarNueva").classList.add("is-invalid");
-          document.getElementById("mensajeErrorVar").classList.add("invalid-feedback");
-          console.log("false");
-          return false; 
-        } else {    //el nombre no existe
-          document.getElementById("inputnombreVarNueva").classList.remove("is-invalid");
-          document.getElementById("mensajeErrorVar").classList.remove("invalid-feedback");
-          console.log("true");
-          return true; 
-        }
-      } catch (error) {
-        console.error("Error al verificar el nombre:", error);
-        return false; 
-      }
-}
-
-function evitarNombresVarRepetidos() { //esta funcion sirve para verificar vars que se acaben de crear y no esten todavia en la bd
+function evitarNombresVarRepetidos() { //esta funcion sirve para verificarnombres de variables repetidos en la misma seccion
     const nombreV = document.getElementById("inputnombreVarNueva").value.trim();
     try {     
         const divs = document.querySelectorAll("#contenedorVariables .variableSeccion");
 
         let existe = false;
         divs.forEach(div => {
-            if (div.dataset.bd != "true") {
+            
                 const nombreVarExistente = div.querySelector(".nombreVariableSpan").innerText;
                 console.log("nombreVarExistente: " + nombreVarExistente);
                 if(nombreVarExistente == nombreV) {
                     existe = true;
                 }
-            }
+            
         });
 
         if (existe) { //el nombre existe
@@ -412,11 +387,11 @@ async function editarSeccion() {
         const variables = [];
 
         divs.forEach(div => {
-            if (div.dataset.bd != "true") {
+            
                 const nombreV = div.querySelector(".nombreVariableSpan").innerText;
                 const tipoV = div.querySelector(".tipoVariableSpan").innerText;
                 variables.push({ nombreV, tipoV });
-            }
+            
         });
 
         const jsonData = {
@@ -428,7 +403,6 @@ async function editarSeccion() {
             arrayVariables: variables
         };
 
-        console.log("pregoEditar");
         go(`/admin/editarSeccion`, "POST", jsonData)
         .then(data => {
             console.log("Respuesta recibida:", data.mensaje);
@@ -439,10 +413,22 @@ async function editarSeccion() {
 }
 
 var variableSeccionesForm = document.getElementById("variableSeccionForm");
-
 if(variableSeccionesForm != null){
     document.getElementById("variableSeccionForm").addEventListener("submit", function(event) {
         event.preventDefault();
     });
 }
 
+document.addEventListener('DOMContentLoaded', function () {
+    document.addEventListener('click', function (event) {
+        if (event.target.closest('.botonBasuraVariable')) {
+            event.preventDefault(); 
+            const boton = event.target.closest('.botonBasuraVariable');
+            const div = boton.closest('.variableSeccion');
+
+            if (div) {
+                div.remove();
+            }
+        }
+    });
+});

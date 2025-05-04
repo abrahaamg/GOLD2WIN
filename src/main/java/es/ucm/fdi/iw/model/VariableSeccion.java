@@ -15,6 +15,8 @@ import jakarta.persistence.*;
 @NamedQueries({
     @NamedQuery(name = "VarSeccion.filtrarPorNombre",
             query = "SELECT v FROM VariableSeccion v WHERE v.nombre = :nombre"),
+    @NamedQuery(name = "VarSeccion.filtrarPorSeccion",
+            query = "SELECT v FROM VariableSeccion v WHERE v.seccion = :seccion"),
 })
 public class VariableSeccion {
     @Id

@@ -59,9 +59,10 @@
                             <button style="min-height: 30px;"  class="btn btn-secondary mt-4 w-100" type = "button">Cancelar</button>
                         </a>
                         
+
                         <button id = "botonDefinitivoCrearSeccion" style="min-height: 30px; " onclick="guardarSeccion(event)" class = "col-3 btn btn-success mt-4 ms-5"> 
                             Confirmar seccion
-                        </button>
+                        </button>                        
                     </div>
                 </div>
             </form>
@@ -131,7 +132,7 @@
     </div>
 
     <div id="menuOpcionesSeccion">
-        <a href="#">Editar seccion</a>
+        <a href="#" onclick="redireccionarEditarSeccion()">Editar seccion</a>
         <a id = "enlaceModalEliminarSeccion" href="#" data-bs-toggle="modal" data-bs-target="#modalEliminarSeccion">Eliminar seccion</a>
     </div>
 

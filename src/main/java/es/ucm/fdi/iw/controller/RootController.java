@@ -36,7 +36,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 
 import es.ucm.fdi.iw.AppConfig;
 import es.ucm.fdi.iw.LocalData;
-import es.ucm.fdi.iw.model.Apuesta;
 
 import es.ucm.fdi.iw.model.Evento;
 import es.ucm.fdi.iw.model.Seccion;
@@ -60,7 +59,6 @@ public class RootController {
 
     @Autowired
 	private PasswordEncoder passwordEncoder;
-
 
     private final AdminController adminController;
 
@@ -281,6 +279,7 @@ public class RootController {
                 UserController.class.getClassLoader().getResourceAsStream(
                         "static/img/default-pic.jpg")));
     }
+    
 
     @GetMapping("/crearApuesta")
     public String crearApuesta(Model model) {

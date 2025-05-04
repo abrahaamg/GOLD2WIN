@@ -13,11 +13,12 @@
     
     <header th:replace="fragments/nav.html :: nav('administrar')"></header>
 
-    <div class="px-4">
-        <div th:replace="fragments/menuAdmin.html :: navAdmin('Usuarios')"></div>
-    </div>
+    
 
     <div style = "width: 90%" class = "mx-auto">
+        <div class="pb-3">
+            <div th:replace="fragments/menuAdmin.html :: navAdmin('Usuarios')"></div>
+        </div>
         <table id="myTableUsers" class="display">
             <thead>
                 <tr>

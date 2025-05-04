@@ -26,6 +26,8 @@ public class WebSocketSecurityConfig {
         messages
                 .simpDestMatchers("/admin/**").hasRole(User.Role.ADMIN.toString())
                 .simpSubscribeDestMatchers("/admin/**").hasRole(User.Role.ADMIN.toString())
+                .simpSubscribeDestMatchers("/admin/**").hasRole(User.Role.ADMIN.toString())
+                .simpSubscribeDestMatchers("/chats/**").hasRole(User.Role.ADMIN.toString())
                 .anyMessage().authenticated();
         return messages.build();
     }

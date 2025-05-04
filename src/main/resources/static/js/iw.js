@@ -48,11 +48,20 @@ const ws = {
         }
     },
 
-    subscribe: (sub) => {
+    /*modificacion para poder poner una funcion callback personalizada pero el comportamiento original siga funcionando*/
+    subscribe: (sub,comportamiento) => {
         try {
-            ws.stompClient.subscribe(sub,
-                (m) => ws.receive(JSON.parse(m.body))); // fails if non-json received!
-            console.log("Hopefully subscribed to " + sub);
+            if(!comportamiento){
+                ws.stompClient.subscribe(sub,
+                    (m) => ws.receive(JSON.parse(m.body))); // fails if non-json received!
+                console.log("Hopefully subscribed to " + sub);
+            }
+            else{
+                ws.stompClient.subscribe(sub,
+                    (m) => comportamiento(JSON.parse(m.body))); // fails if non-json received!
+                console.log("Hopefully subscribed to " + sub);
+            }
+            
         } catch (e) {
             console.log("Error, could not subscribe to " + sub, e);
         }

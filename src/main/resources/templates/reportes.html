@@ -12,12 +12,12 @@
 <body class="d-flex flex-column h-100">
     
     <header th:replace="fragments/nav.html :: nav('administrar')"></header>
-
-    <div class="px-4">
-        <div th:replace="fragments/menuAdmin.html :: navAdmin('Reportes')"></div>
-    </div>
     
     <div style = "width: 90%" class = "mx-auto">
+        <div class="pb-3">
+            <div th:replace="fragments/menuAdmin.html :: navAdmin('Reportes')"></div>
+        </div>
+
         <table id="myTableReports" class="display">
             <thead>
                 <tr>

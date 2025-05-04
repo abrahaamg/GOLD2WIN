@@ -11,12 +11,12 @@ Feature: Testeo UI con Karate
     # Se añade una cantidad a una formula para crear una apuesta
     * delay(1000)
     And input('#cantidad-3', '15')
-    * delay(2000)
+    * delay(1000)
     * click('.botonApostarFavorable')
-    * delay(4000)
+    * delay(2000)
 
     # Se va a la parte de mis apuestas y se despliega la apuesta creada
     * click('#enlaceNavMisApuestas')
     * click('#bettingBox-975')
-    * delay(5000)
+    * delay(3000)
     

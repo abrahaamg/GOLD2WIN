@@ -6,11 +6,9 @@ import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 
 import jakarta.persistence.*;
-import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Entity
 @Data
@@ -22,6 +20,7 @@ import java.util.stream.Collectors;
         @NamedQuery(name = "Evento.getBusqueda", query = "SELECT e FROM Evento e WHERE e.fechaCierre > :inicio AND e.fechaCreacion < :inicio AND (LOWER(e.nombre) LIKE LOWER(:nombre)) ORDER BY e.fechaCierre ASC"),
         @NamedQuery(name = "Evento.getBusquedaInSeccion", query = "SELECT e FROM Evento e WHERE e.fechaCierre > :inicio AND e.fechaCreacion < :inicio AND e.seccion.id = :seccionId AND (LOWER(e.nombre) LIKE LOWER(:nombre)) ORDER BY e.fechaCierre ASC")
 })
+
 public class Evento implements Transferable<Evento.Transfer> {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "gen")
@@ -42,10 +41,11 @@ public class Evento implements Transferable<Evento.Transfer> {
     private Seccion seccion;
 
     @OneToMany(mappedBy = "evento")
+    @OrderBy("fechaEnvio ASC")
     private List<Mensaje> mensajes;
 
-    @ManyToMany(mappedBy = "chats")
-    private List<User> usuariosDelChat;
+    @OneToMany(mappedBy = "evento")
+    private List<ParticipacionChat> usuariosDelChat;
 
     @OneToMany(mappedBy = "evento")
     private List<FormulaApuesta> formulasApuestas;
@@ -82,6 +82,11 @@ public class Evento implements Transferable<Evento.Transfer> {
 
     public void setCancelado(boolean cancelado) {
         this.cancelado = cancelado;
+    }
+
+    @Transient
+    public boolean isPasado() {
+        return fechaCierre.isBefore(OffsetDateTime.now());
     }
 
 }
