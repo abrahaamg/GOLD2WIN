@@ -43,14 +43,14 @@ public class Mensaje implements Transferable<Mensaje.Transfer> {
     @AllArgsConstructor
     public static class Transfer {
         private long id;
-        private long idRemitente;
-        private String nombreRemitente;
+        private long idEmisor;
+        private String emisor;
         private String contenido;
-        private OffsetDateTime fechaEnvio;
+        private String fecha; //tiene que ser String porque jackson no sabe serializar OffsetDateTime
     }
 
     @Override
     public Transfer toTransfer() {
-        return new Transfer(id, remitente.getId(), remitente.getUsername(), contenido, fechaEnvio);
+        return new Transfer(id, remitente.getId(), remitente.getUsername(), contenido, fechaEnvio.toString());
     }
 }

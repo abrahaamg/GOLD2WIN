@@ -1,7 +1,6 @@
 package es.ucm.fdi.iw.model;
 
 import java.time.OffsetDateTime;
-import java.util.List;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -50,13 +49,13 @@ public class ParticipacionChat implements Transferable<ParticipacionChat.Transfe
         String ultimoMensaje = "Creacion chat";
 
         int i = 0; 
-        while(evento.getMensajes().size() > i && evento.getMensajes().get(i).getFechaEnvio().isBefore(ultimaVisita)) {
+        while(evento.getMensajes().size() > i && ultimaVisita.isBefore(evento.getMensajes().get(i).getFechaEnvio())) {
             mensajesNoLeidos++;
             i++;
         }
 
         if (evento.getMensajes().size() != 0){
-            Mensaje mensaje = evento.getMensajes().get(0);
+            Mensaje mensaje = evento.getMensajes().get(evento.getMensajes().size() - 1);
             fechaUltimo = mensaje.getFechaEnvio();
         }
 

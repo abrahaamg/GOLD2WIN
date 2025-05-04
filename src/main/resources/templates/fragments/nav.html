@@ -223,7 +223,7 @@
                                   <a class="nav-link" th:classappend="${active == 'apuestas'} ? 'active'" th:href="${active == 'apuestas'} ? '#' : @{/misApuestas/}">Mis apuestas</a>
                               </li>
                               <li class="nav-item" th:if="${session?.u?.hasRole('USER')}">
-                                  <a class="nav-link" th:classappend="${active == 'chats'} ? 'active'" th:href="${active == 'chats'} ? '#' : @{/}">Chats</a>
+                                  <a class="nav-link" th:classappend="${active == 'chats'} ? 'active'" th:href="${active == 'chats'} ? '#' : @{/}">chats</a>
                               </li>
                               <li class="nav-item" th:if="${session?.u?.hasRole('ADMIN')}">
                                   <a class="nav-link" th:classappend="${active == 'administrar'} ? 'active'" th:href="${active == 'administrar'} ? '#' :@{/admin/usuarios}">Administrar</a>
