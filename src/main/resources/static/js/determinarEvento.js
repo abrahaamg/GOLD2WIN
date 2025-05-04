@@ -37,8 +37,9 @@ document.getElementById("btn_determinar").addEventListener("click", function () 
     });
 
     go(window.location.href, 'POST', data)
-        .then(data => {
-            if (data.success) {
+        .then(result => {
+            if (result.success) {
+                console.log("hola");
                 window.location.href = root + "admin/eventos"; //redirijo
             } else {
                 alert("Ocurrió un error en el servidor");
@@ -47,6 +48,8 @@ document.getElementById("btn_determinar").addEventListener("click", function () 
             mandando = false;
         })
         .catch(error => {
+            console.log(error);
+            console.error("Error:", error);
             alert("Ocurrió un error en el servidor")
             mandando = false;
         });

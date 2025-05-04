@@ -18,11 +18,13 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.FileCopyUtils;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -33,6 +35,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import es.ucm.fdi.iw.AppConfig;
 import es.ucm.fdi.iw.LocalData;
@@ -294,14 +298,30 @@ public class RootController {
     @GetMapping("/cartera/ingresar")
     public String ingresar(Model model, HttpSession session) {
         User user = (User) session.getAttribute("u");
-        if (user == null || !user.hasRole(Role.USER)) {
-            return "redirect:/login"; // Redirige si no es un usuario autenticado
+
+        int dineroDisponible = user.getDineroDisponible();
+        int parteEntera = dineroDisponible / 100;
+        int parteDecimal = dineroDisponible % 100;
+        if(parteDecimal < 10) {
+            String parteDecimalString = String.valueOf(parteDecimal);
+            parteDecimalString = "0" + parteDecimalString;
+            model.addAttribute("parteEntera", parteEntera);
+            model.addAttribute("parteDecimal", parteDecimalString);
         }
+        else{
+            model.addAttribute("parteEntera", parteEntera);
+            model.addAttribute("parteDecimal", parteDecimal);
+        }
+
         return "ingresar";
     }
 
     @GetMapping("/cartera/retirar")
-    public String retirar(Model model) {
+    public String retirar(Model model, HttpSession session) {
+        User user = (User) session.getAttribute("u");
+
+        int dineroDisponible = user.getDineroDisponible();
+        model.addAttribute("dinero", dineroDisponible);
         return "retirar";
     }
 
@@ -318,5 +338,57 @@ public class RootController {
     @GetMapping("/cartera/ingresar/tarjeta")
     public String tarjeta(Model model) {
         return "tarjeta";
+    }
+
+    @Transactional
+    @ResponseBody
+    @PostMapping("/cartera/ingresarDinero")
+    public ResponseEntity<JsonNode> ingresarDinero(@RequestBody JsonNode json, HttpSession session) {
+        ObjectMapper objectMapper = new ObjectMapper();
+        ObjectNode response = objectMapper.createObjectNode();
+        User user = (User) session.getAttribute("u");
+
+        int cantEntera = json.get("entera").asInt();
+        int cantDecimal = json.get("decimal").asInt(); 
+        int total = (cantEntera * 100) + cantDecimal;
+        if(total < 300 || total > 150000){
+            response.put("mensaje", "La cantidad a retirar debe estar entre 3 y 1500 euros: " + total);
+            return ResponseEntity.badRequest().body(response);
+        } 
+        user.setDineroDisponible(user.getDineroDisponible() + total); 
+        entityManager.merge(user);
+
+        response.put("mensaje", "Dinero ingresado correctamente: " + total);
+        return ResponseEntity.ok(response);
+    }
+
+    @Transactional
+    @ResponseBody
+    @PostMapping("/cartera/retirarDinero")
+    public ResponseEntity<JsonNode> retirarDinero(@RequestBody JsonNode json, HttpSession session) {
+        ObjectMapper objectMapper = new ObjectMapper();
+        ObjectNode response = objectMapper.createObjectNode();
+        User user = (User) session.getAttribute("u");
+
+        int cantEntera = json.get("entera").asInt();
+        int cantDecimal = json.get("decimal").asInt(); 
+        int total = (cantEntera * 100) + cantDecimal; 
+
+        if(total > user.getDineroDisponible()+1) {
+            response.put("mensaje", "No tienes suficiente dinero disponible para retirar: " + total);
+            return ResponseEntity.badRequest().body(response);
+        }
+        else if(total < 500 || total > 100000){
+            response.put("mensaje", "La cantidad a retirar debe estar entre 5 y 1000 euros: " + total);
+            return ResponseEntity.badRequest().body(response);
+        }
+        if(total == user.getDineroDisponible()+1){
+            user.setDineroDisponible(0); 
+        }
+        else user.setDineroDisponible(user.getDineroDisponible() - total); 
+        entityManager.merge(user);
+
+        response.put("mensaje", "Dinero retirado correctamente: " + total);
+        return ResponseEntity.ok(response);
     }
 }

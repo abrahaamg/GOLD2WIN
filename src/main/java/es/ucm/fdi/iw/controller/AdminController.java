@@ -427,6 +427,8 @@ public class AdminController {
         return "secciones-crearSeccion";
     }
 
+   
+
     @GetMapping("/eventos")
     public String eventos(Model model) {
         String queryEventos = "SELECT e FROM Evento e WHERE e.cancelado = false";

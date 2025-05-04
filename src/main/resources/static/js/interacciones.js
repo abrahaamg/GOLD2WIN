@@ -186,7 +186,6 @@ if(menuOpcionesSeccionForm != null){
     });
 }
 
-
 function agregarDiv(event, seccionId) {
     event.preventDefault();
 
@@ -230,6 +229,7 @@ function agregarDiv(event, seccionId) {
 
         const modal = bootstrap.Modal.getInstance(document.getElementById('modalCrearVariables'));
         modal.hide();
+        actualizarClasePocos();
     }
 };        
     
@@ -432,3 +432,14 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 });
+
+function actualizarClasePocos() {
+    const contenedor = document.getElementById('contenedorVariables'); // ← Usás el ID directamente
+    const divs = contenedor.querySelectorAll(':scope > div');
+    
+    if (divs.length <= 2) {
+      contenedor.classList.add('limitar');
+    } else {
+      contenedor.classList.remove('limitar');
+    }
+}
