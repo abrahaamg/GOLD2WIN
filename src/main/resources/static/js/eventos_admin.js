@@ -13,23 +13,45 @@ var id_evento_editado = -1;
 var _datepicker;
 var _timepicker;
 
-configurarflatpickr(new Date());
+document.addEventListener("DOMContentLoaded", function() {
 
-document.querySelectorAll(".cambiadorTema").forEach(elemento => {
-    elemento.addEventListener("click", function () {
-        const idEvento = btn.getAttribute("data-id-evento");
-        if(id_evento_editado != idEvento){
-            id_evento_editado = idEvento;
-
-            if (isDarkMode) {
-                document.documentElement.setAttribute("data-bs-theme", "light");
-                isDarkMode = false;
-            } else {
-                document.documentElement.setAttribute("data-bs-theme", "dark");
-                isDarkMode = true;
-            }
-            configurarflatpickr(new Date());
+    document.getElementById("timepicker").addEventListener("change", function() {
+        if (!isValidTime(this.value)) {
+            _timepicker.setDate(new Date().getDate() + 1, true);
         }
+        else{
+            actualizarTextoFecha();
+        } 
+    });
+    
+    document.getElementById("datepicker").addEventListener("change", function() {
+        if (!isValidDate(this.value)) {
+            _datepicker.setDate(new Date().getDate() + 1, true);
+        }
+        else{
+            actualizarTextoFecha();
+        } 
+    });
+
+    configurarflatpickr(new Date());
+
+    document.querySelectorAll(".cambiadorTema").forEach(elemento => {
+        elemento.addEventListener("click", function () {
+            const idEvento = btn.getAttribute("data-id-evento");
+
+            if(id_evento_editado != idEvento){
+                id_evento_editado = idEvento;
+
+                if (isDarkMode) {
+                    document.documentElement.setAttribute("data-bs-theme", "light");
+                    isDarkMode = false;
+                } else {
+                    document.documentElement.setAttribute("data-bs-theme", "dark");
+                    isDarkMode = true;
+                }
+                configurarflatpickr(new Date());
+            }
+        });
     });
 });
 
@@ -38,28 +60,30 @@ function configurarflatpickr(fecha){
     _datepicker = flatpickr("#datepicker", {
         locale: "es",  
         dateFormat: "Y-m-d",         
-        altInput: true,
+        altInput: false,
         minDate: creando ? new Date(): null,
-        defaultDate: fecha,    
-        altFormat: "j \\de F \\de Y",               
-        allowInput: false,
+        defaultDate: fecha,             
+        allowInput: true,
         theme: isDarkMode ? "dark" : "light",
         onOpen: function(selectedDates, dateStr, instance) {
             instance.input.classList.add("focused");
         },
         onClose: function(selectedDates, dateStr, instance) {
             instance.input.classList.remove("focused");
+
+            if (!isValidDate(dateStr)) {
+                _datepicker.setDate(new Date(), true);
+            }
+            else{
+                actualizarTextoFecha();
+            } 
         },
-        onChange: function(selectedDates, dateStr, instance) {
-            actualizarTextoFecha();
-        },
-        onReady: function(selectedDates, dateStr, instance) {
-            actualizarTextoFecha();
-        }
     });
     
     _timepicker = flatpickr("#timepicker", {
         viewMode: 'clock',
+        altInput: false,
+        allowInput: true,
         enableTime: true,
         noCalendar: true,
         defaultDate: fecha, 
@@ -71,14 +95,30 @@ function configurarflatpickr(fecha){
         },
         onClose: function(selectedDates, dateStr, instance) {
             instance.input.classList.remove("focused");
-        },
-        onChange: function(selectedDates, dateStr, instance) {
-            actualizarTextoFecha();
+
+            if (!isValidTime(dateStr)) {
+                _timepicker.setDate(new Date(), true);
+            }
+            else{
+                actualizarTextoFecha();
+            } 
         },
         onReady: function(selectedDates, dateStr, instance) {
             actualizarTextoFecha();
         }
     });
+}
+
+//Verifica si la fecha introducida es valida
+function isValidDate(dateStr) {
+    const regex = /^\d{4}-\d{2}-\d{2}$/;
+    return regex.test(dateStr);
+}
+
+//verifica si la hora introducida es valida
+function isValidTime(timeStr) {
+    const timeRegex = /^([01]?\d|2[0-3]):([0-5]\d)$/;
+    return timeRegex.test(timeStr);
 }
 
 /*FUNCIONES PARA ALTERNAR EL MODO EDICION Y EL MODO CREACION DEL MODAL*/
@@ -231,8 +271,6 @@ function formatearHora(hora){
         salida += " am";
     else
         salida += " pm";
-
-    console.log(salida);
 
     return salida;
 }
