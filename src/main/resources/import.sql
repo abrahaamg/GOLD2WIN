@@ -196,8 +196,42 @@ INSERT INTO VARIABLE_SECCION (ID, NOMBRE, NUMERICO, ID_SECCION) VALUES
 (33, 'Ganador-JugB', TRUE, 8),
 (34, 'Golpes-lanzados', TRUE, 8);
 
+INSERT INTO PARTICIPACION_CHAT (EVENTO_ID, ULTIMA_VISITA, USUARIO_ID) VALUES
+(4, '1000-01-01 00:00:00', 11),
+(8, '1000-01-01 00:00:00', 11),
+(11, '1000-01-01 00:00:00', 11),
+(4, '1000-01-01 00:00:00', 12),
+(8, '1000-01-01 00:00:00', 12),
+(11, '1000-01-01 00:00:00', 12);
 
+INSERT INTO MENSAJE (ENABLED, FECHA_ENVIO, ID, ID_EVENTO, REMITENTE, CONTENIDO) VALUES
+(1, '2025-05-03 08:15:00', 1, 4, 11, 'Mensaje enviado por el usuario 11 en el evento 4'),
+(1, '2025-05-03 09:30:00', 2, 8, 11, 'Mensaje enviado por el usuario 11 en el evento 8'),
+(1, '2025-05-03 10:45:00', 3, 11, 11, 'Mensaje enviado por el usuario 11 en el evento 11'),
+(1, '2025-05-03 11:00:00', 4, 4, 12, 'Mensaje enviado por el usuario 12 en el evento 4'),
+(1, '2025-05-03 12:15:00', 5, 8, 12, 'Mensaje enviado por el usuario 12 en el evento 8'),
+(1, '2025-05-03 13:30:00', 6, 11, 12, 'Mensaje enviado por el usuario 12 en el evento 11'),
+(1, '2025-03-02 14:00:00', 7, 4, 11, 'Mensaje enviado por el usuario 11 en el evento 4'),
+(1, '2025-03-02 15:15:00', 8, 8, 11, 'Mensaje enviado por el usuario 11 en el evento 8'),
+(1, '2025-03-02 16:30:00', 9, 11, 11, 'Mensaje enviado por el usuario 11 en el evento 11'),
+(1, '2025-03-02 17:00:00', 10, 4, 12, 'Mensaje enviado por el usuario 12 en el evento 4'),
+(1, '2025-03-02 18:15:00', 11, 8, 12, 'Mensaje enviado por el usuario 12 en el evento 8'),
+(1, '2025-03-02 19:30:00', 12, 11, 12, 'Mensaje enviado por el usuario 12 en el evento 11');
 
+INSERT INTO REPORTE (RESUELTO, FECHA_ENVIO, FECHA_RESOLUCION, ID, ID_MENSAJE, ID_REPORTADOR, MOTIVO)
+VALUES 
+(FALSE, '2025-05-01', NULL, 1, 1, 2, 'Contenido ofensivo en el mensaje'),
+(FALSE, '2025-05-02', NULL, 2, 2, 3, 'Spam repetitivo detectado'),
+(TRUE, '2025-04-28', '2025-05-03', 3, 3, 4, 'Manipulación de resultados en mensaje'),
+(TRUE, '2025-04-20', '2025-04-22', 4, 4, 5, 'Lenguaje inapropiado'),
+(FALSE, '2025-05-03', NULL, 5, 5, 2, 'Incitación al odio'),
+(TRUE, '2025-04-15', '2025-04-18', 6, 6, 6, 'Publicidad no solicitada'),
+(FALSE, '2025-05-04', NULL, 7, 7, 3, 'Amenazas en el mensaje'),
+(TRUE, '2025-04-10', '2025-04-12', 8, 8, 7, 'Suplantación de identidad'),
+(FALSE, '2025-05-04', NULL, 9, 9, 4, 'Contenido falso'),
+(FALSE, '2025-05-04', NULL, 10, 10, 5, 'Contenido explícito sin aviso'),
+(TRUE, '2025-04-01', '2025-04-05', 11, 11, 8, 'Violación de normas comunitarias'),
+(TRUE, '2025-03-28', '2025-03-30', 12, 12, 9, 'Abuso verbal en conversación');
 
 -- start id numbering from a value that is larger than any assigned above
 ALTER SEQUENCE "PUBLIC"."GEN" RESTART WITH 1024;

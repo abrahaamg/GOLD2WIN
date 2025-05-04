@@ -27,7 +27,8 @@ import java.util.List;
         @NamedQuery(name = "User.topics", query = "SELECT t.key "
                 + "FROM Topic t JOIN t.members u "
                 + "WHERE u.id = :id"),
-        @NamedQuery(name = "User.getChats", query = "SELECT e FROM User u JOIN u.chats e WHERE u.id = :id")
+        @NamedQuery(name = "User.getChats", query = "SELECT e FROM User u JOIN u.chats e WHERE u.id = :id"),
+        @NamedQuery(name = "User.estaEnChat", query = "SELECT p FROM ParticipacionChat p WHERE p.usuario = :user AND p.evento = :evento")
 })
 @Table(name = "IWUser")
 public class User implements Transferable<User.Transfer> {
@@ -57,12 +58,11 @@ public class User implements Transferable<User.Transfer> {
     private int dineroDisponible; // En centimos
     private int dineroRetenido; // En centimos
 
-    @ManyToMany
-    @JoinTable(name = "pertenece_a_chat", joinColumns = @JoinColumn(name = "id_usuario"), inverseJoinColumns = @JoinColumn(name = "id_evento"))
-    private List<Evento> chats;
-
     @OneToMany(mappedBy = "usuario")
-    private List<ParticipacionChat> apuestas;
+    private List<ParticipacionChat> chats;
+
+    @OneToMany(mappedBy = "apostador")
+    private List<Apuesta> apuestas;
 
     @OneToMany(mappedBy = "remitente")
     private List<Mensaje> mensajes;

@@ -48,6 +48,7 @@ import es.ucm.fdi.iw.LocalData;
 import es.ucm.fdi.iw.model.Apuesta;
 import es.ucm.fdi.iw.model.Evento;
 import es.ucm.fdi.iw.model.FormulaApuesta;
+import es.ucm.fdi.iw.model.Reporte;
 import es.ucm.fdi.iw.model.Resultado;
 import es.ucm.fdi.iw.model.Seccion;
 import es.ucm.fdi.iw.model.User;
@@ -103,6 +104,11 @@ public class AdminController {
 
     @GetMapping("/reportes")
     public String tablaReportes(Model model) {
+        String queryReportes = "SELECT r FROM Reporte r";
+        List<Reporte> reportes = entityManager.createQuery(queryReportes, Reporte.class).getResultList();
+
+        model.addAttribute("reportes", reportes);
+        
         return "reportes";
     }
 
@@ -455,7 +461,6 @@ public class AdminController {
         }
 
         // calculo si las diferentes formulas se han cumplido y reparto el dinero
-
         Map<String, Variable> variablesEvento = new HashMap<>();
         for (Variable variable : evento.getVariables()) {
             variablesEvento.put(variable.getNombre(), variable);
