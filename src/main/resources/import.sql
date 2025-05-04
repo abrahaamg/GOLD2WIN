@@ -21,7 +21,7 @@ INSERT INTO EVENTO (ID, CANCELADO, DETERMINADO, FECHA_CIERRE, FECHA_CREACION, NO
 (2, false, false, '2025-06-22 20:30:00', '2025-03-02 14:15:00', 'NBA Playoffs - Lakers vs Celtics', 2),
 (3, false, false, '2025-06-10 16:00:00', '2025-03-03 10:30:00', 'Serie Mundial de Beisbol', 3),
 (4, false, false, '2025-05-20 19:00:00', '2025-03-05 09:45:00', 'Copa Europa de Balonmano', 4),
-(5, false, false, '2025-1-02 15:00:00', '2025-03-06 08:00:00', 'Campeonato Mundial de Esgrima', 5),
+(5, false, false, '2025-01-02 15:00:00', '2025-03-06 08:00:00', 'Campeonato Mundial de Esgrima', 5),
 (6, false, false, '2025-06-22 21:00:00', '2025-03-07 13:20:00', 'Roland Garros - Final Masculina', 6),
 (7, false, false, '2025-06-23 11:00:00', '2025-03-08 07:30:00', 'Torneo Internacional de Ping Pong', 7),
 (8, false, false, '2025-05-20 13:00:00', '2025-05-10 15:15:00', 'Exhibición de mayo', 8),
@@ -196,8 +196,35 @@ INSERT INTO VARIABLE_SECCION (ID, NOMBRE, NUMERICO, ID_SECCION) VALUES
 (33, 'Ganador-JugB', TRUE, 8),
 (34, 'Golpes-lanzados', TRUE, 8);
 
+INSERT INTO MENSAJE (ENABLED, FECHA_ENVIO, ID, ID_EVENTO, REMITENTE, CONTENIDO)
+VALUES 
+(TRUE, '2025-05-01', 100, 12, 2, 'Este mensaje contiene lenguaje ofensivo.'),
+(TRUE, '2025-05-02', 101, 1, 3, 'Oferta especial, gana dinero fácil ahora mismo!!!'),
+(TRUE, '2025-04-28', 102, 2, 4, 'Truco para manipular las votaciones del sistema.'),
+(TRUE, '2025-04-20', 103, 3, 5, 'Palabras groseras y sin respeto aquí.'),
+(TRUE, '2025-05-03', 104, 4, 2, 'Odio hacia cierto grupo mencionado.'),
+(TRUE, '2025-04-15', 105, 5, 6, 'Compra ahora, publicidad especial solo para ti!'),
+(TRUE, '2025-05-04', 106, 6, 3, 'Si no haces caso te voy a encontrar.'),
+(TRUE, '2025-04-10', 107, 7, 7, 'Yo soy el administrador, dame tu contraseña.'),
+(TRUE, '2025-05-04', 108, 8, 4, 'Noticias falsas sobre evento importante.'),
+(TRUE, '2025-05-04', 109, 9, 5, 'Imagen explícita sin previo aviso.'),
+(TRUE, '2025-04-01', 110, 10, 8, 'Incumpliendo las reglas comunitarias claramente.'),
+(TRUE, '2025-03-28', 111, 11, 9, 'Abuso verbal directo a otro usuario.');
 
-
+INSERT INTO REPORTE (RESUELTO, FECHA_ENVIO, FECHA_RESOLUCION, ID, ID_MENSAJE, ID_REPORTADOR, MOTIVO)
+VALUES 
+(FALSE, '2025-05-01', NULL, 1, 100, 2, 'Contenido ofensivo en el mensaje'),
+(FALSE, '2025-05-02', NULL, 2, 101, 3, 'Spam repetitivo detectado'),
+(TRUE, '2025-04-28', '2025-05-03', 3, 102, 4, 'Manipulación de resultados en mensaje'),
+(TRUE, '2025-04-20', '2025-04-22', 4, 103, 5, 'Lenguaje inapropiado'),
+(FALSE, '2025-05-03', NULL, 5, 104, 2, 'Incitación al odio'),
+(TRUE, '2025-04-15', '2025-04-18', 6, 105, 6, 'Publicidad no solicitada'),
+(FALSE, '2025-05-04', NULL, 7, 106, 3, 'Amenazas en el mensaje'),
+(TRUE, '2025-04-10', '2025-04-12', 8, 107, 7, 'Suplantación de identidad'),
+(FALSE, '2025-05-04', NULL, 9, 108, 4, 'Contenido falso'),
+(FALSE, '2025-05-04', NULL, 10, 109, 5, 'Contenido explícito sin aviso'),
+(TRUE, '2025-04-01', '2025-04-05', 11, 110, 8, 'Violación de normas comunitarias'),
+(TRUE, '2025-03-28', '2025-03-30', 12, 111, 9, 'Abuso verbal en conversación');
 
 -- start id numbering from a value that is larger than any assigned above
 ALTER SEQUENCE "PUBLIC"."GEN" RESTART WITH 1024;

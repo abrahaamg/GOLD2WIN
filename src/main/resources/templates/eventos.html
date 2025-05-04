@@ -18,10 +18,6 @@
         <div th:replace="fragments/menuAdmin.html :: navAdmin('Eventos')"></div>
     </div>
 
-    <!--<button id = "botonCrearEvento" type="button" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#modalCrearEvento">
-        Crear evento
-    </button>-->
-
     <!-- Fuera de la tabla -->
     <div th:each="evento : ${eventos}">
         <div class="modal fade" th:id="'cancelarEventoModal-' + ${evento.id}" tabindex="-1" aria-hidden="true">
