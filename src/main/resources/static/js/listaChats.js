@@ -50,6 +50,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
     if(botonRetroceder){
         botonRetroceder.addEventListener('click', function () {
+            idEventoSeleccionado = -1;
+            if(contenedorEventoSeleccionado) contenedorEventoSeleccionado.classList.remove("resaltaHoverSelected"); 
+            contenedorEventoSeleccionado = null;
+            
             document.getElementById("chatContainer").classList.remove('paginaChatsActiva'); //foco en el input de mensaje
             document.getElementById("contenedorMenuListaChats").classList.add('paginaChatsActiva'); //foco en el input de mensaje
         });
@@ -210,12 +214,14 @@ function seleccionarChat(chat,componente){
     const chatContainer = document.getElementById("chatContainer");
     const imagenCabeceraChat = document.getElementById("imagenCabeceraChat");
     const tituloCabeceraChat = document.getElementById("tituloCabeceraChat");
+    const tituloCabeceraChatMobile = document.getElementById("tituloCabeceraChatMobile");
 
     //Cambio la barra de cabecera de chat
     chatContainer.classList.add("d-lg-flex", "flex-column");
 
     imagenCabeceraChat.setAttribute("src", appRoot + "seccion/" + chat.idEvento + "/pic");
     tituloCabeceraChat.textContent = chat.nombreEvento;
+    tituloCabeceraChatMobile.textContent = chat.nombreEvento;
 
     //Reinicio la zona de mensajes
     eliminarMensajes();
@@ -256,6 +262,9 @@ function anadirChat(chat){
                         </div>`;
     
     chatDiv.addEventListener('click', function () {
+        document.getElementById("chatContainer").classList.add('paginaChatsActiva'); //foco en el input de mensaje
+        document.getElementById("contenedorMenuListaChats").classList.remove('paginaChatsActiva'); //foco en el input de mensaje
+
         if(cargando || idEventoSeleccionado === chat.idEvento) return;
         cargando = true;
 
@@ -265,8 +274,6 @@ function anadirChat(chat){
 
         seleccionarChat(chat, chatDiv);
         cargarMensajes(chat.idEvento);
-        document.getElementById("chatContainer").classList.add('paginaChatsActiva'); //foco en el input de mensaje
-        document.getElementById("contenedorMenuListaChats").classList.remove('paginaChatsActiva'); //foco en el input de mensaje
     });
 
     //si ya hay una busqueda hecha cuando se añade se verifica si tiene que ser visible o no
