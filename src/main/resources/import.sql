@@ -21,7 +21,7 @@ INSERT INTO EVENTO (ID, CANCELADO, DETERMINADO, FECHA_CIERRE, FECHA_CREACION, NO
 (2, false, false, '2025-06-22 20:30:00', '2025-03-02 14:15:00', 'NBA Playoffs - Lakers vs Celtics', 2),
 (3, false, false, '2025-06-10 16:00:00', '2025-03-03 10:30:00', 'Serie Mundial de Beisbol', 3),
 (4, false, false, '2025-05-20 19:00:00', '2025-03-05 09:45:00', 'Copa Europa de Balonmano', 4),
-(5, false, false, '2025-06-03 15:00:00', '2025-01-02 08:00:00', 'Campeonato Mundial de Esgrima', 5),
+(5, false, false, '2025-04-03 15:00:00', '2025-01-02 08:00:00', 'Campeonato Mundial de Esgrima', 5),
 (6, false, false, '2025-06-22 21:00:00', '2025-03-07 13:20:00', 'Roland Garros - Final Masculina', 6),
 (7, false, false, '2025-06-23 11:00:00', '2025-03-08 07:30:00', 'Torneo Internacional de Ping Pong', 7),
 (8, false, false, '2025-05-20 13:00:00', '2025-05-10 15:15:00', 'Exhibición de mayo', 8),
