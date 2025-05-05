@@ -270,3 +270,22 @@ input {
 .btn-cartera:hover {
     background-color: #0e5cc3;
 }
+
+.btn-morado-cartera {
+    background-color: #6A0DAD;
+    color: white;
+    border: none;
+    font-weight: 550;
+}
+
+.btn-morado-guardar {
+    background-color: #6A0DAD;
+    color: white;
+    border: none;
+    font-weight: 550;
+    font-size: 30px;
+}
+
+.btn-morado-cartera:hover, .btn-morado-guardar:hover {
+    background-color: #5a0ca0; /* Asegúrate de que el hover sea morado oscuro */
+}

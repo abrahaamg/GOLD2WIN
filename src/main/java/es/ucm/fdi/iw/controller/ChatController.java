@@ -37,6 +37,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import es.ucm.fdi.iw.model.Evento;
 import es.ucm.fdi.iw.model.Mensaje;
 import es.ucm.fdi.iw.model.ParticipacionChat;
+import es.ucm.fdi.iw.model.Reporte;
 import es.ucm.fdi.iw.model.Transferable;
 import es.ucm.fdi.iw.model.User;
 
@@ -207,7 +208,6 @@ public class ChatController {
         response.put("mensaje", m.toTransfer());
         response.put("tipoEvento", "nuevoMensaje");
 
-        log.info("llega al json");
 		String json = mapper.writeValueAsString(response);
 
 		log.info("Sending a message to {} with contents '{}'", id, json);
@@ -248,6 +248,83 @@ public class ChatController {
             
         participacionChat.setUltimaVisita(OffsetDateTime.now());
         entityManager.merge(participacionChat);
+        entityManager.flush();
+
+        response.put("status", "ok");
+
+        return response;
+    }
+
+    @PostMapping(path = "/borrarMensaje/{id}", produces = "application/json")
+    @ResponseBody
+    @Transactional
+    public Map<String, Object> borrarMensaje(@PathVariable long id, HttpSession session) throws JsonProcessingException {
+        Map<String, Object> response = new HashMap<>();
+        User user = (User) session.getAttribute("u");
+        Mensaje mensaje = entityManager.find(Mensaje.class, id);
+
+        if (user == null) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Usuario no autenticado");
+        }
+
+        if(mensaje == null || !mensaje.isEnabled()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Mensaje no encontrado");
+        }
+
+        if(!mensaje.getRemitente().equals(user)){
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "No tienes permiso para borrar este mensaje");
+        }
+
+        mensaje.setEnabled(false);
+        entityManager.merge(mensaje);
+        entityManager.flush();
+
+        Map<String, Object> mensajeSocket = new HashMap<>();
+        mensajeSocket.put("idMensaje", mensaje.getId());
+        mensajeSocket.put("tipoEvento", "eliminarMensaje");
+
+        ObjectMapper mapper = new ObjectMapper();
+		String json = mapper.writeValueAsString(mensajeSocket);
+
+		messagingTemplate.convertAndSend("/topic/chats/" + mensaje.getEvento().getId() , json);
+
+        response.put("status", "ok");
+
+        return response;
+    }
+
+    @PostMapping(path = "/reportarMensaje/{id}", produces = "application/json")
+    @ResponseBody
+    @Transactional
+    public Map<String, Object> reportarMensaje(@PathVariable long id,@RequestBody JsonNode o, Model model, HttpSession session)throws JsonProcessingException{
+        
+        Map<String, Object> response = new HashMap<>();
+        User user = (User) session.getAttribute("u");
+        Mensaje mensaje = entityManager.find(Mensaje.class, id);
+        String motivo = o.get("motivo").asText();
+
+        if (user == null) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Usuario no autenticado");
+        }
+
+        if(mensaje == null || !mensaje.isEnabled()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Mensaje no encontrado");
+        }
+
+        if(mensaje.getRemitente().equals(user)){
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "no puedes reportar tu propio mensaje");
+        }
+
+        Reporte reporte = new Reporte();
+
+        reporte.setReportador(user);
+        reporte.setMensajeReportado(mensaje);
+        reporte.setMotivo(motivo);
+        reporte.setFechaEnvio(OffsetDateTime.now());
+        reporte.setResuelto(false);
+        reporte.setFechaResolucion(null);
+
+        entityManager.persist(mensaje);
         entityManager.flush();
 
         response.put("status", "ok");
