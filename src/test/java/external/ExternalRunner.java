@@ -15,9 +15,14 @@ class ExternalRunner {
     }  
 
     @Karate.Test
-    Karate testCrearFormulaApuesta() {
-        return Karate.run("crearFormulaApuesta").relativeTo(getClass());
-    }  
+    Karate testPruebaPrincipal() { //Prueba de la funcionalidad principal de la aplicación
+        return Karate.run("pruebaPrincipal").relativeTo(getClass());
+    } 
+    
+    @Karate.Test
+    Karate testDeterminarEvento() {  
+        return Karate.run("determinarEvento").relativeTo(getClass());
+    }
 
     @Karate.Test
     Karate testCrearApuesta() {
@@ -25,19 +30,9 @@ class ExternalRunner {
     }
 
     @Karate.Test
-    Karate testDeterminarEvento() {  
-        return Karate.run("determinarEvento").relativeTo(getClass());
-    }
-
-    @Karate.Test
-    Karate testProbarSeccion() {  
-        return Karate.run("crear-editarSeccion").relativeTo(getClass());
-    }
-
-    @Karate.Test
-    Karate testProbarEvento() {  
-        return Karate.run("crearEvento").relativeTo(getClass());
-    }
+    Karate testCrearFormulaApuesta() {
+        return Karate.run("crearFormulaApuesta").relativeTo(getClass());
+    }  
 
     @Karate.Test
     Karate testCrearEliminarSeccion() {
