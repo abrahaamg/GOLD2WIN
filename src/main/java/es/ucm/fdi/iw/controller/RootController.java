@@ -352,7 +352,8 @@ public class RootController {
     public ResponseEntity<JsonNode> ingresarDinero(@RequestBody JsonNode json, HttpSession session) {
         ObjectMapper objectMapper = new ObjectMapper();
         ObjectNode response = objectMapper.createObjectNode();
-        User user = (User) session.getAttribute("u");
+        User user = entityManager.find(User.class, 
+            ((User) session.getAttribute("u")).getId());
 
         int cantEntera = json.get("entera").asInt();
         int cantDecimal = json.get("decimal").asInt(); 
@@ -362,7 +363,7 @@ public class RootController {
             return ResponseEntity.badRequest().body(response);
         } 
         user.setDineroDisponible(user.getDineroDisponible() + total); 
-        entityManager.merge(user);
+        session.setAttribute("u", user);
 
         response.put("mensaje", "Dinero ingresado correctamente: " + total);
         return ResponseEntity.ok(response);
@@ -374,7 +375,8 @@ public class RootController {
     public ResponseEntity<JsonNode> retirarDinero(@RequestBody JsonNode json, HttpSession session) {
         ObjectMapper objectMapper = new ObjectMapper();
         ObjectNode response = objectMapper.createObjectNode();
-        User user = (User) session.getAttribute("u");
+        User user = entityManager.find(User.class, 
+            ((User) session.getAttribute("u")).getId());
 
         int cantEntera = json.get("entera").asInt();
         int cantDecimal = json.get("decimal").asInt(); 
@@ -389,7 +391,7 @@ public class RootController {
             return ResponseEntity.badRequest().body(response);
         }
         user.setDineroDisponible(user.getDineroDisponible() - total); 
-        entityManager.merge(user);
+        session.setAttribute("u", user);
 
         response.put("mensaje", "Dinero retirado correctamente: " + total);
         return ResponseEntity.ok(response);
