@@ -233,6 +233,33 @@ public class AdminController {
         return response;
     }
 
+    @PostMapping(path = "/eventos/cancelar/{id}", produces = "application/json")
+    @ResponseBody
+    @Transactional
+    public Map<String, Object> cancelarEventoControl(@PathVariable long id) {
+        Map<String, Object> response = new HashMap<>();
+
+        Evento evento = entityManager.find(Evento.class, id);
+
+        if (evento == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Evento no encontrado");
+        }
+
+        if (evento.isCancelado()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El evento ya ha sido cancelado");
+        }
+
+        if (evento.isDeterminado()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El evento ya ha sido determinado");
+        }
+
+        cancelarEvento(evento);
+
+        response.put("success", true);
+
+        return response;
+    }
+
     /*
      * LA FUNCION CREA UN EVENTO EN EL CASO DE QUE EL ID SEA -1. EN OTRO CASO
      * INTENTA EDITAR
@@ -556,24 +583,47 @@ public class AdminController {
     }
 
     private void cancelarEvento(Evento evento) {
-        // Verificamos que el evento no sea null y que no esté ya cancelado
-        if (evento != null && !evento.isCancelado()) {
-            // Marcamos el evento como cancelado
-            evento.setCancelado(true);
-            entityManager.persist(evento); // Persistimos el cambio del estado del evento
+        Set<User> apostadoreSet = new HashSet<>();
 
-            // Ahora vamos a revertir las apuestas asociadas al evento
-            for (FormulaApuesta formula : evento.getFormulasApuestas()) {
-                for (Apuesta apuesta : formula.getApuestas()) {
-                    // Devolver el dinero al apostador
-                    User user = apuesta.getApostador();
-                    user.setDineroRetenido(user.getDineroRetenido() - apuesta.getCantidad());
-                    user.setDineroDisponible(user.getDineroDisponible() + apuesta.getCantidad());
-                    entityManager.persist(user);
+
+        for (FormulaApuesta formula : evento.getFormulasApuestas()) {
+            Resultado resultado = Resultado.ERROR;
+
+            formula.setResultado(resultado);
+
+            for (Apuesta apuesta : formula.getApuestas()) {
+                User user = apuesta.getApostador();
+
+                // Devolvemos el dinero al apostador
+                user.setDineroRetenido(user.getDineroRetenido() - apuesta.getCantidad());
+                user.setDineroDisponible(user.getDineroDisponible() + apuesta.getCantidad());
+
+                apostadoreSet.add(user);
+            }
+
+            entityManager.flush();
+
+            for (User apostador : apostadoreSet) {
+                Map<String, Object> mensaje = new HashMap<>();
+                mensaje.put("tipoEvento", "actualizarDinero");
+                mensaje.put("dineroDisponible", apostador.getDineroDisponible());
+                mensaje.put("dineroRetenido", apostador.getDineroRetenido());
+                ObjectMapper mapper = new ObjectMapper();
+                String json;
+
+                try {
+                    json = mapper.writeValueAsString(mensaje);
+                    messagingTemplate.convertAndSend("/user/" + apostador.getUsername() + "/queue/updates", json);
+                } catch (JsonProcessingException e) {
+                    e.printStackTrace();
                 }
             }
-            entityManager.flush(); // Aseguramos que todos los cambios se guardan en la base de datos
         }
+
+        evento.setDeterminado(true);
+        evento.setCancelado(true);
+
+        entityManager.flush();
     }
 
     @Transactional
