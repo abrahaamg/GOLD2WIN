@@ -51,6 +51,28 @@ document.querySelectorAll(".cambiadorTema").forEach(elemento => {
 // Ejecutar al cargar la página
 applyThemeFromCookie();
 
+
+/*WEBSOCKET personal para cosas generales como recibir cambios en el dinero*/
+ws.subscribe("/user/queue/updates",function(data){
+    switch(data.tipoEvento){
+        case "actualizarDinero":
+            let componentesDidponible = document.getElementsByClassName("dineroDisponible");
+            let componentesRetenido = document.getElementsByClassName("dineroRetenido");
+            let disponible = data.dineroDisponible;
+            let retenido = data.dineroRetenido;
+
+            for(let i = 0; i < componentesDidponible.length; i++){
+                componentesDidponible[i].innerHTML = disponible  + " €";
+            }
+            for(let i = 0; i < componentesRetenido.length; i++){
+                componentesRetenido[i].innerHTML = retenido + " €";
+            }
+
+            break;
+    }
+});
+
+
 /* OTRAS FUNCIONES GLOBALES*/
 
 function actualizarTiempoRestante() {

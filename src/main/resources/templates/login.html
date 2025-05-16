@@ -16,7 +16,7 @@
             <div class="mb-3">
                 <label for="username" class="form-label">Username</label>
                 <input type="text" class="form-control" id="username" name="username" placeholder="Ingrese su username" required="required">
-                <p th:if="${loginError != false}" class="error">
+                <p th:if="${param.error}" class="error">
                     Error en nombre de usuario o contraseña
                 </p>
             </div>

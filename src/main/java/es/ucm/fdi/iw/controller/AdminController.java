@@ -23,6 +23,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -72,6 +73,9 @@ public class AdminController {
 
     @Autowired
     private EntityManager entityManager;
+
+    @Autowired
+	private SimpMessagingTemplate messagingTemplate;
 
     private static final Logger log = LogManager.getLogger(AdminController.class);
 
@@ -451,12 +455,13 @@ public class AdminController {
     // Logica para determinar evento
     // El evento tiene que haberse traido previamente de la base de datos y
     // verificado que no sea null
-    private void determinarEvento(Evento evento, Map<String, Object> variables) {
+    private void determinarEvento(Evento evento, Map<String, Object> variables){
+        Set<User> apostadoreSet = new HashSet<>(); 
+
         // Primero establezco el valor de las variables en la BD
         for (Variable variable : evento.getVariables()) {
             if (variable != null) {
                 variable.setResolucion(variables.get(variable.getNombre()).toString());
-                entityManager.persist(variable);
             }
         }
 
@@ -508,37 +513,50 @@ public class AdminController {
             // En teoria solo es transaccional la parte de modificar dinero para no bloquear
             // mas cosas de las necesarias.
             for (Apuesta apuesta : formula.getApuestas()) {
+                User user = apuesta.getApostador();
                 if (formula.getResultado() == Resultado.ERROR) {
                     // Devolvemos el dinero al apostador
-                    User user = apuesta.getApostador();
+                
                     user.setDineroRetenido(user.getDineroRetenido() - apuesta.getCantidad());
                     user.setDineroDisponible(user.getDineroDisponible() + apuesta.getCantidad());
-                    entityManager.persist(user);
                 } else if ((formula.getResultado() == Resultado.GANADO && apuesta.isAFavor())
                         || (formula.getResultado() == Resultado.PERDIDO && !apuesta.isAFavor())) {
                     // Ha ganado por lo que se le suma el dinero apostado por la cuota
                     double cuota = formula.calcularCuota(apuesta.isAFavor());
                     int dineroGanado = (int)cuota * apuesta.getCantidad(); //trunco decimales
 
-                    User user = apuesta.getApostador();
                     user.setDineroRetenido(user.getDineroRetenido() - apuesta.getCantidad());
                     user.setDineroDisponible(user.getDineroDisponible() + dineroGanado);
-                    entityManager.persist(user);
                 } else {
                     // Ha perdido por lo que se resta el dinero apostado del dinero retenido
-
-                    User user = apuesta.getApostador();
                     user.setDineroRetenido(user.getDineroRetenido() - apuesta.getCantidad());
-                    entityManager.persist(user);
                 }
+
+                apostadoreSet.add(user);
             }
 
-            entityManager.persist(formula);
-            entityManager.flush(); // forzamos a que se haga la consulta para que no se quede en la cola de espera
+            entityManager.flush();
+
+            for(User apostador : apostadoreSet) {
+                Map<String, Object> mensaje = new HashMap<>();
+                mensaje.put("tipoEvento", "actualizarDinero");
+                mensaje.put("dineroDisponible", apostador.getDineroDisponible());
+                mensaje.put("dineroRetenido", apostador.getDineroRetenido());
+                ObjectMapper mapper = new ObjectMapper();
+		        String json;
+
+                try {
+                    json = mapper.writeValueAsString(mensaje);
+                    messagingTemplate.convertAndSend("/user/"+apostador.getUsername()+"/queue/updates", json);
+                } catch (JsonProcessingException e) {
+                    e.printStackTrace();
+                }
+            }
         }
 
         evento.setDeterminado(true);
-        entityManager.persist(evento);
+
+        entityManager.flush();
     }
 
     private void cancelarEvento(Evento evento) {
