@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.time.OffsetDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
@@ -19,6 +20,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.LockedException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -143,9 +145,28 @@ public class RootController {
         return response;
     }
 
-    @GetMapping("/login")
-    public String login(Model model) {
-        return "login";
+    @GetMapping({"/login", "/login_error"})
+    public String login(Model model,@RequestParam(name = "username", required = false, defaultValue = "") String username) {
+        try{
+            User u = entityManager.createNamedQuery("User.byUsername", User.class)
+                .setParameter("username", username)
+                .getSingleResult();
+
+            if(u != null && u.getExpulsadoHasta() != null && u.getExpulsadoHasta().isAfter(java.time.OffsetDateTime.now())) {
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+                model.addAttribute("mensajeError", "Este usuario está expulsado hasta el " + u.getExpulsadoHasta().format(formatter));
+            }
+            else {
+                model.addAttribute("mensajeError", "Usuario o contraseña incorrectos");
+            }
+            
+            return "login";
+        }
+        catch (Exception e) {
+            model.addAttribute("mensajeError", "Usuario o contraseña incorrectos");
+
+            return "login";
+        }
     }
 
     @GetMapping("/register")

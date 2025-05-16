@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 
 import jakarta.persistence.*;
 
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -57,6 +58,8 @@ public class User implements Transferable<User.Transfer> {
     // añadir tiempo de expulsion como vaiable
     private int dineroDisponible; // En centimos
     private int dineroRetenido; // En centimos
+
+    private OffsetDateTime expulsadoHasta; 
 
     @OneToMany(mappedBy = "usuario")
     private List<ParticipacionChat> chats;
