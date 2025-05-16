@@ -11,6 +11,34 @@ var ultimoContenedorMensaje = null; //saber el contenedor del ultimo mensaje
 var idEventoSeleccionado = -1;
 var contenedorEventoSeleccionado = null; //Contenedor del evento seleccionado (para eliminar el estilo de seleccionado)
 
+let idMensajeClicado = 0; //para el menu contextual
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    document.getElementById("botonEliminarMensaje").addEventListener("click", function () {
+        go(config.rootUrl + '/chats/borrarMensaje/' + idMensajeClicado, 'DELETE').then(function (data) {
+        }).catch(function (error) {
+            console.log(error);
+        });
+    });
+
+    document.addEventListener("click", function () {
+        let menuPropio = document.getElementById("menuPropio");
+        let menuAgeno = document.getElementById("menuAgeno");
+
+        menuPropio.classList.add("desaparece");
+        menuAgeno.classList.add("desaparece");
+    });
+
+    document.addEventListener("wheel", () => {
+        let menuPropio = document.getElementById("menuPropio");
+        let menuAgeno = document.getElementById("menuAgeno");
+
+        menuPropio.classList.add("desaparece");
+        menuAgeno.classList.add("desaparece");
+    });
+});
+
 //El boton apostar del chat redirige al ID del evento conteniedo en "idEventoSeleccionado"
 document.addEventListener('DOMContentLoaded', function () {
     const botonApostarCabecera = document.getElementById('botonApostarCabecera');
@@ -369,6 +397,35 @@ function anadirMensajeAbajo(mensaje) {
                                     <div class="text-end">
                                         <span class="text-secondary small">${obtenerHora(mensaje.fecha)}</span>
                                     </div>`;
+    }
+
+    if(propio){
+        const menu = document.getElementById("menuPropio");
+        const menuAgeno = document.getElementById("menuAgeno");
+
+        nuevoMensajeDiv.addEventListener("contextmenu", function(e){
+            e.preventDefault();
+
+            idMensajeClicado = mensaje.id; 
+            menu.style.left = `${e.pageX}px`;
+            menu.style.top = `${e.pageY}px`;
+            menu.classList.remove("desaparece");
+            menuAgeno.classList.add("desaparece");
+        });
+    }
+    else{
+        const menu = document.getElementById("menuAgeno");
+        const menuPropio = document.getElementById("menuPropio");
+
+        nuevoMensajeDiv.addEventListener("contextmenu", function(e){
+            e.preventDefault();
+            idMensajeClicado = mensaje.id;
+            
+            menu.style.left = `${e.pageX}px`;
+            menu.style.top = `${e.pageY}px`;
+            menu.classList.remove("desaparece");
+            menuPropio.classList.add("desaparece");
+        });
     }
 
     ultimoContenedorMensaje.appendChild(nuevoMensajeDiv);
