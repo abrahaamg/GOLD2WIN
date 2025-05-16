@@ -325,7 +325,7 @@ public class ChatController {
         reporte.setResuelto(false);
         reporte.setFechaResolucion(null);
 
-        entityManager.persist(mensaje);
+        entityManager.persist(reporte);
         entityManager.flush();
 
         response.put("status", "ok");

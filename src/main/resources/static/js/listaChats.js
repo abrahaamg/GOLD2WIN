@@ -37,6 +37,24 @@ document.addEventListener("DOMContentLoaded", function () {
         menuPropio.classList.add("desaparece");
         menuAgeno.classList.add("desaparece");
     });
+
+    document.getElementById("formReporte").addEventListener("submit", function (e) {
+        e.preventDefault();
+        const motivo = document.getElementById("motivo").value.trim();
+
+        if (!motivo) {
+            document.getElementById("motivo").classList.add("is-invalid");
+            return;
+        }
+
+        go(config.rootUrl + '/chats/reportarMensaje/' + idMensajeClicado, 'POST', { motivo: motivo }).then(function (data) {}).catch(function (error) {console.log(error);});
+
+        const modal = bootstrap.Modal.getInstance(document.getElementById("reportarModal"));
+        modal.hide();
+
+        this.reset();
+        document.getElementById("motivo").classList.remove("is-invalid");
+    });
 });
 
 //El boton apostar del chat redirige al ID del evento conteniedo en "idEventoSeleccionado"
