@@ -1,10 +1,8 @@
 package es.ucm.fdi.iw;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import jakarta.persistence.EntityManager;
 import jakarta.servlet.ServletException;
@@ -20,9 +18,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import es.ucm.fdi.iw.model.Topic;
 import es.ucm.fdi.iw.model.User;
 
 /**
@@ -96,7 +91,7 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
     session.setAttribute("topics", String.join(",", topics));
 
     // redirects to 'admin' or 'user/{id}', depending on the user
-    String nextUrl = "/";//u.hasRole(User.Role.ADMIN) ? "admin/" : "user/" + u.getId();
+    String nextUrl = "/";// u.hasRole(User.Role.ADMIN) ? "admin/" : "user/" + u.getId();
 
     log.info("LOG IN: {} (id {}) -- session is {}, websocket is {} -- redirected to {}",
         u.getUsername(), u.getId(), session.getId(), ws, nextUrl);

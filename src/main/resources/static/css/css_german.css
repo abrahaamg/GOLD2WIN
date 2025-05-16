@@ -242,10 +242,6 @@
     border-top: 1px solid var(--bs-border-color);
 }
 
-.invalid-feedback {
-    display: block !important;  
-}
-
 @media (min-width: 769px) {
     #contenedorVariables.limitar > div {
       max-height: 80px;

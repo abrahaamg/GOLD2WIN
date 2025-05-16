@@ -1,5 +1,6 @@
 package es.ucm.fdi.iw;
 
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
 import jakarta.persistence.EntityManager;
@@ -7,6 +8,7 @@ import jakarta.persistence.PersistenceContext;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.security.authentication.LockedException;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -33,6 +35,12 @@ public class IwUserDetailsService implements UserDetailsService {
 	        User u = entityManager.createNamedQuery("User.byUsername", User.class)
                     .setParameter("username", username)
                     .getSingleResult();
+
+			if(u!= null && u.getExpulsadoHasta() != null && u.getExpulsadoHasta().isAfter(java.time.OffsetDateTime.now())) {
+				DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+				throw new LockedException("Este usuario está expulsado hasta el " + u.getExpulsadoHasta().format(formatter));
+			}
+			
 	        // build UserDetails object
 	        ArrayList<SimpleGrantedAuthority> roles = new ArrayList<>();
 	        for (String r : u.getRoles().split("[,]")) {

@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.time.OffsetDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
@@ -18,13 +19,13 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.LockedException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.FileCopyUtils;
-import org.springframework.web.bind.annotation.DeleteMapping;
+
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -35,8 +36,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import es.ucm.fdi.iw.AppConfig;
 import es.ucm.fdi.iw.LocalData;
@@ -44,7 +43,6 @@ import es.ucm.fdi.iw.LocalData;
 import es.ucm.fdi.iw.model.Evento;
 import es.ucm.fdi.iw.model.Seccion;
 import es.ucm.fdi.iw.model.User;
-import es.ucm.fdi.iw.model.User.Role;
 import es.ucm.fdi.iw.model.Transferable;
 import java.util.stream.Collectors;
 import java.util.Map;
@@ -62,7 +60,7 @@ public class RootController {
     private final AppConfig appConfig;
 
     @Autowired
-	private PasswordEncoder passwordEncoder;
+    private PasswordEncoder passwordEncoder;
 
     private final AdminController adminController;
 
@@ -82,8 +80,8 @@ public class RootController {
     }
 
     public String encodePassword(String rawPassword) {
-		return passwordEncoder.encode(rawPassword);
-	}
+        return passwordEncoder.encode(rawPassword);
+    }
 
     RootController(AdminController adminController, AppConfig appConfig,
             AuthenticationManager authenticationManagerBean) {
@@ -147,9 +145,28 @@ public class RootController {
         return response;
     }
 
-    @GetMapping("/login")
-    public String login(Model model) {
-        return "login";
+    @GetMapping({"/login", "/login_error"})
+    public String login(Model model,@RequestParam(name = "username", required = false, defaultValue = "") String username) {
+        try{
+            User u = entityManager.createNamedQuery("User.byUsername", User.class)
+                .setParameter("username", username)
+                .getSingleResult();
+
+            if(u != null && u.getExpulsadoHasta() != null && u.getExpulsadoHasta().isAfter(java.time.OffsetDateTime.now())) {
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+                model.addAttribute("mensajeError", "Este usuario está expulsado hasta el " + u.getExpulsadoHasta().format(formatter));
+            }
+            else {
+                model.addAttribute("mensajeError", "Usuario o contraseña incorrectos");
+            }
+            
+            return "login";
+        }
+        catch (Exception e) {
+            model.addAttribute("mensajeError", "Usuario o contraseña incorrectos");
+
+            return "login";
+        }
     }
 
     @GetMapping("/register")
@@ -160,7 +177,7 @@ public class RootController {
     @GetMapping("/")
     public String index(Model model) {
         // obtengo las secciones
-        List<Seccion> secciones = entityManager.createNamedQuery("Seccion.getAll",Seccion.class).getResultList();
+        List<Seccion> secciones = entityManager.createNamedQuery("Seccion.getAll", Seccion.class).getResultList();
 
         // añado los eventos y las secciones al modelo
         model.addAttribute("secciones", secciones);
@@ -176,10 +193,11 @@ public class RootController {
             @RequestParam long seccionId,
             @RequestParam String busqueda,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime fechaInicio, // necesito
-                                                                                                         // indicar el
-                                                                                                         // formato en
-                                                                                                         // que viene la
-                                                                                                         // fecha
+                                                                                                          // indicar el
+                                                                                                          // formato en
+                                                                                                          // que viene
+                                                                                                          // la
+                                                                                                          // fecha
             @RequestParam int offset) {
 
         boolean hayMasEventos = false;
@@ -188,7 +206,7 @@ public class RootController {
         List<String> etiquetas;
         Seccion seccion;
 
-        //procesamos la busqueda
+        // procesamos la busqueda
         etiquetas = List.of(busqueda.split(" ")).stream()
                 .filter(palabra -> palabra.startsWith("[") && palabra.endsWith("]")).collect(Collectors.toList());
         nombre = List.of(busqueda.split(" ")).stream()
@@ -196,7 +214,7 @@ public class RootController {
                 .collect(Collectors.joining(" "));
 
         seccion = entityManager.find(Seccion.class, seccionId);
-        
+
         if (seccion != null && seccion.isEnabled()) {
             query = entityManager.createNamedQuery("Evento.getBusquedaInSeccion", Evento.class);
             query.setParameter("seccionId", seccionId);
@@ -236,7 +254,7 @@ public class RootController {
         TypedQuery<Evento> query;
 
         if (seccion != null && seccion.isEnabled()) {
-            query = entityManager.createNamedQuery("Evento.getAllAfterDateInSeccion", Evento.class); 
+            query = entityManager.createNamedQuery("Evento.getAllAfterDateInSeccion", Evento.class);
             query.setParameter("seccion", seccionId);
         } else {
             query = entityManager.createNamedQuery("Evento.getAllAfterDate", Evento.class);
@@ -262,7 +280,7 @@ public class RootController {
     @GetMapping("/seccion/{id}")
     public String eventosSeccion(@PathVariable long id, Model model) {
         // obtengo las secciones
-        List<Seccion> secciones = entityManager.createNamedQuery("Seccion.getAll",Seccion.class).getResultList();
+        List<Seccion> secciones = entityManager.createNamedQuery("Seccion.getAll", Seccion.class).getResultList();
 
         // añado las secciones al modelo
         model.addAttribute("secciones", secciones);
@@ -283,115 +301,9 @@ public class RootController {
                 UserController.class.getClassLoader().getResourceAsStream(
                         "static/img/default-pic.jpg")));
     }
-    
-
-    @GetMapping("/crearApuesta")
-    public String crearApuesta(Model model) {
-        return "crearApuesta";
-    }
-
-    @GetMapping("/admin")
-    public String admin(Model model) {
-        return "admin";
-    }
-
-    @GetMapping("/cartera/ingresar")
-    public String ingresar(Model model, HttpSession session) {
-        User user = (User) session.getAttribute("u");
-
-        int dineroDisponible = user.getDineroDisponible();
-        int parteEntera = dineroDisponible / 100;
-        int parteDecimal = dineroDisponible % 100;
-        if(parteDecimal < 10) {
-            String parteDecimalString = String.valueOf(parteDecimal);
-            parteDecimalString = "0" + parteDecimalString;
-            model.addAttribute("parteEntera", parteEntera);
-            model.addAttribute("parteDecimal", parteDecimalString);
-        }
-        else{
-            model.addAttribute("parteEntera", parteEntera);
-            model.addAttribute("parteDecimal", parteDecimal);
-        }
-
-        return "ingresar";
-    }
-
-    @GetMapping("/cartera/retirar")
-    public String retirar(Model model, HttpSession session) {
-        User user = (User) session.getAttribute("u");
-
-        int dineroDisponible = user.getDineroDisponible();
-        model.addAttribute("dinero", dineroDisponible);
-        return "retirar";
-    }
-
-    @GetMapping("/cartera/ingreso")
-    public String ingreso(Model model) {
-        return "ingreso";
-    }
-
-    @GetMapping("/cartera/ingresar/paypal")
-    public String paypal(Model model) {
-        return "paypal";
-    }
-
-    @GetMapping("/cartera/ingresar/tarjeta")
-    public String tarjeta(Model model) {
-        return "tarjeta";
-    }
 
     @GetMapping("/perfil")
     public String perfil(Model model) {
         return "user";
-    }
-    
-
-    @Transactional
-    @ResponseBody
-    @PostMapping("/cartera/ingresarDinero")
-    public ResponseEntity<JsonNode> ingresarDinero(@RequestBody JsonNode json, HttpSession session) {
-        ObjectMapper objectMapper = new ObjectMapper();
-        ObjectNode response = objectMapper.createObjectNode();
-        User user = (User) session.getAttribute("u");
-
-        int cantEntera = json.get("entera").asInt();
-        int cantDecimal = json.get("decimal").asInt(); 
-        int total = (cantEntera * 100) + cantDecimal;
-        if(total < 300 || total > 150000){
-            response.put("mensaje", "La cantidad a retirar debe estar entre 3 y 1500 euros: " + total);
-            return ResponseEntity.badRequest().body(response);
-        } 
-        user.setDineroDisponible(user.getDineroDisponible() + total); 
-        entityManager.merge(user);
-
-        response.put("mensaje", "Dinero ingresado correctamente: " + total);
-        return ResponseEntity.ok(response);
-    }
-
-    @Transactional
-    @ResponseBody
-    @PostMapping("/cartera/retirarDinero")
-    public ResponseEntity<JsonNode> retirarDinero(@RequestBody JsonNode json, HttpSession session) {
-        ObjectMapper objectMapper = new ObjectMapper();
-        ObjectNode response = objectMapper.createObjectNode();
-        User user = (User) session.getAttribute("u");
-
-        int cantEntera = json.get("entera").asInt();
-        int cantDecimal = json.get("decimal").asInt(); 
-        int total = (cantEntera * 100) + cantDecimal; 
-
-        if(total > user.getDineroDisponible()) {
-            response.put("mensaje", "No tienes suficiente dinero disponible para retirar: " + total);
-            return ResponseEntity.badRequest().body(response);
-        }
-        else if(total < 500 || total > 100000){
-            response.put("mensaje", "La cantidad a retirar debe estar entre 5 y 1000 euros: " + total);
-            return ResponseEntity.badRequest().body(response);
-        }
-        user.setDineroDisponible(user.getDineroDisponible() - total); 
-        entityManager.merge(user);
-
-        response.put("mensaje", "Dinero retirado correctamente: " + total);
-        return ResponseEntity.ok(response);
     }
 }
