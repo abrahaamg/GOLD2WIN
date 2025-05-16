@@ -126,6 +126,18 @@ public class AdminController {
         return "verificarEvento";
     }
 
+    @GetMapping("/eventos")
+    public String eventos(Model model) {
+        String queryEventos = "SELECT e FROM Evento e";
+        List<Evento> eventos = entityManager.createQuery(queryEventos, Evento.class).getResultList();
+        List<Seccion> secciones = entityManager.createNamedQuery("Seccion.getAll", Seccion.class).getResultList();
+
+        model.addAttribute("eventos", eventos);
+        model.addAttribute("secciones", secciones);
+
+        return "eventos";
+    }
+
     @GetMapping("/eventos/determinar/{id}")
     public String verificarEvento(@PathVariable long id, Model model) {
         Evento evento = entityManager.find(Evento.class, id);
@@ -464,18 +476,6 @@ public class AdminController {
         return "secciones-crearSeccion";
     }
 
-    @GetMapping("/eventos")
-    public String eventos(Model model) {
-        String queryEventos = "SELECT e FROM Evento e WHERE e.cancelado = false";
-        List<Evento> eventos = entityManager.createQuery(queryEventos, Evento.class).getResultList();
-        List<Seccion> secciones = entityManager.createNamedQuery("Seccion.getAll", Seccion.class).getResultList();
-
-        model.addAttribute("eventos", eventos);
-        model.addAttribute("secciones", secciones);
-
-        return "eventos";
-    }
-
     // Logica para determinar evento
     // El evento tiene que haberse traido previamente de la base de datos y
     // verificado que no sea null
@@ -584,7 +584,6 @@ public class AdminController {
 
     private void cancelarEvento(Evento evento) {
         Set<User> apostadoreSet = new HashSet<>();
-
 
         for (FormulaApuesta formula : evento.getFormulasApuestas()) {
             Resultado resultado = Resultado.ERROR;
