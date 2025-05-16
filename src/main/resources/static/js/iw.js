@@ -13,11 +13,26 @@ const ws = {
     /**
      * Default action when message is received. 
      */
-    receive: (text) => {
-        console.log(text);
-        let p = document.querySelector("#nav-unread");
-        if (p) {
-            p.textContent = +p.textContent + 1;
+    receive: (data) => {
+        console.log(data);
+
+        switch (data.tipoEvento) {
+            case "actualizarDinero":
+                let componentesDidponible = document.getElementsByClassName("dineroDisponible");
+                let componentesRetenido = document.getElementsByClassName("dineroRetenido");
+                let disponible = data.dineroDisponible;
+                let retenido = data.dineroRetenido;
+
+                for (let i = 0; i < componentesDidponible.length; i++) {
+                    componentesDidponible[i].innerHTML = parseInt(disponible/100) +","+disponible%100  + " €";
+                }
+                for (let i = 0; i < componentesRetenido.length; i++) {
+                    componentesRetenido[i].innerHTML =  parseInt(retenido/100) + "," + retenido%100  + " €";
+                }
+
+                go(config.rootUrl + "/cartera/ingresarDinero", "POST", {entera: 0, decimal: 0}); //actualiza el saldo del modelo
+
+                break;
         }
     },
 

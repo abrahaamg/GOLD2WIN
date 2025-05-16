@@ -25,7 +25,7 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    if(buscador){
+    if (buscador) {
         buscador.addEventListener('keypress', function (event) {
             if (event.key === "Enter") {
                 busqueda = document.getElementById("queryEventos").value;
@@ -34,7 +34,7 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    if(inputMensaje){
+    if (inputMensaje) {
         inputMensaje.addEventListener('keypress', function (event) {
             if (event.key === "Enter") {
                 enviarMensaje();
@@ -42,18 +42,18 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    if(botonEnviar){
+    if (botonEnviar) {
         botonEnviar.addEventListener('click', function () {
             enviarMensaje();
         });
     }
 
-    if(botonRetroceder){
+    if (botonRetroceder) {
         botonRetroceder.addEventListener('click', function () {
             idEventoSeleccionado = -1;
-            if(contenedorEventoSeleccionado) contenedorEventoSeleccionado.classList.remove("resaltaHoverSelected"); 
+            if (contenedorEventoSeleccionado) contenedorEventoSeleccionado.classList.remove("resaltaHoverSelected");
             contenedorEventoSeleccionado = null;
-            
+
             document.getElementById("chatContainer").classList.remove('paginaChatsActiva'); //foco en el input de mensaje
             document.getElementById("contenedorMenuListaChats").classList.add('paginaChatsActiva'); //foco en el input de mensaje
         });
@@ -65,28 +65,28 @@ document.addEventListener('DOMContentLoaded', function () {
 
 /*WEB-SOCKETS*/
 
-function suscribirseWebSocketChat(chat){
+function suscribirseWebSocketChat(chat) {
     ws.subscribe(appRoot + 'topic/chats/' + chat.idEvento, function (data) {
         console.log("llega el mensaje");
-        if(data.tipoEvento == 'nuevoMensaje'){
-            if(idEventoSeleccionado != chat.idEvento){
+        if (data.tipoEvento == 'nuevoMensaje') {
+            if (idEventoSeleccionado != chat.idEvento) {
                 //El chat no esta abierto +1 mensaje no leido y se reintroduce ordenado
                 let chatDiv = document.querySelector(`[data-idEvento="${chat.idEvento}"]`);
-                let mensajesNoLeidos =  parseInt(chatDiv.querySelector('.badge').textContent);
-                if(chatDiv){ //por si se ha eliminado el chat
-                    anadirChat({idEvento:chat.idEvento, mensajesNoLeidos: mensajesNoLeidos+1, ultimoMensaje:data.mensaje.contenido, fechaUltimoMensaje:data.mensaje.fecha, nombreEvento:chat.nombreEvento});
+                let mensajesNoLeidos = parseInt(chatDiv.querySelector('.badge').textContent);
+                if (chatDiv) { //por si se ha eliminado el chat
+                    anadirChat({ idEvento: chat.idEvento, mensajesNoLeidos: mensajesNoLeidos + 1, ultimoMensaje: data.mensaje.contenido, fechaUltimoMensaje: data.mensaje.fecha, nombreEvento: chat.nombreEvento });
                     chatDiv.remove();
                 }
-                
-            }else{
+
+            } else {
                 //si el chat esta abierto se añade el mensaje al chat
                 let chatDiv = document.querySelector(`[data-idEvento="${chat.idEvento}"]`);
                 let mensaje = data.mensaje;
                 anadirMensajeAbajo(mensaje);
                 deslizarHaciaAbajo();
-                
-                if(chatDiv){ //por si se ha eliminado el chat
-                    anadirChat({idEvento:chat.idEvento, mensajesNoLeidos: 0, ultimoMensaje:data.mensaje.contenido, fechaUltimoMensaje:data.mensaje.fecha, nombreEvento:chat.nombreEvento});
+
+                if (chatDiv) { //por si se ha eliminado el chat
+                    anadirChat({ idEvento: chat.idEvento, mensajesNoLeidos: 0, ultimoMensaje: data.mensaje.contenido, fechaUltimoMensaje: data.mensaje.fecha, nombreEvento: chat.nombreEvento });
                     chatDiv.remove();
                     chatDiv = document.querySelector(`[data-idEvento="${chat.idEvento}"]`);
 
@@ -96,53 +96,53 @@ function suscribirseWebSocketChat(chat){
                 }
 
                 //Notifico que he visto el mensaje
-                go(appRoot + 'chats/notificar/' + chat.idEvento, 'POST').then(function (data) {}).catch(function (error) {console.log(error);});
+                go(appRoot + 'chats/notificar/' + chat.idEvento, 'POST').then(function (data) { }).catch(function (error) { console.log(error); });
             }
         }
-        else if(data.tipoEvento == 'eliminarMensaje'){
+        else if (data.tipoEvento == 'eliminarMensaje') {
             eliminarMensaje(data.idMensaje);
         }
     });
 }
 
-function eliminarMensaje(idMensaje){
+function eliminarMensaje(idMensaje) {
     let mensajeDiv = document.querySelector(`[data-idMensaje="${idMensaje}"]`);
-    if(!mensajeDiv) return; //si no existe el mensaje no se hace nada
-    let padreDiv = mensajeDiv.parentNode; 
+    if (!mensajeDiv) return; //si no existe el mensaje no se hace nada
+    let padreDiv = mensajeDiv.parentNode;
 
-    if(padreDiv.childElementCount == 1){
+    if (padreDiv.childElementCount == 1) {
         let abueloDiv = padreDiv.parentNode;
         let etiquetaArriba = false;
         let etiquetaAbajo = false;
         let elementos = Array.from(abueloDiv.parentNode.children); //obtenemos los hijos del padre (los mensajes)
         let posicion = elementos.indexOf(abueloDiv);
 
-         //si es el unico mensaje del dia se elimina el separador
-        if((elementos[0] !== abueloDiv && elementos[posicion-1].classList.contains("separadorMensajes")) && (elementos[elementos.length-1] === abueloDiv || elementos[posicion+1].classList.contains("separadorMensajes"))){
-            elementos[posicion-1].remove(); //eliminamos el separador de arriba
-            
+        //si es el unico mensaje del dia se elimina el separador
+        if ((elementos[0] !== abueloDiv && elementos[posicion - 1].classList.contains("separadorMensajes")) && (elementos[elementos.length - 1] === abueloDiv || elementos[posicion + 1].classList.contains("separadorMensajes"))) {
+            elementos[posicion - 1].remove(); //eliminamos el separador de arriba
+
             //hay que cambiar el ultimo contenedor (el siguiente mensaje tendrá que introducir uno nuevo)
-            if(elementos.length-1 === posicion){
-                ultimaFecha = new Date(0); 
+            if (elementos.length - 1 === posicion) {
+                ultimaFecha = new Date(0);
                 ultimoContenedorMensaje = null;
                 idUltimoEmisor = -1;
             }
         }
-        else if(elementos.length-1 === posicion){
-            ultimoContenedorMensaje = elementos[posicion-1];
+        else if (elementos.length - 1 === posicion) {
+            ultimoContenedorMensaje = elementos[posicion - 1];
             idUltimoEmisor = ultimoContenedorMensaje.getAttribute('data-idUsuario');
         }
 
         abueloDiv.remove(); //eliminamos el mensaje
     }
-    else{
+    else {
         let hijosDirectos = Array.from(padreDiv.children);
-        if(hijosDirectos.indexOf(mensajeDiv) === 0){
+        if (hijosDirectos.indexOf(mensajeDiv) === 0) {
             //si es el primer hijo del padre (el mensaje) se elimina el separador de arriba
             hijosDirectos[1].setAttribute('atop', '');
-            if(mensajeDiv.hasAttribute('pleft'))
+            if (mensajeDiv.hasAttribute('pleft'))
                 hijosDirectos[1].setAttribute('pleft', '');
-            if(mensajeDiv.hasAttribute('pright')) 
+            if (mensajeDiv.hasAttribute('pright'))
                 hijosDirectos[1].setAttribute('pright', '');
         }
 
@@ -168,7 +168,7 @@ function enviarMensaje() {
 //Al cargar la pagina se pide al servidor una lista de los chats a los que esta suscrito el usuario
 //Esto permite no repetir codigo en html del servidor ya que las funciones de insertar chat/mensaje se van a tener
 //que usar en el js obligatoriamente al llegar un mensaje nuevo (un chat que esta abajo en la lista se elimina y añade arriba)
-function cargarChats(){
+function cargarChats() {
     go(appRoot + 'chats/cargarChats', 'GET').then(function (data) {
         let listaChats = data.chats;
         console.log(listaChats);
@@ -178,28 +178,28 @@ function cargarChats(){
             suscribirseWebSocketChat(chat);
         });
 
-        if(primeraCarga){
-            if(eventoInicial != -1){
+        if (primeraCarga) {
+            if (eventoInicial != -1) {
                 let chatDiv = document.querySelector(`[data-idEvento="${eventoInicial}"]`);
-                if(chatDiv){
+                if (chatDiv) {
                     chatDiv.click(); //simulo el click para abrir el chat
                 }
             }
         }
-        cargando = false; 
+        cargando = false;
     }).catch(function (error) {
-        cargando = false; 
+        cargando = false;
     });
 }
 
 //Rellena la zona de mensajes con los mensajes del chat relacionado al evento "idEvento"
-function cargarMensajes(idEvento){
+function cargarMensajes(idEvento) {
     go(appRoot + 'chats/cargarMensajes/' + idEvento, 'GET').then(function (data) {
         data.mensajes.forEach(mensaje => {
             anadirMensajeAbajo(mensaje);
         });
 
-        deslizarHaciaAbajo(); 
+        deslizarHaciaAbajo();
         cargando = false; //ya no estoy cargando mensajes
     }).catch(function (error) {
         console.log(error);
@@ -210,7 +210,7 @@ function cargarMensajes(idEvento){
 //Precondicion: el usuario ya tiene que pertenecer al chat
 //Al puslar un chat se eliminan los mensajes del chat anterior, cambia la imagen del chat, el nombre y cambia la variable idEventoSeleccionado
 //idEventoSeleccionado permite que al pulsar el boton de apostar sepa a que evento redirigir sin tener que cambiar la funcion onClick cada vez
-function seleccionarChat(chat,componente){
+function seleccionarChat(chat, componente) {
     const chatContainer = document.getElementById("chatContainer");
     const imagenCabeceraChat = document.getElementById("imagenCabeceraChat");
     const tituloCabeceraChat = document.getElementById("tituloCabeceraChat");
@@ -239,7 +239,7 @@ function seleccionarChat(chat,componente){
 
 //chat: {idEvento, mensajesNoLeidos, ultimoMensaje, fechaUltimoMensaje, nombreEvento}
 //Añado un chat a la lista de chats, ordenandolo por fecha de ultimo mensaje
-function anadirChat(chat){
+function anadirChat(chat) {
     let textoNumMensajes = chat.mensajesNoLeidos >= 100 ? '99+' : chat.mensajesNoLeidos; //si hay muchos mensajes se pone 99+
     let chatDiv = document.createElement('div');
     chatDiv.setAttribute('data-fecha', chat.fechaUltimoMensaje); //guardamos la fecha en el HTML para ordenar previamente sin variables extras en el JS
@@ -248,7 +248,7 @@ function anadirChat(chat){
     chatDiv.setAttribute('role', 'button');
     chatDiv.setAttribute('class', 'd-flex w-100 mt-2 p-2 resaltaHover');
     chatDiv.setAttribute('style', 'border-radius: 15px;');
-    chatDiv.innerHTML= `<img class="flex-shrink-0" width="55" height="55" src="${appRoot}seccion/${chat.idEvento}/pic" style="border-radius: 50%;">
+    chatDiv.innerHTML = `<img class="flex-shrink-0" width="55" height="55" src="${appRoot}seccion/${chat.idEvento}/pic" style="border-radius: 50%;">
                         <div class="d-flex flex-column h-100 justify-content-center ms-2 flex-grow-1" style="width: calc(100% - 71px);">
                             <div class="d-flex flex-row justify-content-between">
                                 <h5 class="m-0 text-nowrap text-truncate">${chat.nombreEvento}</h5>
@@ -260,15 +260,15 @@ function anadirChat(chat){
                                 <span class="indicadorMensajes ms-2 badge bg-primary ${chat.mensajesNoLeidos == 0 ? 'd-none' : ''}" style="font-size: 12px;border-radius: 25px;">${textoNumMensajes}</span>
                             </div>
                         </div>`;
-    
+
     chatDiv.addEventListener('click', function () {
         document.getElementById("chatContainer").classList.add('paginaChatsActiva'); //foco en el input de mensaje
         document.getElementById("contenedorMenuListaChats").classList.remove('paginaChatsActiva'); //foco en el input de mensaje
 
-        if(cargando || idEventoSeleccionado === chat.idEvento) return;
+        if (cargando || idEventoSeleccionado === chat.idEvento) return;
         cargando = true;
 
-        if(contenedorEventoSeleccionado) contenedorEventoSeleccionado.classList.remove("resaltaHoverSelected"); 
+        if (contenedorEventoSeleccionado) contenedorEventoSeleccionado.classList.remove("resaltaHoverSelected");
         chatDiv.classList.add("resaltaHoverSelected");
         contenedorEventoSeleccionado = chatDiv;
 
@@ -277,11 +277,11 @@ function anadirChat(chat){
     });
 
     //si ya hay una busqueda hecha cuando se añade se verifica si tiene que ser visible o no
-    if(busqueda != "" && !chat.nombreEvento.toLowerCase().includes(busqueda.toLowerCase())){
+    if (busqueda != "" && !chat.nombreEvento.toLowerCase().includes(busqueda.toLowerCase())) {
         componente.classList.remove('d-none');
         componente.classList.add('d-flex');
     }
-    
+
 
     insertarChatOrdenado(chatDiv);
 
@@ -291,19 +291,19 @@ function anadirChat(chat){
 //Hace invisibles todos los chats que no contengan la busqueda en su nombre (data-nombreEvento)
 //Por otro lado hace visibles los que contengan la busqueda por si se han hecho invisibles previamente
 //(no se llegan a eliminar del HTML solo se ocultan)
-function buscarChat(busqueda){
+function buscarChat(busqueda) {
     const contenedor = document.getElementById('contenedorChats');
     const hijos = Array.from(contenedor.children);
     busqueda = busqueda.toLowerCase(); //normalizo la busqueda a minusculas
 
-    if(busqueda === ""){
+    if (busqueda === "") {
         //si la lupa esta vacia se muestran todos los chats
         hijos.forEach(componente => {
             componente.classList.remove('d-none');
             componente.classList.add('d-flex');
         });
     }
-    else{
+    else {
         hijos.forEach(componente => {
             const nombreEvento = componente.getAttribute('data-nombreEvento').toLowerCase(); //normalizo el nombre del evento a minusculas
             if (!nombreEvento) return; //si no hay nombre no se hace nada
@@ -321,37 +321,37 @@ function buscarChat(busqueda){
 
 //mensaje: {id, idEmisor, emisor, contenido, fecha}
 //Añado un mensaje al chat abierto, si es del mismo emisor que el anterior lo agrupo sino creo un nuevo grupo
-function anadirMensajeAbajo(mensaje){
+function anadirMensajeAbajo(mensaje) {
     const propio = mensaje.idEmisor == userId; //si el mensaje es del usuario logueado
     var nuevoMensajeDiv = document.createElement('div');
     nuevoMensajeDiv.setAttribute('class', 'mensaje mt-1 pb-1 pt-2 text-wrap text-break');
     nuevoMensajeDiv.setAttribute('data-idMensaje', mensaje.id); //guardo el id del mensaje para poder eliminarlo si es necesario
 
-    if(propio) nuevoMensajeDiv.classList.add('ms-auto');
+    if (propio) nuevoMensajeDiv.classList.add('ms-auto');
     else nuevoMensajeDiv.classList.add('me-auto');
 
     nuevoMensajeDiv.setAttribute('speech-bubble', '');
 
-    if(normalizarFecha(ultimaFecha) < normalizarFecha(new Date(mensaje.fecha))){
+    if (normalizarFecha(ultimaFecha) < normalizarFecha(new Date(mensaje.fecha))) {
         ultimaFecha = new Date(mensaje.fecha);
         insertarSeparador(formatearFechaSeparador(mensaje.fecha));
         idUltimoEmisor = -1;
     }
 
-    if (mensaje.idEmisor != idUltimoEmisor){
-        insertarGrupoMensajes(mensaje.idEmisor,propio);
+    if (mensaje.idEmisor != idUltimoEmisor) {
+        insertarGrupoMensajes(mensaje.idEmisor, propio);
         idUltimoEmisor = mensaje.idEmisor;
 
         nuevoMensajeDiv.setAttribute('style', 'max-width: 650px; min-width: 250px;');
 
-        if(propio)nuevoMensajeDiv.setAttribute('pright', '');
+        if (propio) nuevoMensajeDiv.setAttribute('pright', '');
         else nuevoMensajeDiv.setAttribute('pleft', '');
 
         nuevoMensajeDiv.setAttribute('atop', '');
 
         nuevoMensajeDiv.innerHTML = "";
 
-        if(!propio)
+        if (!propio)
             nuevoMensajeDiv.innerHTML = `<div class="fw-bold text-success mb-1">${mensaje.emisor}</div>`;
 
         nuevoMensajeDiv.innerHTML += `<p class="mb-1">${mensaje.contenido}</p>
@@ -359,13 +359,13 @@ function anadirMensajeAbajo(mensaje){
                                         <span class="text-secondary small">${obtenerHora(mensaje.fecha)}</span>
                                     </div>`;
     }
-    else{
+    else {
         nuevoMensajeDiv.setAttribute('style', 'max-width: 650px;min-width: 250px;');
 
-        if(!propio) nuevoMensajeDiv.setAttribute("style", nuevoMensajeDiv.getAttribute("style") + "margin-left: 24px;");
+        if (!propio) nuevoMensajeDiv.setAttribute("style", nuevoMensajeDiv.getAttribute("style") + "margin-left: 24px;");
         else nuevoMensajeDiv.setAttribute("style", nuevoMensajeDiv.getAttribute("style") + "margin-right: 24px;");
 
-        nuevoMensajeDiv.innerHTML= `<p class="mb-1">${mensaje.contenido}</p>
+        nuevoMensajeDiv.innerHTML = `<p class="mb-1">${mensaje.contenido}</p>
                                     <div class="text-end">
                                         <span class="text-secondary small">${obtenerHora(mensaje.fecha)}</span>
                                     </div>`;
@@ -375,41 +375,41 @@ function anadirMensajeAbajo(mensaje){
 }
 
 //Obtengo la fecha en formato para mostrar a la derecha del evento
-function formatearFechaMensaje(fecha){
+function formatearFechaMensaje(fecha) {
     var fecha = new Date(fecha);
     var hoy = new Date();
-    if (fecha.getDate() == hoy.getDate() && fecha.getMonth() == hoy.getMonth() && fecha.getFullYear() == hoy.getFullYear()){
-        return fecha.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-    }else{
-        return fecha.toLocaleDateString([], {year: 'numeric', month: '2-digit', day: '2-digit'});
+    if (fecha.getDate() == hoy.getDate() && fecha.getMonth() == hoy.getMonth() && fecha.getFullYear() == hoy.getFullYear()) {
+        return fecha.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    } else {
+        return fecha.toLocaleDateString([], { year: 'numeric', month: '2-digit', day: '2-digit' });
     }
 }
 
-function formatearFechaSeparador(input){
+function formatearFechaSeparador(input) {
     let fecha = new Date(input);
-    return fecha.toLocaleDateString([], {year: 'numeric', month: '2-digit', day: '2-digit'});
+    return fecha.toLocaleDateString([], { year: 'numeric', month: '2-digit', day: '2-digit' });
 }
 
 //Obtengo solo la hora para mostrarlo en el mensaje
-function obtenerHora(fecha){
+function obtenerHora(fecha) {
     var fecha = new Date(fecha);
-    return fecha.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+    return fecha.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 }
 
 //Añado en la parte de abajo del chat un separador con la fecha de los mensajes de abajo
-function insertarSeparador(texto){
+function insertarSeparador(texto) {
     const contenedorMensajes = document.getElementById("contenedorMensajes");
 
     var nuevoSeparador = document.createElement('div');
     nuevoSeparador.setAttribute('style', 'border-radius: 10px;');
     nuevoSeparador.setAttribute('class', 'py-2 px-3 my-2 text-center flex-shrink-0 ms-auto me-auto separadorMensajes');
-    nuevoSeparador.innerHTML= `<span>${texto}</span>`;
+    nuevoSeparador.innerHTML = `<span>${texto}</span>`;
 
     contenedorMensajes.appendChild(nuevoSeparador);
 }
 
 //Inserto un grupo de mensajes de un mismo emisor. (imagenPerfil + nombre + mensaje con estilo de bocadillo)
-function insertarGrupoMensajes(idUsuario,propio){
+function insertarGrupoMensajes(idUsuario, propio) {
     const contenedorMensajes = document.getElementById("contenedorMensajes");
     var contenedorGlobal = document.createElement('div');
     contenedorGlobal.setAttribute('class', 'd-flex flex-row mt-2');
@@ -418,11 +418,11 @@ function insertarGrupoMensajes(idUsuario,propio){
     contenedorGlobal.innerHTML = `<img class="flex-shrink-0" width="40" height="40" src="/user/${idUsuario}/pic" style="border-radius: 50%;">`;
 
     ultimoContenedorMensaje = document.createElement('div');
-    if(propio) ultimoContenedorMensaje.setAttribute('class', 'd-flex flex-column mx-2 ms-auto');
+    if (propio) ultimoContenedorMensaje.setAttribute('class', 'd-flex flex-column mx-2 ms-auto');
     else ultimoContenedorMensaje.setAttribute('class', 'd-flex flex-column mx-2');
-    
 
-    if(propio) contenedorGlobal.prepend(ultimoContenedorMensaje);
+
+    if (propio) contenedorGlobal.prepend(ultimoContenedorMensaje);
     else contenedorGlobal.appendChild(ultimoContenedorMensaje);
 
     contenedorMensajes.appendChild(contenedorGlobal);
@@ -454,7 +454,7 @@ function insertarChatOrdenado(nuevoChatDiv) {
 }
 
 //Elimina todos los mensajes del chat (para cargar un nuevo chat normalmente)
-function eliminarMensajes(){
+function eliminarMensajes() {
     const contenedorMensajes = document.getElementById("contenedorMensajes");
 
     while (contenedorMensajes.firstChild) {

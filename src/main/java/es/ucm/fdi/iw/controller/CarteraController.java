@@ -1,39 +1,23 @@
 package es.ucm.fdi.iw.controller;
 
-import java.io.BufferedInputStream;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.time.OffsetDateTime;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Objects;
-
 import jakarta.persistence.EntityManager;
-import jakarta.persistence.TypedQuery;
 import jakarta.servlet.http.HttpSession;
 import jakarta.transaction.Transactional;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.util.FileCopyUtils;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -42,15 +26,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import es.ucm.fdi.iw.AppConfig;
 import es.ucm.fdi.iw.LocalData;
 
-import es.ucm.fdi.iw.model.Evento;
-import es.ucm.fdi.iw.model.Seccion;
 import es.ucm.fdi.iw.model.User;
-import es.ucm.fdi.iw.model.User.Role;
-import es.ucm.fdi.iw.model.Transferable;
-import java.util.stream.Collectors;
-import java.util.Map;
-
-import java.io.File;
 
 @Controller
 @RequestMapping("cartera")
@@ -86,7 +62,7 @@ public class CarteraController {
         this.authenticationManagerBean = authenticationManagerBean;
     }
 
-    
+    //Pagina inicial de la cartera
     @GetMapping("/ingresar")
     public String ingresar(Model model, HttpSession session) {
         User user = (User) session.getAttribute("u");
@@ -94,13 +70,12 @@ public class CarteraController {
         int dineroDisponible = user.getDineroDisponible();
         int parteEntera = dineroDisponible / 100;
         int parteDecimal = dineroDisponible % 100;
-        if(parteDecimal < 10) {
+        if (parteDecimal < 10) {
             String parteDecimalString = String.valueOf(parteDecimal);
             parteDecimalString = "0" + parteDecimalString;
             model.addAttribute("parteEntera", parteEntera);
             model.addAttribute("parteDecimal", parteDecimalString);
-        }
-        else{
+        } else {
             model.addAttribute("parteEntera", parteEntera);
             model.addAttribute("parteDecimal", parteDecimal);
         }
@@ -108,6 +83,7 @@ public class CarteraController {
         return "ingresar";
     }
 
+    //pagina tras pulsar retirar
     @GetMapping("/retirar")
     public String retirar(Model model, HttpSession session) {
         User user = (User) session.getAttribute("u");
@@ -117,6 +93,7 @@ public class CarteraController {
         return "retirar";
     }
 
+    //Pagina tras pulsar ingresar
     @GetMapping("/ingreso")
     public String ingreso(Model model) {
         return "ingreso";
@@ -132,23 +109,29 @@ public class CarteraController {
         return "tarjeta";
     }
 
-        @Transactional
+    @Transactional
     @ResponseBody
     @PostMapping("/ingresarDinero")
     public ResponseEntity<JsonNode> ingresarDinero(@RequestBody JsonNode json, HttpSession session) {
         ObjectMapper objectMapper = new ObjectMapper();
         ObjectNode response = objectMapper.createObjectNode();
-        User user = (User) session.getAttribute("u");
+        User user = entityManager.find(User.class, ((User)session.getAttribute("u")).getId());
 
         int cantEntera = json.get("entera").asInt();
-        int cantDecimal = json.get("decimal").asInt(); 
+        int cantDecimal = json.get("decimal").asInt();
         int total = (cantEntera * 100) + cantDecimal;
-        if(total < 300 || total > 150000){
-            response.put("mensaje", "La cantidad a retirar debe estar entre 3 y 1500 euros: " + total);
+
+        if(total == 0){
+            session.setAttribute("u", user); //actualizo el usuario para que cuando recargue la pagina siga apareciendo el dinero
+        }
+
+        if (total < 300 || total > 150000) {
+            response.put("mensaje", "La cantidad a ingresar debe estar entre 3 y 1500 euros: " + total);
             return ResponseEntity.badRequest().body(response);
-        } 
-        user.setDineroDisponible(user.getDineroDisponible() + total); 
-        entityManager.merge(user);
+        }
+
+        user.setDineroDisponible(user.getDineroDisponible() + total);
+        session.setAttribute("u", user);
 
         response.put("mensaje", "Dinero ingresado correctamente: " + total);
         return ResponseEntity.ok(response);
@@ -160,22 +143,21 @@ public class CarteraController {
     public ResponseEntity<JsonNode> retirarDinero(@RequestBody JsonNode json, HttpSession session) {
         ObjectMapper objectMapper = new ObjectMapper();
         ObjectNode response = objectMapper.createObjectNode();
-        User user = (User) session.getAttribute("u");
+        User user = entityManager.find(User.class, ((User)session.getAttribute("u")).getId());
 
         int cantEntera = json.get("entera").asInt();
-        int cantDecimal = json.get("decimal").asInt(); 
-        int total = (cantEntera * 100) + cantDecimal; 
+        int cantDecimal = json.get("decimal").asInt();
+        int total = (cantEntera * 100) + cantDecimal;
 
-        if(total > user.getDineroDisponible()) {
+        if (total > user.getDineroDisponible()) {
             response.put("mensaje", "No tienes suficiente dinero disponible para retirar: " + total);
             return ResponseEntity.badRequest().body(response);
-        }
-        else if(total < 500 || total > 100000){
+        } else if (total < 500 || total > 100000) {
             response.put("mensaje", "La cantidad a retirar debe estar entre 5 y 1000 euros: " + total);
             return ResponseEntity.badRequest().body(response);
         }
-        user.setDineroDisponible(user.getDineroDisponible() - total); 
-        entityManager.merge(user);
+        user.setDineroDisponible(user.getDineroDisponible() - total);
+        session.setAttribute("u", user);
 
         response.put("mensaje", "Dinero retirado correctamente: " + total);
         return ResponseEntity.ok(response);

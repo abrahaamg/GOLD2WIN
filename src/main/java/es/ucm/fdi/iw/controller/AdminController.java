@@ -75,7 +75,7 @@ public class AdminController {
     private EntityManager entityManager;
 
     @Autowired
-	private SimpMessagingTemplate messagingTemplate;
+    private SimpMessagingTemplate messagingTemplate;
 
     private static final Logger log = LogManager.getLogger(AdminController.class);
 
@@ -87,7 +87,7 @@ public class AdminController {
     }
 
     @GetMapping("/usuarios")
-    public String usuarios(Model model){
+    public String usuarios(Model model) {
         String queryUsuarios = "SELECT u FROM User u";
         List<User> usuarios = entityManager.createQuery(queryUsuarios, User.class).getResultList();
 
@@ -97,12 +97,12 @@ public class AdminController {
     }
 
     @GetMapping("/usuarios/usuarioDetalles")
-    public String usuarioDetalles(Model model){
+    public String usuarioDetalles(Model model) {
         return "usuarioDetalles";
     }
 
     @GetMapping("/usuarios/transacciones")
-    public String transacciones(Model model){
+    public String transacciones(Model model) {
         return "transacciones";
     }
 
@@ -112,7 +112,7 @@ public class AdminController {
         List<Reporte> reportes = entityManager.createQuery(queryReportes, Reporte.class).getResultList();
 
         model.addAttribute("reportes", reportes);
-        
+
         return "reportes";
     }
 
@@ -153,7 +153,7 @@ public class AdminController {
 
     @GetMapping(path = "/eventos/getVariablesSeccion/{id}", produces = "application/json")
     @ResponseBody
-    public Map<String, Boolean> getVariablesSeccion(@PathVariable long id,Model model) {
+    public Map<String, Boolean> getVariablesSeccion(@PathVariable long id, Model model) {
         Map<String, Boolean> variables = new HashMap<>();
         Seccion seccion = entityManager.find(Seccion.class, id);
 
@@ -234,9 +234,10 @@ public class AdminController {
     }
 
     /*
-     * LA FUNCION CREA UN EVENTO EN EL CASO DE QUE EL ID SEA -1. EN OTRO CASO INTENTA EDITAR
-     * UN EVENTO QUE YA EXISTE. 
-     *  
+     * LA FUNCION CREA UN EVENTO EN EL CASO DE QUE EL ID SEA -1. EN OTRO CASO
+     * INTENTA EDITAR
+     * UN EVENTO QUE YA EXISTE.
+     * 
      * codigos de error:
      * 1: no se han definido variables
      * 2: la fecha del evento no puede ser anterior a la actual
@@ -256,7 +257,7 @@ public class AdminController {
         List<Variable> variables = new ArrayList<>();
         Evento evento = new Evento();
 
-        if(id != -1) {
+        if (id != -1) {
             evento = entityManager.find(Evento.class, id);
 
             if (evento == null) {
@@ -277,15 +278,15 @@ public class AdminController {
                 resultado.put("errorCode", 7);
                 resultado.put("error", "El nombre de la etiqueta debe ser único: " + nombreEtiqueta);
                 return resultado;
-            }
-            else
+            } else
                 etiquetas.add(nombreEtiqueta);
         }
 
-        //Verificamos que no hay 2 variables con el mismo nombre y que una variable no puede tener espacios en blanco
+        // Verificamos que no hay 2 variables con el mismo nombre y que una variable no
+        // puede tener espacios en blanco
         Set<String> variableNames = new HashSet<>();
 
-        if(id != -1)
+        if (id != -1)
             variableNames = evento.getVariables().stream().map(Variable::getNombre).collect(Collectors.toSet());
 
         for (JsonNode varJsonNode : o.get("variables")) {
@@ -310,22 +311,22 @@ public class AdminController {
             variables.add(var);
         }
 
-        //Si se esta creando un evento nuevo
-        if(id == -1){
+        // Si se esta creando un evento nuevo
+        if (id == -1) {
             long seccion = o.get("seccion").asLong();
             Seccion seccionObj = null;
             String nombre = o.get("nombre").asText();
 
-            //Puedes modificar un evento existente sin añadir ninguna variable nueva
-            if(variables.size() == 0 ) {
+            // Puedes modificar un evento existente sin añadir ninguna variable nueva
+            if (variables.size() == 0) {
                 resultado.put("success", false);
                 resultado.put("errorCode", 1);
                 resultado.put("error", "No se han definido variables para el evento");
                 return resultado;
             }
 
-            //Puedes modificar un evento existente como que ya ha pasado
-            if(OffsetDateTime.now().isAfter(fecha) ) {
+            // Puedes modificar un evento existente como que ya ha pasado
+            if (OffsetDateTime.now().isAfter(fecha)) {
                 resultado.put("success", false);
                 resultado.put("errorCode", 2);
                 resultado.put("error", "La fecha del evento no puede ser anterior a la actual");
@@ -340,8 +341,8 @@ public class AdminController {
                 return resultado;
             }
 
-            //Puedes modificar un evento existente sin añadir ninguna etiqueta nueva
-            if(etiquetas.size() == 0 && id == -1) {
+            // Puedes modificar un evento existente sin añadir ninguna etiqueta nueva
+            if (etiquetas.size() == 0 && id == -1) {
                 resultado.put("success", false);
                 resultado.put("errorCode", 4);
                 resultado.put("error", "No se han definido etiquetas para el evento");
@@ -355,19 +356,18 @@ public class AdminController {
             evento.setDeterminado(false);
             evento.setSeccion(seccionObj);
             evento.setEtiquetas(etiquetas);
-    
+
             entityManager.persist(evento);
 
-            for(Variable variable : variables) {
+            for (Variable variable : variables) {
                 variable.setEvento(evento);
                 entityManager.persist(variable);
             }
-        }
-        else{ //si se esta editando un evento existente
+        } else { // si se esta editando un evento existente
             evento.setFechaCierre(fecha);
             evento.setEtiquetas(etiquetas);
-            
-            for(Variable variable : variables) {
+
+            for (Variable variable : variables) {
                 variable.setEvento(evento);
                 entityManager.persist(variable);
             }
@@ -437,17 +437,14 @@ public class AdminController {
         return "secciones-crearSeccion";
     }
 
-   
-
     @GetMapping("/eventos")
     public String eventos(Model model) {
         String queryEventos = "SELECT e FROM Evento e WHERE e.cancelado = false";
         List<Evento> eventos = entityManager.createQuery(queryEventos, Evento.class).getResultList();
-        List<Seccion> secciones = entityManager.createNamedQuery("Seccion.getAll",Seccion.class).getResultList();
+        List<Seccion> secciones = entityManager.createNamedQuery("Seccion.getAll", Seccion.class).getResultList();
 
         model.addAttribute("eventos", eventos);
         model.addAttribute("secciones", secciones);
-        
 
         return "eventos";
     }
@@ -455,8 +452,8 @@ public class AdminController {
     // Logica para determinar evento
     // El evento tiene que haberse traido previamente de la base de datos y
     // verificado que no sea null
-    private void determinarEvento(Evento evento, Map<String, Object> variables){
-        Set<User> apostadoreSet = new HashSet<>(); 
+    private void determinarEvento(Evento evento, Map<String, Object> variables) {
+        Set<User> apostadoreSet = new HashSet<>();
 
         // Primero establezco el valor de las variables en la BD
         for (Variable variable : evento.getVariables()) {
@@ -516,14 +513,13 @@ public class AdminController {
                 User user = apuesta.getApostador();
                 if (formula.getResultado() == Resultado.ERROR) {
                     // Devolvemos el dinero al apostador
-                
                     user.setDineroRetenido(user.getDineroRetenido() - apuesta.getCantidad());
                     user.setDineroDisponible(user.getDineroDisponible() + apuesta.getCantidad());
                 } else if ((formula.getResultado() == Resultado.GANADO && apuesta.isAFavor())
                         || (formula.getResultado() == Resultado.PERDIDO && !apuesta.isAFavor())) {
                     // Ha ganado por lo que se le suma el dinero apostado por la cuota
                     double cuota = formula.calcularCuota(apuesta.isAFavor());
-                    int dineroGanado = (int)cuota * apuesta.getCantidad(); //trunco decimales
+                    int dineroGanado = (int) (cuota * apuesta.getCantidad()); // trunco decimales
 
                     user.setDineroRetenido(user.getDineroRetenido() - apuesta.getCantidad());
                     user.setDineroDisponible(user.getDineroDisponible() + dineroGanado);
@@ -537,17 +533,17 @@ public class AdminController {
 
             entityManager.flush();
 
-            for(User apostador : apostadoreSet) {
+            for (User apostador : apostadoreSet) {
                 Map<String, Object> mensaje = new HashMap<>();
                 mensaje.put("tipoEvento", "actualizarDinero");
                 mensaje.put("dineroDisponible", apostador.getDineroDisponible());
                 mensaje.put("dineroRetenido", apostador.getDineroRetenido());
                 ObjectMapper mapper = new ObjectMapper();
-		        String json;
+                String json;
 
                 try {
                     json = mapper.writeValueAsString(mensaje);
-                    messagingTemplate.convertAndSend("/user/"+apostador.getUsername()+"/queue/updates", json);
+                    messagingTemplate.convertAndSend("/user/" + apostador.getUsername() + "/queue/updates", json);
                 } catch (JsonProcessingException e) {
                     e.printStackTrace();
                 }
@@ -583,7 +579,7 @@ public class AdminController {
     @Transactional
     @ResponseBody
     @PostMapping("/guardarSeccion")
-    public ResponseEntity<JsonNode> guardarSeccion(@RequestBody JsonNode json) throws IOException{
+    public ResponseEntity<JsonNode> guardarSeccion(@RequestBody JsonNode json) throws IOException {
         // Crear una respuesta JSON con el mensaje
         ObjectMapper objectMapper = new ObjectMapper();
         ObjectNode response = objectMapper.createObjectNode();
@@ -591,7 +587,8 @@ public class AdminController {
 
         JsonNode seccionNode = json.get("seccionN");
         if (seccionNode == null || !seccionNode.has("nombre") || !seccionNode.has("tipo")) {
-            return ResponseEntity.badRequest().body(objectMapper.createObjectNode().put("error", "Datos de seccionN incompletos"));
+            return ResponseEntity.badRequest()
+                    .body(objectMapper.createObjectNode().put("error", "Datos de seccionN incompletos"));
         }
 
         String nombre = seccionNode.get("nombre").asText();
@@ -602,7 +599,7 @@ public class AdminController {
         nuevaSeccion.setGrupo(grupo);
         nuevaSeccion.setEnabled(true);
         entityManager.persist(nuevaSeccion);
-        entityManager.flush();  //para asegurar que exista la sección cuando se añadan variables
+        entityManager.flush(); // para asegurar que exista la sección cuando se añadan variables
 
         JsonNode itemsNode = json.get("arrayVariables");
         if (itemsNode != null && itemsNode.isArray()) {
@@ -625,7 +622,7 @@ public class AdminController {
             String filename = imageDataNode.get("filename").asText();
 
             MultipartFile photo = convertirBase64AMultipartFile(base64Image, filename);
-            setPic(photo, "seccion", ""+ nuevaSeccion.getId());
+            setPic(photo, "seccion", "" + nuevaSeccion.getId());
         }
         return ResponseEntity.ok(response);
     }
@@ -650,7 +647,7 @@ public class AdminController {
     @Transactional
     @ResponseBody
     @PostMapping("/editarSeccion")
-    public ResponseEntity<JsonNode> editarSeccion(@RequestBody JsonNode json) throws IOException{
+    public ResponseEntity<JsonNode> editarSeccion(@RequestBody JsonNode json) throws IOException {
         // Crear una respuesta JSON con el mensaje
         ObjectMapper objectMapper = new ObjectMapper();
         ObjectNode response = objectMapper.createObjectNode();
@@ -658,36 +655,41 @@ public class AdminController {
 
         JsonNode seccionNode = json.get("seccionN");
         if (seccionNode == null || !seccionNode.has("nombre") || !seccionNode.has("tipo")) {
-            return ResponseEntity.badRequest().body(objectMapper.createObjectNode().put("error", "Datos de seccionN incompletos"));
+            return ResponseEntity.badRequest()
+                    .body(objectMapper.createObjectNode().put("error", "Datos de seccionN incompletos"));
         }
 
         String nombre = seccionNode.get("nombre").asText();
         String grupo = seccionNode.get("tipo").asText();
 
-        Seccion seccion = entityManager.createNamedQuery("Seccion.getPorNombre", Seccion.class).setParameter("nombre", nombre).getSingleResult();
+        Seccion seccion = entityManager.createNamedQuery("Seccion.getPorNombre", Seccion.class)
+                .setParameter("nombre", nombre).getSingleResult();
 
-        seccion.setGrupo(grupo);    
+        seccion.setGrupo(grupo);
         entityManager.merge(seccion);
 
         JsonNode itemsNode = json.get("arrayVariables");
 
-        List<VariableSeccion> vars = entityManager.createNamedQuery("VarSeccion.filtrarPorSeccion", VariableSeccion.class).setParameter("seccion", seccion).getResultList();
-        for(VariableSeccion variable : vars) {
+        List<VariableSeccion> vars = entityManager
+                .createNamedQuery("VarSeccion.filtrarPorSeccion", VariableSeccion.class)
+                .setParameter("seccion", seccion).getResultList();
+        for (VariableSeccion variable : vars) {
             seccion.getPlantilla().remove(variable);
             entityManager.persist(seccion);
-            
+
             entityManager.remove(variable);
         }
         if (itemsNode != null && itemsNode.isArray() && itemsNode.size() > 0) {
-            //borrar las variables antiguas
-            //String queryDelete = "DELETE FROM VariableSeccion v WHERE v.seccion = :seccion";
-            //entityManager.createQuery(queryDelete).setParameter("seccion", seccion).executeUpdate();
-            
+            // borrar las variables antiguas
+            // String queryDelete = "DELETE FROM VariableSeccion v WHERE v.seccion =
+            // :seccion";
+            // entityManager.createQuery(queryDelete).setParameter("seccion",
+            // seccion).executeUpdate();
+
             for (JsonNode item : itemsNode) {
 
                 String nombreV = item.get("nombreV").asText();
                 String tipoV = item.get("tipoV").asText();
-
 
                 VariableSeccion nuevaVariable = new VariableSeccion();
                 nuevaVariable.setNombre(nombreV);
@@ -703,8 +705,8 @@ public class AdminController {
             String filename = imageDataNode.has("filename") ? imageDataNode.get("filename").asText() : "";
 
             if (!base64Image.isEmpty()) {
-                    MultipartFile photo = convertirBase64AMultipartFile(base64Image, filename);
-                    setPic(photo, "seccion", ""+seccion.getId());
+                MultipartFile photo = convertirBase64AMultipartFile(base64Image, filename);
+                setPic(photo, "seccion", "" + seccion.getId());
             }
         }
         return ResponseEntity.ok(response);
@@ -712,29 +714,28 @@ public class AdminController {
 
     @ResponseBody
     public String setPic(MultipartFile photo, String carpeta, String nombre) throws IOException {
-		log.info("Updating photo for user {}", nombre);
-		File f = localData.getFile(carpeta, nombre+".jpg");
-		if (photo.isEmpty()) {
-			log.info("failed to upload photo: emtpy file?");
-		} else {
-			try (BufferedOutputStream stream =
-					new BufferedOutputStream(new FileOutputStream(f))) {
-				byte[] bytes = photo.getBytes();
-				stream.write(bytes);
+        log.info("Updating photo for user {}", nombre);
+        File f = localData.getFile(carpeta, nombre + ".jpg");
+        if (photo.isEmpty()) {
+            log.info("failed to upload photo: emtpy file?");
+        } else {
+            try (BufferedOutputStream stream = new BufferedOutputStream(new FileOutputStream(f))) {
+                byte[] bytes = photo.getBytes();
+                stream.write(bytes);
                 log.info("Uploaded photo for {} into {}!", nombre, f.getAbsolutePath());
-			} catch (Exception e) {
-				log.warn("Error uploading " + nombre + " ", e);
-			}
-		}
-		return "{\"status\":\"photo uploaded correctly\"}";
+            } catch (Exception e) {
+                log.warn("Error uploading " + nombre + " ", e);
+            }
+        }
+        return "{\"status\":\"photo uploaded correctly\"}";
     }
 
     @GetMapping("/verificarSeccion")
     public ResponseEntity<?> verificarSeccion(@RequestParam String nombre) {
-        nombre = nombre.trim(); 
+        nombre = nombre.trim();
 
         Long count = entityManager.createNamedQuery("Seccion.countByNombre", Long.class).setParameter("nombre", nombre)
-                                .getSingleResult();
+                .getSingleResult();
 
         boolean existe = count > 0; // Si el numero es mayor a 0, ya existe
 
@@ -760,7 +761,7 @@ public class AdminController {
 
             @Override
             public String getContentType() {
-                return "image/jpeg"; 
+                return "image/jpeg";
             }
 
             @Override
@@ -791,5 +792,4 @@ public class AdminController {
 
         return photo;
     }
-
 }

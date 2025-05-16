@@ -18,13 +18,12 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.FileCopyUtils;
-import org.springframework.web.bind.annotation.DeleteMapping;
+
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -35,8 +34,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import es.ucm.fdi.iw.AppConfig;
 import es.ucm.fdi.iw.LocalData;
@@ -44,7 +41,6 @@ import es.ucm.fdi.iw.LocalData;
 import es.ucm.fdi.iw.model.Evento;
 import es.ucm.fdi.iw.model.Seccion;
 import es.ucm.fdi.iw.model.User;
-import es.ucm.fdi.iw.model.User.Role;
 import es.ucm.fdi.iw.model.Transferable;
 import java.util.stream.Collectors;
 import java.util.Map;
@@ -62,7 +58,7 @@ public class RootController {
     private final AppConfig appConfig;
 
     @Autowired
-	private PasswordEncoder passwordEncoder;
+    private PasswordEncoder passwordEncoder;
 
     private final AdminController adminController;
 
@@ -82,8 +78,8 @@ public class RootController {
     }
 
     public String encodePassword(String rawPassword) {
-		return passwordEncoder.encode(rawPassword);
-	}
+        return passwordEncoder.encode(rawPassword);
+    }
 
     RootController(AdminController adminController, AppConfig appConfig,
             AuthenticationManager authenticationManagerBean) {
@@ -160,7 +156,7 @@ public class RootController {
     @GetMapping("/")
     public String index(Model model) {
         // obtengo las secciones
-        List<Seccion> secciones = entityManager.createNamedQuery("Seccion.getAll",Seccion.class).getResultList();
+        List<Seccion> secciones = entityManager.createNamedQuery("Seccion.getAll", Seccion.class).getResultList();
 
         // añado los eventos y las secciones al modelo
         model.addAttribute("secciones", secciones);
@@ -176,10 +172,11 @@ public class RootController {
             @RequestParam long seccionId,
             @RequestParam String busqueda,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime fechaInicio, // necesito
-                                                                                                         // indicar el
-                                                                                                         // formato en
-                                                                                                         // que viene la
-                                                                                                         // fecha
+                                                                                                          // indicar el
+                                                                                                          // formato en
+                                                                                                          // que viene
+                                                                                                          // la
+                                                                                                          // fecha
             @RequestParam int offset) {
 
         boolean hayMasEventos = false;
@@ -188,7 +185,7 @@ public class RootController {
         List<String> etiquetas;
         Seccion seccion;
 
-        //procesamos la busqueda
+        // procesamos la busqueda
         etiquetas = List.of(busqueda.split(" ")).stream()
                 .filter(palabra -> palabra.startsWith("[") && palabra.endsWith("]")).collect(Collectors.toList());
         nombre = List.of(busqueda.split(" ")).stream()
@@ -196,7 +193,7 @@ public class RootController {
                 .collect(Collectors.joining(" "));
 
         seccion = entityManager.find(Seccion.class, seccionId);
-        
+
         if (seccion != null && seccion.isEnabled()) {
             query = entityManager.createNamedQuery("Evento.getBusquedaInSeccion", Evento.class);
             query.setParameter("seccionId", seccionId);
@@ -236,7 +233,7 @@ public class RootController {
         TypedQuery<Evento> query;
 
         if (seccion != null && seccion.isEnabled()) {
-            query = entityManager.createNamedQuery("Evento.getAllAfterDateInSeccion", Evento.class); 
+            query = entityManager.createNamedQuery("Evento.getAllAfterDateInSeccion", Evento.class);
             query.setParameter("seccion", seccionId);
         } else {
             query = entityManager.createNamedQuery("Evento.getAllAfterDate", Evento.class);
@@ -262,7 +259,7 @@ public class RootController {
     @GetMapping("/seccion/{id}")
     public String eventosSeccion(@PathVariable long id, Model model) {
         // obtengo las secciones
-        List<Seccion> secciones = entityManager.createNamedQuery("Seccion.getAll",Seccion.class).getResultList();
+        List<Seccion> secciones = entityManager.createNamedQuery("Seccion.getAll", Seccion.class).getResultList();
 
         // añado las secciones al modelo
         model.addAttribute("secciones", secciones);
