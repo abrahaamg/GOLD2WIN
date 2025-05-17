@@ -161,6 +161,24 @@ if (inputImagenSeccionesForm != null) {
     });
 }
 
+var inputImagenUsuarioForm = document.getElementById("inputImagenUsuario");
+if (inputImagenUsuarioForm != null) {
+    console.log("entra");
+    document.getElementById('inputImagenUsuario').addEventListener('change', function (event) {
+        var file = event.target.files[0];
+        console.log("efwdcs");
+        if (file) {
+            console.log("entra");
+            var reader = new FileReader();
+            reader.onload = function (e) {
+                var imgPreview = document.getElementById('mostrarImagenUsuario');
+                imgPreview.src = e.target.result; // Mostrar la imagen
+            }
+            reader.readAsDataURL(file);
+        }
+    });
+}
+
 var menuOpcionesSeccionForm = document.getElementById("menuOpcionesSeccion");
 let seccionSeleccionadaId = null;
 if (menuOpcionesSeccionForm != null) {
@@ -317,11 +335,13 @@ async function verificarNombreSeccion() {
         if (data.existe) {  //el nombre existe
             document.getElementById("inputNombreSeccion").classList.add("is-invalid");
             document.getElementById("mensajeError").classList.add("invalid-feedback");
+            document.getElementById("mensajeError").style.display = 'block';
             console.log("false");
             return false;
         } else {    //el nombre no existe
             document.getElementById("inputNombreSeccion").classList.remove("is-invalid");
             document.getElementById("mensajeError").classList.remove("invalid-feedback");
+            document.getElementById("mensajeError").style.display = 'none';
             console.log("true");
             return true;
         }
@@ -350,11 +370,13 @@ function evitarNombresVarRepetidos() { //esta funcion sirve para verificarnombre
         if (existe) { //el nombre existe
             document.getElementById("inputnombreVarNueva").classList.add("is-invalid");
             document.getElementById("mensajeErrorVar").classList.add("invalid-feedback");
+            document.getElementById("mensajeErrorVar").style.display = 'block';
             console.log("false");
             return false;
         } else {    //el nombre no existe
             document.getElementById("inputnombreVarNueva").classList.remove("is-invalid");
             document.getElementById("mensajeErrorVar").classList.remove("invalid-feedback");
+            document.getElementById("mensajeErrorVar").style.display = 'none';
             console.log("true");
             return true;
         }
@@ -442,4 +464,67 @@ function actualizarClasePocos() {
     } else {
         contenedor.classList.remove('limitar');
     }
+}
+
+
+function cambiarContrasenha(event) {
+    event.preventDefault();
+
+    let form = document.getElementById("cambiarContrasenhaForm");
+    if (!form.checkValidity()) { //esto sirve para los mensajes de required cuando arriba esta rel preventDefault
+        form.reportValidity();
+        return;
+    }
+
+    var con = document.getElementById('inputContrasenha').value.trim();
+
+    var coniguales = confirmarContrasenhas();
+    if (!coniguales) {
+        return;
+    }
+    else{
+        const inputCon = document.getElementById("password");
+        inputCon.value = con;
+        var botonVis = document.getElementById("botonVisualizarCon");
+        botonVis.style.display = "block";
+
+        document.getElementById('inputContrasenha').value = '';
+        document.getElementById('inputContrasenha2').value = '';
+
+        const modal = bootstrap.Modal.getInstance(document.getElementById('modalCambiarContrasenha'));
+        modal.hide();
+    }
+};
+
+function confirmarContrasenhas() { //esta funcion sirve para verificarnombres de variables repetidos en la misma seccion
+    const con = document.getElementById("inputContrasenha").value.trim();
+    const con2 = document.getElementById('inputContrasenha2').value.trim();
+    try {
+
+        let iguales = false;
+        if (con == con2) {
+            iguales = true;
+        }
+
+        if (!iguales) { 
+            document.getElementById("inputContrasenha").classList.add("is-invalid");
+            document.getElementById("mensajeErrorCon").classList.add("invalid-feedback");
+            document.getElementById("mensajeErrorCon").style.display = 'block';
+            return false;
+        } else {  
+            document.getElementById("inputContrasenha").classList.remove("is-invalid");
+            document.getElementById("mensajeErrorCon").classList.remove("invalid-feedback");
+            document.getElementById("mensajeErrorCon").style.display = 'none';
+            return true;
+        }
+    } catch (error) {
+        console.error("Error al comparar contraseñas:", error);
+        return false;
+    }
+}
+
+function togglePassword(objetivo) {
+    const passwordInput = document.getElementById(objetivo);
+    console.log(objetivo);
+    passwordInput.type = passwordInput.type === 'password' ? 'text' : 'password';
 }

@@ -2,20 +2,28 @@
 <html class="h-100" xmlns:th="http://www.thymeleaf.org">
 
 <head>
-    <th:block th:replace="fragments/head :: header" />
+    <th:block th:replace="~{fragments/head :: header}" />
     <title>Perfil</title>
 </head>
 
-<body class="d-flex flex-column h-100">
+<body class="d-flex flex-column h-100 ">
     <header th:replace="fragments/nav.html :: nav(null)"></header>
 
-    <main class="flex-shrink-0">
-        <div class="container mt-5 scrollBarPerso" id = "">
+    <main class="flex-shrink-0 scrollBarPerso" id = "contenedorGeneralUsuario">
+        <div class="container mt-5">
 
-            <div class="d-flex align-items-center mb-4">
-                <div class="me-3">
-                    <img th:src="@{/img/default-pic.jpg}" src="/img/default-pic.jpg" alt="Foto de perfil" class="rounded-circle" width="80" height="80">
-                </div>
+            <div class="d-flex align-items-center mb-4 justify-content-center">
+                <label for="inputImagenUsuario" class="imagenUsuario">
+                    <div class="imagenUsuario">
+                        <img id = "mostrarImagenUsuario" th:src="@{/usuario/{id}/pic(id=${user.id})}" alt="Foto de perfil" class="rounded-circle" width="120" height="120">
+                        <div class="edit-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" fill="currentColor" class="bi bi-pencil" viewBox="0 0 16 16">
+                                <path d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293zm-9.761 5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325"/>
+                            </svg>
+                        </div>
+                    </div>
+                </label>
+                <input type="file" id="inputImagenUsuario" accept="image/*" style="display: none;">
             </div>
 
             <form class="mt-4">
@@ -37,13 +45,13 @@
                 <div class="row mb-3">
                     <div class="col-md-6">
                         <label for="email" class="form-label">Email</label>
-                        <input type="email" class="form-control" id="email" th:value="${user.email}" readonly>
+                        <input type="email" class="form-control" id="email" th:value="${user.email}">
                     </div>
                     <div class="col-md-6">
                         <label for="password" class="form-label">Contraseña</label>
                         <div class="input-group">
-                            <input type="password" class="form-control" id="password" th:value="${user.password}">
-                            <button type="button" class="btn btn-outline-secondary" onclick="togglePassword()">
+                            <input type="password" class="form-control" id="password" th:value="${user.password}" data-bs-toggle="modal" data-bs-target="#modalCambiarContrasenha">
+                            <button type="button" class="btn btn-outline-secondary" id = "botonVisualizarCon" onclick="togglePassword('password')" style="display: none;">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-eye" viewBox="0 0 16 16">
                                     <path d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8M1.173 8a13 13 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5s3.879 1.168 5.168 2.457A13 13 0 0 1 14.828 8q-.086.13-.195.288c-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5s-3.879-1.168-5.168-2.457A13 13 0 0 1 1.172 8z"/>
                                     <path d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5M4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0"/>
@@ -88,18 +96,58 @@
             </div>
 
         </div>
-
-        <script>
-            function togglePassword() {
-                const passwordInput = document.getElementById('password');
-                passwordInput.type = passwordInput.type === 'password' ? 'text' : 'password';
-            }
-        </script>
     </main>
 
-    <th:block th:replace="fragments/footer.html :: footer" />
+     <div class="modal fade" id="modalCambiarContrasenha" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-fullscreen-sm-down">
+                <div class="modal-content" style="position: relative;">
+                    <div id="ocultador-formulario">
+                        <form id="cambiarContrasenhaForm">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Modificar contraseña</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                            </div>
+                        
+                            <div class="modal-body">
+                                
+                                <div class="mb-3">
+                                    <label for="inputGroupContrasenha" class="form-label">Introduce la nueva contraseña</label>
+                                    <div class="input-group" id="inputGroupContrasenha">
+                                        <input type="password" class="form-control" id="inputContrasenha" name="contrasenha" required>
+                                        <button type="button" class="btn btn-outline-secondary " onclick="togglePassword('inputContrasenha')">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-eye" viewBox="0 0 16 16">
+                                                <path d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8M1.173 8a13 13 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5s3.879 1.168 5.168 2.457A13 13 0 0 1 14.828 8q-.086.13-.195.288c-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5s-3.879-1.168-5.168-2.457A13 13 0 0 1 1.172 8z"/>
+                                                <path d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5M4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0"/>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                    <div id="mensajeErrorCon" class="mensaje-error" style="display: none;">No coinciden las contraseñas</div>
+                                </div>
+            
+                                <div class="mb-3">
+                                    <label for="inputGroupContrasenha2" class="form-label">Introduce de nuevo la contraseña</label>
+                                    <div class="input-group" id="inputGroupContrasenha">
+                                        <input type="password" class="form-control" id="inputContrasenha2" name="contrasenah2" required>
+                                        <button type="button" class="btn btn-outline-secondary " onclick="togglePassword('inputContrasenha2')">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-eye" viewBox="0 0 16 16">
+                                                <path d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8M1.173 8a13 13 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5s3.879 1.168 5.168 2.457A13 13 0 0 1 14.828 8q-.086.13-.195.288c-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5s-3.879-1.168-5.168-2.457A13 13 0 0 1 1.172 8z"/>
+                                                <path d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5M4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0"/>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer" style="display: flex; justify-content: space-between;">
+                                <button type="button" class="btn btn-secondary ms-3" data-bs-dismiss="modal">Cancelar</button>
+                                <button id = "botonCambiarContrasenha" class="btn btn-success me-2" onclick="cambiarContrasenha(event)">Cambiar contrasenha</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-    <script th:src="@{/js/ajax-demo.js}"></script>
+    <th:block th:replace="fragments/footer.html :: footer" />
 </body>
 
 </html>
