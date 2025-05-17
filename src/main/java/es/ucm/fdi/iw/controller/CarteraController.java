@@ -4,6 +4,7 @@ import jakarta.persistence.EntityManager;
 import jakarta.servlet.http.HttpSession;
 import jakarta.transaction.Transactional;
 
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -24,9 +25,9 @@ import es.ucm.fdi.iw.model.User;
 @Controller
 @RequestMapping("cartera")
 public class CarteraController {
+  
     @Autowired
     private EntityManager entityManager;
-
     @ModelAttribute
     public void populateModel(HttpSession session, Model model) {
         for (String name : new String[] { "u", "url", "ws", "topics" }) {
