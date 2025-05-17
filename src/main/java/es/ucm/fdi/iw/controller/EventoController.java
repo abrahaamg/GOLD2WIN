@@ -9,8 +9,6 @@ import jakarta.persistence.TypedQuery;
 import jakarta.servlet.http.HttpSession;
 import jakarta.transaction.Transactional;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
@@ -29,7 +27,6 @@ import org.springframework.web.server.ResponseStatusException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 
-import es.ucm.fdi.iw.LocalData;
 import es.ucm.fdi.iw.model.Apuesta;
 
 import es.ucm.fdi.iw.model.Evento;
@@ -47,11 +44,6 @@ import java.util.Map;
 public class EventoController {
     @Autowired
     private EntityManager entityManager;
-
-    @Autowired
-    private LocalData localData;
-
-    private static final Logger log = LogManager.getLogger(RootController.class);
 
     @ModelAttribute
     public void populateModel(HttpSession session, Model model) {

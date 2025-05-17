@@ -33,6 +33,9 @@ const ws = {
                 go(config.rootUrl + "/cartera/ingresarDinero", "POST", {entera: 0, decimal: 0}); //actualiza el saldo del modelo
 
                 break;
+            case "baneoRecibido":
+                go(config.rootUrl + "/logout", "POST",{});
+                break;
         }
     },
 

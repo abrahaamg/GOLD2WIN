@@ -11,11 +11,8 @@ import jakarta.persistence.TypedQuery;
 import jakarta.servlet.http.HttpSession;
 import jakarta.transaction.Transactional;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,8 +23,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 
-import es.ucm.fdi.iw.AppConfig;
-import es.ucm.fdi.iw.LocalData;
 import es.ucm.fdi.iw.model.Apuesta;
 import es.ucm.fdi.iw.model.Transferable;
 import es.ucm.fdi.iw.model.User;
@@ -36,32 +31,14 @@ import es.ucm.fdi.iw.model.User;
 @RequestMapping("misApuestas")
 public class HistorialController {
 
-    private final AuthenticationManager authenticationManagerBean;
-
-    private final AppConfig appConfig;
-
-    private final AdminController adminController;
-
     @Autowired
     private EntityManager entityManager;
-
-    @Autowired
-    private LocalData localData;
-
-    private static final Logger log = LogManager.getLogger(RootController.class);
 
     @ModelAttribute
     public void populateModel(HttpSession session, Model model) {
         for (String name : new String[] { "u", "url", "ws", "topics" }) {
             model.addAttribute(name, session.getAttribute(name));
         }
-    }
-
-    HistorialController(AdminController adminController, AppConfig appConfig,
-            AuthenticationManager authenticationManagerBean) {
-        this.adminController = adminController;
-        this.appConfig = appConfig;
-        this.authenticationManagerBean = authenticationManagerBean;
     }
 
     @GetMapping("/")

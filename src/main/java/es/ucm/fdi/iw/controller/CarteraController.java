@@ -4,12 +4,8 @@ import jakarta.persistence.EntityManager;
 import jakarta.servlet.http.HttpSession;
 import jakarta.transaction.Transactional;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,43 +19,19 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-import es.ucm.fdi.iw.AppConfig;
-import es.ucm.fdi.iw.LocalData;
-
 import es.ucm.fdi.iw.model.User;
 
 @Controller
 @RequestMapping("cartera")
 public class CarteraController {
-    private final AuthenticationManager authenticationManagerBean;
-
-    private final AppConfig appConfig;
-
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-
-    private final AdminController adminController;
-
     @Autowired
     private EntityManager entityManager;
-
-    @Autowired
-    private LocalData localData;
-
-    private static final Logger log = LogManager.getLogger(RootController.class);
 
     @ModelAttribute
     public void populateModel(HttpSession session, Model model) {
         for (String name : new String[] { "u", "url", "ws", "topics" }) {
             model.addAttribute(name, session.getAttribute(name));
         }
-    }
-
-    CarteraController(AdminController adminController, AppConfig appConfig,
-            AuthenticationManager authenticationManagerBean) {
-        this.adminController = adminController;
-        this.appConfig = appConfig;
-        this.authenticationManagerBean = authenticationManagerBean;
     }
 
     //Pagina inicial de la cartera

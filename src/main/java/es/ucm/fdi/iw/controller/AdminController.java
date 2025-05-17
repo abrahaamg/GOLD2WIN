@@ -106,6 +106,54 @@ public class AdminController {
         return "transacciones";
     }
 
+    @PostMapping("/usuarios/{id}/banear")
+    @ResponseBody
+    @Transactional
+    public ResponseEntity<JsonNode> banearUsuario(@PathVariable long id, @RequestBody JsonNode o) {
+        User user = entityManager.find(User.class, id);
+        int tipo = o.get("tipo").asInt(); // 0 = nueva fecha, 1 = cantidad de minutos
+         
+
+        if (user == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario no encontrado");
+        }
+
+        OffsetDateTime duracionFinal = user.getExpulsadoHasta();
+
+        if(tipo == 0){
+            if(o.get("fecha").isNull()){
+                duracionFinal = null; //quita el baneo
+            }
+            else{
+                duracionFinal = OffsetDateTime.parse(o.get("fecha").asText());
+            }
+        }
+        else if(tipo == 1){
+            int minutos = o.get("minutos").asInt();
+            duracionFinal = OffsetDateTime.now().plusMinutes(minutos);
+        }
+
+        //Mando un mensaje WS al usuario baneado para que cierre sesion
+        user.setExpulsadoHasta(duracionFinal);
+        Map<String, Object> mensaje = new HashMap<>();
+        mensaje.put("tipoEvento", "baneoRecibido");
+        ObjectMapper mapper = new ObjectMapper();
+        String json;
+
+        try {
+            json = mapper.writeValueAsString(mensaje);
+            messagingTemplate.convertAndSend("/user/" + user.getUsername() + "/queue/updates", json);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        ObjectNode response = objectMapper.createObjectNode();
+        response.put("mensaje", "Usuario baneado correctamente");
+
+        return ResponseEntity.ok(response);
+    }
+
     @GetMapping("/reportes")
     public String tablaReportes(Model model) {
         String queryReportes = "SELECT r FROM Reporte r";
