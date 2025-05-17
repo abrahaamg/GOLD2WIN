@@ -19,6 +19,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.LockedException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -36,6 +37,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import es.ucm.fdi.iw.AppConfig;
 import es.ucm.fdi.iw.LocalData;
@@ -330,57 +333,5 @@ public class RootController {
         model.addAttribute("numApuestasPend", numApuestasPend);
         model.addAttribute("numMensajes", numMensajes);
         return "user";
-    }
-    
-
-    @Transactional
-    @ResponseBody
-    @PostMapping("/cartera/ingresarDinero")
-    public ResponseEntity<JsonNode> ingresarDinero(@RequestBody JsonNode json, HttpSession session) {
-        ObjectMapper objectMapper = new ObjectMapper();
-        ObjectNode response = objectMapper.createObjectNode();
-        User user = entityManager.find(User.class, 
-            ((User) session.getAttribute("u")).getId());
-
-        int cantEntera = json.get("entera").asInt();
-        int cantDecimal = json.get("decimal").asInt(); 
-        int total = (cantEntera * 100) + cantDecimal;
-        if(total < 300 || total > 150000){
-            response.put("mensaje", "La cantidad a retirar debe estar entre 3 y 1500 euros: " + total);
-            return ResponseEntity.badRequest().body(response);
-        } 
-        user.setDineroDisponible(user.getDineroDisponible() + total); 
-        session.setAttribute("u", user);
-
-        response.put("mensaje", "Dinero ingresado correctamente: " + total);
-        return ResponseEntity.ok(response);
-    }
-
-    @Transactional
-    @ResponseBody
-    @PostMapping("/cartera/retirarDinero")
-    public ResponseEntity<JsonNode> retirarDinero(@RequestBody JsonNode json, HttpSession session) {
-        ObjectMapper objectMapper = new ObjectMapper();
-        ObjectNode response = objectMapper.createObjectNode();
-        User user = entityManager.find(User.class, 
-            ((User) session.getAttribute("u")).getId());
-
-        int cantEntera = json.get("entera").asInt();
-        int cantDecimal = json.get("decimal").asInt(); 
-        int total = (cantEntera * 100) + cantDecimal; 
-
-        if(total > user.getDineroDisponible()) {
-            response.put("mensaje", "No tienes suficiente dinero disponible para retirar: " + total);
-            return ResponseEntity.badRequest().body(response);
-        }
-        else if(total < 500 || total > 100000){
-            response.put("mensaje", "La cantidad a retirar debe estar entre 5 y 1000 euros: " + total);
-            return ResponseEntity.badRequest().body(response);
-        }
-        user.setDineroDisponible(user.getDineroDisponible() - total); 
-        session.setAttribute("u", user);
-
-        response.put("mensaje", "Dinero retirado correctamente: " + total);
-        return ResponseEntity.ok(response);
     }
 }
