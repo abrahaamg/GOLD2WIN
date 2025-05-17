@@ -252,3 +252,22 @@
       overflow-y: auto;
     }
 }
+
+.spanMostrarUsuario{
+    white-space: nowrap;
+}
+
+.inputEstadisticasUsuario{
+    font-weight: bold;
+}
+
+#contenedorGeneralUsuario{
+    display: flex;
+
+    align-items: center;
+    justify-content: top;
+    margin-top: 20px;
+    overflow-y: auto;
+    flex-grow: 1;
+    overflow-x: none;
+}

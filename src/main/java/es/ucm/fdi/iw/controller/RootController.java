@@ -42,6 +42,7 @@ import es.ucm.fdi.iw.AppConfig;
 import es.ucm.fdi.iw.LocalData;
 
 import es.ucm.fdi.iw.model.Evento;
+import es.ucm.fdi.iw.model.ParticipacionChat;
 import es.ucm.fdi.iw.model.Seccion;
 import es.ucm.fdi.iw.model.User;
 import es.ucm.fdi.iw.model.User.Role;
@@ -341,7 +342,31 @@ public class RootController {
     }
 
     @GetMapping("/perfil")
-    public String perfil(Model model) {
+    public String perfil(Model model, HttpSession session) {
+        User user = entityManager.find(User.class, 
+            ((User) session.getAttribute("u")).getId());
+
+        Long numChats = entityManager.createNamedQuery("User.countChats", Long.class)
+            .setParameter("id", user.getId())
+            .getSingleResult();
+
+        Long numApuestas = entityManager.createNamedQuery("User.countApuestas", Long.class)
+            .setParameter("id", user.getId())
+            .getSingleResult();
+
+        Long numApuestasPend = entityManager.createNamedQuery("User.countApuestasPend", Long.class)
+            .setParameter("id", user.getId())
+            .getSingleResult();    
+        
+        Long numMensajes = entityManager.createNamedQuery("User.countMensajes", Long.class)
+            .setParameter("id", user.getId())
+            .getSingleResult();
+
+        model.addAttribute("user", user);  
+        model.addAttribute("numChats", numChats);
+        model.addAttribute("numApuestas", numApuestas);  
+        model.addAttribute("numApuestasPend", numApuestasPend);
+        model.addAttribute("numMensajes", numMensajes);
         return "user";
     }
     

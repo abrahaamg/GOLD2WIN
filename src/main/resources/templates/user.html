@@ -3,48 +3,46 @@
 
 <head>
     <th:block th:replace="fragments/head :: header" />
-    <title>IW: Perfil</title>
+    <title>Perfil</title>
 </head>
 
 <body class="d-flex flex-column h-100">
     <header th:replace="fragments/nav.html :: nav(null)"></header>
 
     <main class="flex-shrink-0">
-        <div class="container mt-5">
-            <!-- Encabezado con imagen de perfil -->
+        <div class="container mt-5 scrollBarPerso" id = "">
+
             <div class="d-flex align-items-center mb-4">
                 <div class="me-3">
                     <img th:src="@{/img/default-pic.jpg}" src="/img/default-pic.jpg" alt="Foto de perfil" class="rounded-circle" width="80" height="80">
                 </div>
-                <h1 class="mb-0">Perfil de Paco</h1>
             </div>
 
-            <!-- Formulario de perfil -->
             <form class="mt-4">
                 <div class="row mb-3">
                     <div class="col-md-4">
                         <label for="username" class="form-label">Username</label>
-                        <input type="text" class="form-control" id="username" value="paco123">
+                        <input type="text" class="form-control" id="username" th:value="${user.username}">
                     </div>
                     <div class="col-md-4">
                         <label for="nombre" class="form-label">Nombre</label>
-                        <input type="text" class="form-control" id="nombre" value="Paco">
+                        <input type="text" class="form-control" id="nombre" th:value="${user.firstName}" readonly>
                     </div>
                     <div class="col-md-4">
                         <label for="apellidos" class="form-label">Apellidos</label>
-                        <input type="text" class="form-control" id="apellidos" value="García Pérez">
+                        <input type="text" class="form-control" id="apellidos" th:value="${user.lastName}" readonly>
                     </div>
                 </div>
 
                 <div class="row mb-3">
                     <div class="col-md-6">
                         <label for="email" class="form-label">Email</label>
-                        <input type="email" class="form-control" id="email" value="paco@example.com">
+                        <input type="email" class="form-control" id="email" th:value="${user.email}" readonly>
                     </div>
                     <div class="col-md-6">
                         <label for="password" class="form-label">Contraseña</label>
                         <div class="input-group">
-                            <input type="password" class="form-control" id="password" value="123456">
+                            <input type="password" class="form-control" id="password" th:value="${user.password}">
                             <button type="button" class="btn btn-outline-secondary" onclick="togglePassword()">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-eye" viewBox="0 0 16 16">
                                     <path d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8M1.173 8a13 13 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5s3.879 1.168 5.168 2.457A13 13 0 0 1 14.828 8q-.086.13-.195.288c-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5s-3.879-1.168-5.168-2.457A13 13 0 0 1 1.172 8z"/>
@@ -58,21 +56,34 @@
 
             <hr class="my-4" />
 
-            <!-- Sección de estadísticas -->
             <div class="d-flex justify-content-between align-items-center mb-3">
                 <h4>Estadísticas</h4>
                 <a class="btn btn-morado-cartera" th:href="@{/cartera/ingresar}" id="enlaceNavCartera">Cartera</a>
             </div>
             <ul class="list-group">
-                <li class="list-group-item">Apuestas Totales: <strong>25</strong></li>
-                <li class="list-group-item">Apuestas Pendientes: <strong>3</strong></li>
-                <li class="list-group-item">Chats: <strong>5</strong></li>
-                <li class="list-group-item">Mensajes: <strong>47</strong></li>
-                <li class="list-group-item">Reportes: <strong>1</strong></li>
+                <li class="list-group-item" style="display: flex; align-items: center;">
+                    <span class = "spanMostrarUsuario">Número de apuestas totales:  </span>
+                    <input type="text" class="form-control ms-2 p-0 inputEstadisticasUsuario" id="apuestas" style="border: none;" th:value="${numApuestas}" readonly>
+                </li>
+                <li class="list-group-item" style="display: flex; align-items: center;">
+                    <span class = "spanMostrarUsuario">Número de apuestas pendientes: </span>
+                    <input type="text" class="form-control ms-2 p-0 inputEstadisticasUsuario" id="apuestasPend" style="border: none;" th:value="${numApuestasPend}" readonly>
+                </li>
+                <li class="list-group-item" style="display: flex; align-items: center;">
+                    <span class = "spanMostrarUsuario">Número de chats:  </span>
+                    <input type="text" class="form-control ms-2 p-0 inputEstadisticasUsuario" id="chats" style="border: none;" th:value="${numChats}" readonly>
+                </li>
+                <li class="list-group-item" style="display: flex; align-items: center;">
+                    <span class = "spanMostrarUsuario">Número de mensajes:  </span>
+                    <input type="text" class="form-control ms-2 p-0 inputEstadisticasUsuario" id="mensajes" style="border: none;" th:value="${numMensajes}" readonly>
+                </li>
+                <li class="list-group-item" style="display: flex; align-items: center;">
+                    <span class = "spanMostrarUsuario">Número de reportes:  </span>
+                    <input type="text" class="form-control ms-2 p-0 inputEstadisticasUsuario" id="chats" style="border: none;" readonly>
+                </li>
             </ul>
 
-            <!-- Botón de guardar -->
-            <div class="d-flex justify-content-center mt-5"> <!-- Aumenté el margin-top para mover el botón más abajo -->
+            <div class="d-flex justify-content-center mt-5"> 
                 <a class="btn btn-morado-guardar" th:href="@{/cartera/ingresar}" id="enlaceNavCartera">Guardar</a>
             </div>
 
