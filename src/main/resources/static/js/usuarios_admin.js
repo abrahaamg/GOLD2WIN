@@ -94,9 +94,10 @@ function confirmarExpulsion() {
         fechaIntroducida = fechaIntroducida.toISOString();
     }
 
+    console.log(fechaIntroducida);
     go(config.rootUrl + "/admin/usuarios/" + idUltimoClicado + "/banear", "POST", {tipo:"0", fecha: fechaIntroducida})
     .then(function(response) {
-        Location.reload();
+        location.reload(true)
     })
     .catch(function(error) {
         console.log(error);

@@ -34,7 +34,9 @@ const ws = {
 
                 break;
             case "baneoRecibido":
-                go(config.rootUrl + "/logout", "POST",{});
+                go(config.rootUrl + "/logout", "POST",{}).then(function(response) {
+                    location.reload(true);});
+
                 break;
         }
     },
