@@ -1,9 +1,6 @@
 package es.ucm.fdi.iw.controller;
 
-import java.time.Instant;
-import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
 import java.util.HashMap;
 import java.util.List;
 
@@ -56,12 +53,12 @@ public class EventoController {
 
     private static final Logger log = LogManager.getLogger(RootController.class);
 
-	@ModelAttribute
-	public void populateModel(HttpSession session, Model model) {
-		for (String name : new String[] { "u", "url", "ws", "topics" }) {
-			model.addAttribute(name, session.getAttribute(name));
-		}
-	}
+    @ModelAttribute
+    public void populateModel(HttpSession session, Model model) {
+        for (String name : new String[] { "u", "url", "ws", "topics" }) {
+            model.addAttribute(name, session.getAttribute(name));
+        }
+    }
 
     @PostMapping("/apostar")
     @Transactional
@@ -71,7 +68,7 @@ public class EventoController {
 
         long idFormula = o.get("idFormula").asLong();
         boolean decision = o.get("decision").asBoolean();
-        int cantidad = o.get("cantidad").intValue(); //en centimos
+        int cantidad = o.get("cantidad").intValue(); // en centimos
 
         FormulaApuesta formula = entityManager.find(FormulaApuesta.class, idFormula);
         long userId = ((User) session.getAttribute("u")).getId();
@@ -80,16 +77,16 @@ public class EventoController {
         // Comprobamos que los datos sean validos
         if (formula == null)
             return "Id invalido";
-        
-        if(formula.getEvento().isCancelado()){
+
+        if (formula.getEvento().isCancelado()) {
             return "Evento cancelado";
         }
 
-        if(formula.getEvento().isCancelado()){
+        if (formula.getEvento().isCancelado()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Evento cancelado");
         }
 
-        if(formula.getEvento().getFechaCierre().isBefore(OffsetDateTime.now())){
+        if (formula.getEvento().getFechaCierre().isBefore(OffsetDateTime.now())) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Evento cerrado para apuestas");
         }
 
@@ -134,7 +131,7 @@ public class EventoController {
 
         String titulo = o.get("titulo").asText();
         String formula = o.get("formula").asText();
-        int cantidad = o.get("cantidad").asInt(); //recibo el dinero en centimos
+        int cantidad = o.get("cantidad").asInt(); // recibo el dinero en centimos
         boolean tipoApuesta = o.get("tipoApuesta").asBoolean();
 
         Evento evento = entityManager.find(Evento.class, id);
@@ -145,11 +142,11 @@ public class EventoController {
         if (evento == null)
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Evento no encontrado");
 
-        if(evento.isCancelado()){
+        if (evento.isCancelado()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Evento cancelado");
         }
 
-        if(evento.getFechaCierre().isBefore(OffsetDateTime.now())){
+        if (evento.getFechaCierre().isBefore(OffsetDateTime.now())) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Evento cerrado para apuestas");
         }
 
@@ -216,11 +213,11 @@ public class EventoController {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Evento no encontrado");
         }
 
-        if(evento.isCancelado()){
+        if (evento.isCancelado()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Evento cancelado");
         }
 
-        if(evento.getFechaCierre().isBefore(OffsetDateTime.now())){
+        if (evento.getFechaCierre().isBefore(OffsetDateTime.now())) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Evento cerrado para apuestas");
         }
 
@@ -253,10 +250,11 @@ public class EventoController {
     public Map<String, Object> cargarApuestas(
             @PathVariable long id,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime fechaInicio, // necesito
-                                                                                                         // indicar el
-                                                                                                         // formato en
-                                                                                                         // que viene la
-                                                                                                         // fecha
+                                                                                                          // indicar el
+                                                                                                          // formato en
+                                                                                                          // que viene
+                                                                                                          // la
+                                                                                                          // fecha
             @RequestParam int offset) {
 
         Evento evento = entityManager.find(Evento.class, id);
@@ -294,11 +292,11 @@ public class EventoController {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Evento no encontrado");
         }
 
-        if(eventoSel.isCancelado()){
+        if (eventoSel.isCancelado()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Evento cancelado");
         }
 
-        if(eventoSel.getFechaCierre().isBefore(OffsetDateTime.now())){
+        if (eventoSel.getFechaCierre().isBefore(OffsetDateTime.now())) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Evento cerrado para apuestas");
         }
 

@@ -1,6 +1,5 @@
 package es.ucm.fdi.iw.controller;
 
-import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -19,6 +18,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -138,11 +138,11 @@ public class ChatController {
            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "No perteneces a este chat");
 
         // Obtengo los mensajes del evento
-        List<Mensaje.Transfer> mensajes = evento.getMensajes().stream()
+        List<Mensaje.Transfer> mensajes = evento.getMensajes().stream().filter(Mensaje::isEnabled)
             .map(Transferable::toTransfer)
             .sorted(Comparator.comparing(Mensaje.Transfer::getFecha)) // Ordenar por fecha
             .collect(Collectors.toList());
-
+        
         response.put("mensajes", mensajes);
 
         //Marco que la ultima visita ha sido ahora
@@ -255,7 +255,7 @@ public class ChatController {
         return response;
     }
 
-    @PostMapping(path = "/borrarMensaje/{id}", produces = "application/json")
+    @DeleteMapping(path = "/borrarMensaje/{id}", produces = "application/json")
     @ResponseBody
     @Transactional
     public Map<String, Object> borrarMensaje(@PathVariable long id, HttpSession session) throws JsonProcessingException {
@@ -271,7 +271,7 @@ public class ChatController {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Mensaje no encontrado");
         }
 
-        if(!mensaje.getRemitente().equals(user)){
+        if(mensaje.getRemitente().getId() != user.getId()){
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "No tienes permiso para borrar este mensaje");
         }
 
@@ -324,7 +324,7 @@ public class ChatController {
         reporte.setResuelto(false);
         reporte.setFechaResolucion(null);
 
-        entityManager.persist(mensaje);
+        entityManager.persist(reporte);
         entityManager.flush();
 
         response.put("status", "ok");

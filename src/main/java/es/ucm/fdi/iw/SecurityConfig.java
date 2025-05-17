@@ -57,7 +57,7 @@ public class SecurityConfig {
 				.csrf(csrf -> csrf
 						.ignoringRequestMatchers("/api/**"))
 				.authorizeHttpRequests(authorize -> authorize
-						.requestMatchers("/css/**", "/js/**", "/img/**", "/", "/seccion/**", "/register").permitAll()
+						.requestMatchers("/css/**", "/js/**", "/img/**", "/", "/seccion/**", "/register","/login_error").permitAll()
 						.requestMatchers("/api/**").permitAll() // <-- public api access
 						.requestMatchers("/admin/**").hasRole("ADMIN") // <-- administration
 						.requestMatchers("/user/**", "/misApuestas/**", "/crearApuesta/**", "/chats/**").hasRole("USER")// <--
@@ -66,6 +66,10 @@ public class SecurityConfig {
 						.anyRequest().authenticated())
 				.formLogin(formLogin -> formLogin
 						.loginPage("/login")
+						.failureHandler((request, response, exception)->{
+							String username = request.getParameter("username");
+							response.sendRedirect("/login_error?error&username=" + username);
+						})
 						.permitAll()
 						.successHandler(loginSuccessHandler) // <-- called when login Ok; can redirect
 				);
