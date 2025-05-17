@@ -7,13 +7,10 @@ import lombok.AllArgsConstructor;
 
 import jakarta.persistence.*;
 
-import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import es.ucm.fdi.iw.model.Resultado;
 
 import com.ezylang.evalex.*;
 

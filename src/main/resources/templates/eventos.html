@@ -24,20 +24,19 @@
             <div class="modal-dialog modal-dialog-centered modal-fullscreen-sm-down">
                 <div class="modal-content" style="position: relative;">
                     <div th:id="'ocultador-formulario-' + ${evento.id}">
-                        <form th:id="'apostarForm-' + ${evento.id}">
-                            <div class="modal-header">
-                                <h5 class="modal-title">Eliminar evento</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-                            </div>
+                        <div class="modal-header">
+                            <h5 class="modal-title">Cancelar evento</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                        </div>
+                    
+                        <div class="modal-body">
+                            <span> ¿Seguro que quiere cancelar permanentemente este evento?</span>
+                        </div>
                         
-                            <div class="modal-body">
-                                <span> ¿Seguro que quiere eliminar permanentemente este evento?</span>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                                <button class="btn btn-danger" data-bs-dismiss="modal">Eliminar evento</button>
-                            </div>
-                        </form>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Retroceder</button>
+                            <button class="btn btn-danger" data-bs-dismiss="modal" th:onclick="'cancelarEvento(' + ${evento.id} + ')'">Cancelar evento</button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -82,8 +81,8 @@
                             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton">
                                 <li><button class="dropdown-item boton-editar" th:onclick="'modalModoEdicion(' + ${evento.id} + ')'" type="button" data-bs-toggle="modal" data-bs-target="#modalCrearEvento">Editar</button></li>
                                 <li><button class="dropdown-item boton-editar" th:onclick="'modalModoVerMas(' + ${evento.id} + ')'" type="button" data-bs-toggle="modal" data-bs-target="#modalCrearEvento">Ver detalles</button></li>
-                                <li><a class="dropdown-item" th:id="'botonDropdownDeterminarEvento-' + ${evento.id}" href="#" th:classappend="${!evento.isPasado()} ? ' disabled' : ''" th:href="@{/admin/eventos/determinar/{id}(id=${evento.id})}">Determinar</a></li>
-                                <li><button class="dropdown-item text-danger" type="button" data-bs-toggle="modal" th:attr="data-bs-target='#cancelarEventoModal-' + ${evento.id}">Cancelar</button></li>
+                                <li><a class="dropdown-item" th:id="'botonDropdownDeterminarEvento-' + ${evento.id}" href="#" th:classappend="${!evento.isPasado() or evento.cancelado or evento.determinado} ? ' disabled' : ''" th:href="@{/admin/eventos/determinar/{id}(id=${evento.id})}">Determinar</a></li>
+                                <li><button class="dropdown-item text-danger" type="button" th:classappend="${evento.determinado} ? 'disabled': ''" data-bs-toggle="modal" th:attr="data-bs-target='#cancelarEventoModal-' + ${evento.id}">Cancelar</button></li>
                             </ul>
                         </div>
                     </td>

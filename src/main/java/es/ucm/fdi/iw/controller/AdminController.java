@@ -106,6 +106,54 @@ public class AdminController {
         return "transacciones";
     }
 
+    @PostMapping("/usuarios/{id}/banear")
+    @ResponseBody
+    @Transactional
+    public ResponseEntity<JsonNode> banearUsuario(@PathVariable long id, @RequestBody JsonNode o) {
+        User user = entityManager.find(User.class, id);
+        int tipo = o.get("tipo").asInt(); // 0 = nueva fecha, 1 = cantidad de minutos
+         
+
+        if (user == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario no encontrado");
+        }
+
+        OffsetDateTime duracionFinal = user.getExpulsadoHasta();
+
+        if(tipo == 0){
+            if(o.get("fecha").isNull()){
+                duracionFinal = null; //quita el baneo
+            }
+            else{
+                duracionFinal = OffsetDateTime.parse(o.get("fecha").asText());
+            }
+        }
+        else if(tipo == 1){
+            int minutos = o.get("minutos").asInt();
+            duracionFinal = OffsetDateTime.now().plusMinutes(minutos);
+        }
+
+        //Mando un mensaje WS al usuario baneado para que cierre sesion
+        user.setExpulsadoHasta(duracionFinal);
+        Map<String, Object> mensaje = new HashMap<>();
+        mensaje.put("tipoEvento", "baneoRecibido");
+        ObjectMapper mapper = new ObjectMapper();
+        String json;
+
+        try {
+            json = mapper.writeValueAsString(mensaje);
+            messagingTemplate.convertAndSend("/user/" + user.getUsername() + "/queue/updates", json);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        ObjectNode response = objectMapper.createObjectNode();
+        response.put("mensaje", "Usuario baneado correctamente");
+
+        return ResponseEntity.ok(response);
+    }
+
     @GetMapping("/reportes")
     public String tablaReportes(Model model) {
         String queryReportes = "SELECT r FROM Reporte r";
@@ -124,6 +172,18 @@ public class AdminController {
     @GetMapping("/verificarEvento")
     public String verificarEvento(Model model) {
         return "verificarEvento";
+    }
+
+    @GetMapping("/eventos")
+    public String eventos(Model model) {
+        String queryEventos = "SELECT e FROM Evento e";
+        List<Evento> eventos = entityManager.createQuery(queryEventos, Evento.class).getResultList();
+        List<Seccion> secciones = entityManager.createNamedQuery("Seccion.getAll", Seccion.class).getResultList();
+
+        model.addAttribute("eventos", eventos);
+        model.addAttribute("secciones", secciones);
+
+        return "eventos";
     }
 
     @GetMapping("/eventos/determinar/{id}")
@@ -229,6 +289,33 @@ public class AdminController {
         }
 
         determinarEvento(evento, variables);
+
+        return response;
+    }
+
+    @PostMapping(path = "/eventos/cancelar/{id}", produces = "application/json")
+    @ResponseBody
+    @Transactional
+    public Map<String, Object> cancelarEventoControl(@PathVariable long id) {
+        Map<String, Object> response = new HashMap<>();
+
+        Evento evento = entityManager.find(Evento.class, id);
+
+        if (evento == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Evento no encontrado");
+        }
+
+        if (evento.isCancelado()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El evento ya ha sido cancelado");
+        }
+
+        if (evento.isDeterminado()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El evento ya ha sido determinado");
+        }
+
+        cancelarEvento(evento);
+
+        response.put("success", true);
 
         return response;
     }
@@ -437,18 +524,6 @@ public class AdminController {
         return "secciones-crearSeccion";
     }
 
-    @GetMapping("/eventos")
-    public String eventos(Model model) {
-        String queryEventos = "SELECT e FROM Evento e WHERE e.cancelado = false";
-        List<Evento> eventos = entityManager.createQuery(queryEventos, Evento.class).getResultList();
-        List<Seccion> secciones = entityManager.createNamedQuery("Seccion.getAll", Seccion.class).getResultList();
-
-        model.addAttribute("eventos", eventos);
-        model.addAttribute("secciones", secciones);
-
-        return "eventos";
-    }
-
     // Logica para determinar evento
     // El evento tiene que haberse traido previamente de la base de datos y
     // verificado que no sea null
@@ -556,24 +631,46 @@ public class AdminController {
     }
 
     private void cancelarEvento(Evento evento) {
-        // Verificamos que el evento no sea null y que no esté ya cancelado
-        if (evento != null && !evento.isCancelado()) {
-            // Marcamos el evento como cancelado
-            evento.setCancelado(true);
-            entityManager.persist(evento); // Persistimos el cambio del estado del evento
+        Set<User> apostadoreSet = new HashSet<>();
 
-            // Ahora vamos a revertir las apuestas asociadas al evento
-            for (FormulaApuesta formula : evento.getFormulasApuestas()) {
-                for (Apuesta apuesta : formula.getApuestas()) {
-                    // Devolver el dinero al apostador
-                    User user = apuesta.getApostador();
-                    user.setDineroRetenido(user.getDineroRetenido() - apuesta.getCantidad());
-                    user.setDineroDisponible(user.getDineroDisponible() + apuesta.getCantidad());
-                    entityManager.persist(user);
+        for (FormulaApuesta formula : evento.getFormulasApuestas()) {
+            Resultado resultado = Resultado.ERROR;
+
+            formula.setResultado(resultado);
+
+            for (Apuesta apuesta : formula.getApuestas()) {
+                User user = apuesta.getApostador();
+
+                // Devolvemos el dinero al apostador
+                user.setDineroRetenido(user.getDineroRetenido() - apuesta.getCantidad());
+                user.setDineroDisponible(user.getDineroDisponible() + apuesta.getCantidad());
+
+                apostadoreSet.add(user);
+            }
+
+            entityManager.flush();
+
+            for (User apostador : apostadoreSet) {
+                Map<String, Object> mensaje = new HashMap<>();
+                mensaje.put("tipoEvento", "actualizarDinero");
+                mensaje.put("dineroDisponible", apostador.getDineroDisponible());
+                mensaje.put("dineroRetenido", apostador.getDineroRetenido());
+                ObjectMapper mapper = new ObjectMapper();
+                String json;
+
+                try {
+                    json = mapper.writeValueAsString(mensaje);
+                    messagingTemplate.convertAndSend("/user/" + apostador.getUsername() + "/queue/updates", json);
+                } catch (JsonProcessingException e) {
+                    e.printStackTrace();
                 }
             }
-            entityManager.flush(); // Aseguramos que todos los cambios se guardan en la base de datos
         }
+
+        evento.setDeterminado(true);
+        evento.setCancelado(true);
+
+        entityManager.flush();
     }
 
     @Transactional

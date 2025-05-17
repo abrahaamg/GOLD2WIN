@@ -1,7 +1,7 @@
 var isDarkMode = document.documentElement.getAttribute("data-bs-theme") === "dark";
-var listaEtiquetas = new Set([]);;
-var listaVariables = new Set([]);;
-var listaNombresVariables = new Set([]);;
+var listaEtiquetas = new Set([]);
+var listaVariables = new Set([]);
+var listaNombresVariables = new Set([]);
 var tipoVariableModal = true; // false = texto, true = numerico
 var cargando = false;
 const appRoot = document.getElementById("root").value;
@@ -588,3 +588,19 @@ document.getElementById("submit-form-eventos").addEventListener("click", functio
         });
     }
 });
+
+/*cancelar evento*/
+function cancelarEvento(id){
+    console.log("cancelar evento");
+    if(cargando == false){
+        cargando = true;
+        go(config.rootUrl + '/admin/eventos/cancelar/' + id, 'POST').then((data) => {
+            cargando = false;
+            if(data.success);
+                location.reload(true)
+        }).catch((error) => {
+            console.log(error);
+            cargando = false;
+        });
+    }
+}
