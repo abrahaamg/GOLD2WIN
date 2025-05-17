@@ -3,12 +3,9 @@ package es.ucm.fdi.iw.model;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
 import lombok.AllArgsConstructor;
 
-import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
-import java.util.List;
 
 import jakarta.persistence.*;
 

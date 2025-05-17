@@ -13,7 +13,34 @@
     
     <header th:replace="fragments/nav.html :: nav('administrar')"></header>
 
-    
+    <div class="modal fade" id="expulsionModal" tabindex="-1" aria-labelledby="expulsionModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="expulsionModalLabel">Gestionar expulsión de usuario</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="expulsionForm">
+                    <div class="mb-3">
+                        <label for="expulsionDate" class="form-label">Fecha de expulsión</label>
+                        <input type="date" class="form-control" id="expulsionDate" name="expulsionDate" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="expulsionTime" class="form-label">Hora de expulsión</label>
+                        <input type="time" class="form-control" id="expulsionTime" name="expulsionTime" required>
+                    </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-danger" id="confirmExpulsionBtn">Expulsar</button>
+                    <button type="button" class="btn btn-primary d-none" id="updateExpulsionBtn">Actualizar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
 
     <div style = "width: 90%" class = "mx-auto">
         <div class="pb-3">
@@ -49,7 +76,11 @@
                             </button>
                             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton">
                                 <li><a class="dropdown-item" href="#" th:href="@{/usuarios/verMas/{id}(id=${usuario.id})}">Ver Más</a></li>
-                                <li><a class="dropdown-item" href="#" th:href="@{/usuarios/expulsar/{id}(id=${usuario.id})}">Expulsar</a></li>
+                                <li>
+                                    <a class="dropdown-item abridorModalExpulsion" href="#" role="button" th:data-id="${usuario.id}" th:data-nombre="${usuario.username}" th:data-fecha="${usuario.expulsadoHasta}">
+                                        Expulsar
+                                    </a>
+                                </li>
                             </ul>
                         </div>
                     </td>
@@ -87,6 +118,7 @@
     </script>
 
     <th:block th:replace="fragments/footer.html :: footer" />
+    <script th:src="@{/js/usuarios_admin.js}" src="js/usuarios_admin.js"></script>
 </body>
 
 </html>
