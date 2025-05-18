@@ -98,8 +98,8 @@ public class CarteraController {
             session.setAttribute("u", user); //actualizo el usuario para que cuando recargue la pagina siga apareciendo el dinero
         }
 
-        if (total < 300 || total > 150000) {
-            response.put("mensaje", "La cantidad a ingresar debe estar entre 3 y 1500 euros: " + total);
+        if (total > 150000) {
+            response.put("mensaje", "La cantidad a ingresar debe ser menor a 1500 euros: " + total);
             return ResponseEntity.badRequest().body(response);
         }
 

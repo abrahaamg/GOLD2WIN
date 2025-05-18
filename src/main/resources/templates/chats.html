@@ -10,7 +10,6 @@
     <header th:replace="fragments/nav.html :: nav('chats')"></header>
 
     <form style="display: none;" id="datos">
-        <input type="hidden" id="root" name="root" th:value="@{/}">
         <input type="hidden" id="userId" name="userId" th:value="${session.u.id}">
         <input type="hidden" id="eventoInicial" th:value="${eventoInicial != null} ? ${eventoInicial} : -1">
     </form>
@@ -21,7 +20,8 @@
         </ul>
 
         <ul id="menuAgeno" class="menuDesplegable desaparece" style="position: absolute; z-index: 1000;">
-            <li id="botonReportarMensaje" class="resaltaHover" role="button" data-bs-toggle="modal" data-bs-target="#reportarModal">Reportar</li>
+            <li id="botonReportarMensaje" class="resaltaHover" role="button" data-bs-toggle="modal"
+                data-bs-target="#reportarModal">Reportar</li>
         </ul>
 
 
@@ -61,7 +61,7 @@
                 <h5 id="tituloCabeceraChatMobile" class="m-0 ms-1 d-block d-lg-none text-nowrap text-truncate"
                     style="width: calc(100% - 145px); font-size: 14;">Nombre</h5>
 
-                <div id="botonApostarCabecera" class="d-flex flex-row ms-auto me-3 btn boton-dinamico" role="button">
+                <div data-bs-toggle="offcanvas" data-bs-target="#offcanvasFormulas" aria-controls="offcanvasFormulas" class="d-flex flex-row ms-auto me-3 btn boton-dinamico" role="button">
                     <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor"
                         class="bi bi-clipboard2-data" viewBox="0 0 16 16">
                         <path
@@ -111,6 +111,139 @@
                         </div>
                     </div>
                 </form>
+            </div>
+        </div>
+
+        <!-- Modal para crear formula apuesta -->
+        <div class="modal fade" id="modalCrearApuesta" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-fullscreen-sm-down">
+                <div class="modal-content" style="position: relative;">
+                    <div id="ocultador-formulario2">
+                        <form id="crearApuestaForm">
+                            <div class="modal-header">
+                                <button type="button" id="botonRetrocederCrearApuesta"
+                                    class="btn btn-svg invisible" aria-label="atras">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="white"
+                                        class="bi bi-arrow-left-short" viewBox="0 0 16 16">
+                                        <path fill-rule="evenodd"
+                                            d="M12 8a.5.5 0 0 1-.5.5H5.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L5.707 7.5H11.5a.5.5 0 0 1 .5.5" />
+                                    </svg>
+                                </button>
+                                <h5 class="modal-title mx-auto">Crea tu apuesta</h5>
+                                <button type="button" class="btn-close ms-0" data-bs-dismiss="modal"
+                                    aria-label="Cerrar"></button>
+                            </div>
+
+                            <div class="modal-body">
+                                <div class="vision-creatuApuesta-1">
+                                    <div class="mb-3">
+                                        <label for="tituloModal" class="form-label">Título:</label>
+                                        <input type="text" class="form-control" id="tituloModal" name="titulo"
+                                            maxlength="30" required>
+                                        <span id="tituloError" class="text-danger"></span>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label for="formulaModal" class="form-label">Formula:</label>
+                                        <input type="text" class="form-control" id="formulaModal" name="formula"
+                                            maxlength="30" required>
+                                        <span id="formulaError" class="text-danger"></span>
+                                    </div>
+
+                                    <div class="d-flex align-items-start mt-4">
+                                        <label class="form-label mb-0 me-2">Variables:</label>
+                                        <div id="lista-Variables-Cr" class="border w-100 scrollBarPerso">
+                                            <span id="lista-Variables-texto" class="spanAdaptable">
+                                                <!-- Aquí se llenarán las variables -->
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="vision-creatuApuesta-2 desaparece">
+                                    <div class="mb-3">
+                                        <label for="cantidadModal" class="form-label">Cantidad a
+                                            apostar:</label>
+                                        <input type="number" class="form-control" id="cantidadModal"
+                                            name="cantidad" min="1" required>
+                                        <span id="cantidadError" class="text-danger"></span>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label for="tipoApuestaModal" class="form-label">Tipo de
+                                            apuesta:</label>
+                                        <select class="form-select" id="tipoApuestaModal" name="tipoApuesta"
+                                            required>
+                                            <option value="favorable">A favor</option>
+                                            <option value="contraria">En contra</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" id="botonSiguienteCrearApuesta"
+                                    class="btn btn-secondary mx-auto vision-creatuApuesta-1">siguiente</button>
+                                <button type="submit"
+                                    class="btn btn-success mx-auto vision-creatuApuesta-2 desaparece"
+                                    id="botonCrearApuestaDefinitiva">Apostar</button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <svg id="confirmacionApuesta2" xmlns="http://www.w3.org/2000/svg" fill="currentColor"
+                        class="bi bi-check-circle-fill text-success invisible confirmacionApuesta"
+                        viewBox="0 0 16 16">
+                        <path
+                            d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0m-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z" />
+                    </svg>
+                </div>
+            </div>
+        </div>
+
+        <!-- Offcanvas para las apuestas -->
+        <div class="offcanvas offcanvas-end bg-body-tertiary" tabindex="-1" id="offcanvasFormulas"
+            aria-labelledby="offcanvasNavbarLabel">
+            <div class="offcanvas-header">
+                <h5 class="offcanvas-title">Formulas</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+            </div>
+
+            <div class="offcanvas-body">
+                <div class="w-100 d-flex flex-column">
+                    <div class="d-flex justify-content-between align-items-center ">
+                        <div class="barraBuscador " style>
+                            <svg viewBox="0 0 24 24" aria-hidden="true" class="iconoBuscador">
+                                <g>
+                                    <path
+                                        d="M21.53 20.47l-3.66-3.66C19.195 15.24 20 13.214 20 11c0-4.97-4.03-9-9-9s-9 4.03-9 9 4.03 9 9 9c2.215 0 4.24-.804 5.808-2.13l3.66 3.66c.147.146.34.22.53.22s.385-.073.53-.22c.295-.293.295-.767.002-1.06zM3.5 11c0-4.135 3.365-7.5 7.5-7.5s7.5 3.365 7.5 7.5-3.365 7.5-7.5 7.5-7.5-3.365-7.5-7.5z">
+                                    </path>
+                                </g>
+                            </svg>
+
+                            <input id="queryApuestas" class="inputBuscador" type="search"
+                                placeholder="Busca por nombre..." name="searchbar" />
+                        </div>
+
+                        <button type="button" class="btn btn-primary d-block p-2 ms-3" id="boton-crear-formula-reducido"
+                            data-bs-toggle="modal" data-bs-target="#modalCrearApuesta">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor"
+                                class="bi bi-plus-circle" viewBox="0 0 16 16">
+                                <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16" />
+                                <path
+                                    d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4" />
+                            </svg>
+                        </button>
+                    </div>
+
+                    <div id="contendorFormulas" class="h-100 w-100 d-flex flex-column" style="margin-top: 10px;">
+                    </div>
+
+                    <div class="width-100 d-flex justify-content-center mt-1">
+                        <button class="btn btn-outline-primary mt-3 botonVerMas" id="verMasEventos"
+                            style="display: none;">ver mas</button>
+                    </div>
+                </div>
             </div>
         </div>
 

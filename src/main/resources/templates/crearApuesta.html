@@ -11,10 +11,6 @@
     
     <header th:replace="fragments/nav.html :: nav('deportes')"></header>
 
-    <form style="display: none;" id="datos">
-        <input type="hidden" id="root" name="root" th:value="@{/}">
-    </form>
-
     <div class="w-100 px-3 pt-2 d-flex flex-column">
         <div class="d-flex justify-content-between align-items-center border-bottom pb-2">
             <h5 class="mb-0" th:text="${eventoSel.nombre}"></h5>
@@ -52,7 +48,7 @@
             </button>
         </div>
 
-        <div id = "contendorFormulas" class="h-100 w-100 d-flex flex-wrap justify-content-evenly" style="margin-top: 10px;">
+        <div id = "contendorFormulas" class="h-100 w-100 d-flex flex" style="margin-top: 10px;">
         </div>
 
         <div class="width-100 d-flex justify-content-center mt-3">

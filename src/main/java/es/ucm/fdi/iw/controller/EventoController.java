@@ -12,6 +12,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,6 +27,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import es.ucm.fdi.iw.model.Apuesta;
 
@@ -33,7 +35,7 @@ import es.ucm.fdi.iw.model.Evento;
 import es.ucm.fdi.iw.model.FormulaApuesta;
 import es.ucm.fdi.iw.model.Resultado;
 import es.ucm.fdi.iw.model.User;
-
+import es.ucm.fdi.iw.model.Variable;
 import es.ucm.fdi.iw.model.Transferable;
 import java.util.stream.Collectors;
 
@@ -44,6 +46,9 @@ import java.util.Map;
 public class EventoController {
     @Autowired
     private EntityManager entityManager;
+
+    @Autowired
+    private SimpMessagingTemplate messagingTemplate;
 
     @ModelAttribute
     public void populateModel(HttpSession session, Model model) {
@@ -111,16 +116,41 @@ public class EventoController {
         entityManager.flush();
         session.setAttribute("u", u);
 
+        Map<String, Object> mensajeDinero = new HashMap<>();
+        mensajeDinero.put("tipoEvento", "actualizarDinero");
+        mensajeDinero.put("dineroDisponible", u.getDineroDisponible());
+        mensajeDinero.put("dineroRetenido", u.getDineroRetenido());
+
+        Map<String, Object> mensajeCuota = new HashMap<>();
+        mensajeCuota.put("tipoEvento", "cambioCuota");
+        mensajeCuota.put("cuotaDesfavorable", formula.calcularCuota(false));
+        mensajeCuota.put("cuotaFavorable", formula.calcularCuota(true));
+        mensajeCuota.put("idFormula", formula.getId());
+
+        ObjectMapper mapper = new ObjectMapper();
+        String jsonDinero;
+        String jsonCuota;
+
+        try {
+            jsonDinero = mapper.writeValueAsString(mensajeDinero);
+            jsonCuota = mapper.writeValueAsString(mensajeCuota);
+            messagingTemplate.convertAndSend("/user/" + u.getUsername() + "/queue/updates", jsonDinero);
+            messagingTemplate.convertAndSend("/topic/chats/" + formula.getEvento().getId() , jsonCuota);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+
         return "OK";
     }
 
-    @PostMapping("/{id}/crearFormula")
+    @PostMapping(path = "/{id}/crearFormula" , produces = "application/json")
     @Transactional
     @ResponseBody
-    public String crearFormula(
+    public Map<String, Object> crearFormula(
             @PathVariable long id,
             @RequestBody JsonNode o, HttpSession session) throws JsonProcessingException {
 
+        Map<String, Object> response = new HashMap<>();
         String titulo = o.get("titulo").asText();
         String formula = o.get("formula").asText();
         int cantidad = o.get("cantidad").asInt(); // recibo el dinero en centimos
@@ -142,17 +172,25 @@ public class EventoController {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Evento cerrado para apuestas");
         }
 
-        if (cantidad < 0)
-            return "ERROR-CANTIDAD";
+        if (cantidad < 0){
+            response.put("status", "ERROR-CANTIDAD");
+            return response;
+        }
 
-        if (cantidad > u.getDineroDisponible())
-            return "ERROR-CANTIDAD";
+        if (cantidad > u.getDineroDisponible()){
+            response.put("status", "ERROR-CANTIDAD");
+            return response;
+        }
 
-        if (titulo.equals(""))
-            return "ERROR-TITULO";
+        if (titulo.equals("")){
+            response.put("status", "ERROR-TITULO");
+            return response;
+        }
 
-        if (!FormulaApuesta.formulaValida(formula, evento))
-            return "ERROR-FORMULA";
+        if (!FormulaApuesta.formulaValida(formula, evento)){
+            response.put("status", "ERROR-FORMULA");
+            return response;
+        }
 
         FormulaApuesta nuevaFormula = new FormulaApuesta();
         nuevaFormula.setEvento(evento);
@@ -186,7 +224,24 @@ public class EventoController {
         entityManager.flush();
         session.setAttribute("u", u);
 
-        return "OK";
+        Map<String, Object> mensaje = new HashMap<>();
+        mensaje.put("tipoEvento", "actualizarDinero");
+        mensaje.put("dineroDisponible", u.getDineroDisponible());
+        mensaje.put("dineroRetenido", u.getDineroRetenido());
+        ObjectMapper mapper = new ObjectMapper();
+        String json;
+
+        try {
+            json = mapper.writeValueAsString(mensaje);
+            messagingTemplate.convertAndSend("/user/" + u.getUsername() + "/queue/updates", json);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+
+        response.put("status", "OK");
+        response.put("formula",nuevaFormula.toTransfer());
+        
+        return response;
     }
 
     @GetMapping(path = "/{id}/apostar/buscar", produces = "application/json")
@@ -297,4 +352,18 @@ public class EventoController {
         return "crearApuesta";
     }
 
+    @GetMapping(path = "{id}/getVariables", produces = "application/json")
+    @ResponseBody
+    public Map<String, Object> getVariables(@PathVariable long id, Model model, HttpSession session) {
+        Evento eventoSel = entityManager.find(Evento.class, id);
+        Map<String, Object> response = new HashMap<>();
+
+        if (eventoSel == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Evento no encontrado");
+        }
+        
+        response.put("variables", eventoSel.getVariables().stream().map(Variable::getNombre).collect(Collectors.toList()));
+
+        return response;
+    }
 }

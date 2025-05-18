@@ -14,10 +14,6 @@
 <body>
     <header th:replace="fragments/nav.html :: nav('administrar')"></header>
 
-    <form style="display: none;" id="datos">
-        <input type="hidden" id="root" name="root" th:value="@{/}">
-    </form>
-
     <!-- Fuera de la tabla -->
     <div th:each="evento : ${eventos}">
         <div class="modal fade" th:id="'cancelarEventoModal-' + ${evento.id}" tabindex="-1" aria-hidden="true">

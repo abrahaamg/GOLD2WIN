@@ -1,4 +1,3 @@
-const appRoot = document.getElementById('root').value; // th:href="@{/}"
 const currentPath = window.location.pathname;
 const botonVerMas = document.getElementById("verMasEventos");
 var offset = 0; // numElementos cargados
@@ -114,25 +113,19 @@ function anadirFormula(formula){
                     <span class="spanAdaptable" style="white-space: nowrap;"> ${formula.formula}</span>
                 </div>
             </div>
-            <div >
-                <span class="titulo-campo-apuesta">Cuota favorable:</span>
-                <span class="text-success"> ${formula.cuotaFaborable}</span>
-            </div>
-            <div >
-                <span class="titulo-campo-apuesta">Cuota desfavorable:</span>
-                <span class="text-success">${formula.cuotaDesfavorable}</span>
-            </div>
         </div>
         
         <div id="cuestionario-form-${formula.id}" class="w-100 d-flex align-items-center mt-3">
-            <button type="button" class="btn btn-success botonApostarFavorable" onclick="enviarFormulario(true,${formula.id})">
-                favorable
+            <button type="button" class="btn btn-success botonApostarFavorable d-flex flex-column g-0" onclick="enviarFormulario(true,${formula.id})">
+                <span style="font-size:14px;" id="cuota-favorable-${formula.id}">x${parseFloat(formula.cuotaFaborable).toFixed(2)}</span>
+                <span style="font-size:12px;">(favorable)</span>
             </button>
 
             <input type="number" id="cantidad-${formula.id}" class ="form-control mx-2 flex-grow-1" placeholder="cantidad..." required>
 
-            <button type="button" class="btn btn-success botonApostarDesfavorable" onclick="enviarFormulario(false,${formula.id})">
-                desfavorable
+            <button type="button" class="btn btn-success botonApostarDesfavorable d-flex flex-column g-0" style="gap: 0px;" onclick="enviarFormulario(false,${formula.id})">
+                <span style="font-size:14px;" id="cuota-favorable-${formula.id}">x${parseFloat(formula.cuotaDesfavorable).toFixed(2)}</span>
+                <span style="font-size:12px;">(desfavorable)</span>
             </button>
         </div>
 
@@ -221,8 +214,8 @@ document.getElementById("crearApuestaForm").addEventListener("submit", function(
         cantidad = Math.floor(cantidad * 100);
         const tipoApuesta = document.getElementById("tipoApuestaModal").value == "favorable";
 
-        goTexto(ruta, 'POST', {titulo,formula,cantidad,tipoApuesta}).then((response) => {
-            if(response == "OK"){
+        go(ruta, 'POST', {titulo,formula,cantidad,tipoApuesta}).then((response) => {
+            if(response.status == "OK"){
                 document.getElementById("ocultador-formulario2").classList.add("invisible");
                 let check = document.getElementById("confirmacionApuesta2");
                 check.classList.remove("invisible");
@@ -233,17 +226,17 @@ document.getElementById("crearApuestaForm").addEventListener("submit", function(
                 }, 1000);
             }
             else{
-                if(response == "ERROR-TITULO"){
+                if(response.status == "ERROR-TITULO"){
                     document.getElementById("tituloModal").classList.add("border", "border-danger");
                     mostrarModal();
                 }
-                else if(response == "ERROR-FORMULA"){
+                else if(response.status == "ERROR-FORMULA"){
                     document.getElementById("formulaModal").classList.add("border", "border-danger");
                     mostrarModal();
                 }
-                else if(response == "ERROR-CANTIDAD")
+                else if(response.status == "ERROR-CANTIDAD")
                     document.getElementById("cantidadModal").classList.add("border", "border-danger");
-                else if(response == "ERROR-TIPO")
+                else if(response.status == "ERROR-TIPO")
                     document.getElementById("tipoApuestaModal").classList.add("border", "border-danger");
                 else
                     console.log(response);
@@ -270,7 +263,7 @@ function enviarFormulario(esFavorable,id) {
 
         console.log({idFormula,decision,cantidad});
 
-        goTexto(appRoot+ 'evento/apostar', 'POST', {idFormula,decision,cantidad}).then((response) => {
+        goTexto(config.rootUrl+ '/evento/apostar', 'POST', {idFormula,decision,cantidad}).then((response) => {
             if(response == "OK"){
                 const contenedorFormula = document.getElementById("formula-"+id);
 

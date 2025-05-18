@@ -467,7 +467,7 @@ a.botonOvalado.nav-link:hover{
 
 [data-bs-theme="dark"] .contenedor-apuesta{
     border: 0px solid rgba(0, 0, 0, 0.1);
-    background-color: #313338;
+    background-color: rgba(255, 255, 255, 0.1);
 }
 
 .contenedor-apuesta .titulo-campo-apuesta{
