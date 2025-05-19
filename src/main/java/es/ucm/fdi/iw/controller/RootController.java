@@ -34,6 +34,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -47,6 +48,7 @@ import es.ucm.fdi.iw.model.Evento;
 import es.ucm.fdi.iw.model.ParticipacionChat;
 import es.ucm.fdi.iw.model.Seccion;
 import es.ucm.fdi.iw.model.User;
+import es.ucm.fdi.iw.model.VariableSeccion;
 import es.ucm.fdi.iw.model.Transferable;
 import java.util.stream.Collectors;
 import java.util.Map;
@@ -341,4 +343,83 @@ public class RootController {
         model.addAttribute("numMensajes", numMensajes);
         return "user";
     }
+
+    @PostMapping("perfil/editar")
+    @Transactional
+    @ResponseBody
+    public Map<String, Object> editarPerfil(@RequestBody JsonNode o, Model model, HttpSession session) throws IOException{
+        Map<String, Object> response = new HashMap<>();
+
+        User user = entityManager.find(User.class, ((User) session.getAttribute("u")).getId());
+
+        String username = o.get("username").asText();
+        String email = o.get("email").asText();
+        if(o.has("contrasenha")) {
+            String password = o.get("contrasenha").asText();
+            user.setPassword(encodePassword(password));
+        }
+
+        Long countUsername = entityManager
+            .createNamedQuery("User.existeUsername", Long.class)
+            .setParameter("username", username).setParameter("id", user.getId()).getSingleResult();
+        
+
+        if (countUsername > 0) {
+            response.put("success", false);
+            response.put("error", "username");
+            return response;
+        }
+
+        Long countEmail = entityManager
+            .createNamedQuery("User.existeEmail", Long.class)
+            .setParameter("email", email).setParameter("id", user.getId()).getSingleResult();
+
+        if (countEmail > 0) {
+            response.put("success", false);
+            response.put("error", "email");
+            return response;
+        }
+
+        user.setUsername(username);
+        user.setEmail(email);
+
+        entityManager.merge(user);
+        JsonNode imageDataNode = o.get("imageData");
+        if (imageDataNode != null && imageDataNode.has("image") && !imageDataNode.get("image").isNull()) {
+            String base64Image = imageDataNode.get("image").asText();
+            String filename = imageDataNode.has("filename") ? imageDataNode.get("filename").asText() : "";
+
+            if (!base64Image.isEmpty()) {
+                MultipartFile photo = adminController.convertirBase64AMultipartFile(base64Image, filename);
+                adminController.setPic(photo, "user", "" + user.getId());
+            }
+        }
+
+        response.put("success", true);
+        return response;
+    }
+
+    @GetMapping("/verificarUsername")
+    public ResponseEntity<?> verificarUsername(@RequestParam String username, @RequestParam Long id) {
+        Long countUsername = entityManager
+            .createNamedQuery("User.existeUsername", Long.class)
+            .setParameter("username", username).setParameter("id", id).getSingleResult();
+
+        boolean existe = countUsername > 0; // Si el numero es mayor a 0, ya existe
+
+        return ResponseEntity.ok().body("{\"existe\": " + existe + "}");
+    }
+
+    @GetMapping("/verificarEmail")
+    public ResponseEntity<?> verificarEmail(@RequestParam String email, @RequestParam Long id) {
+        Long countEmail = entityManager
+            .createNamedQuery("User.existeEmail", Long.class)
+            .setParameter("email", email).setParameter("id", id).getSingleResult();
+
+        boolean existe = countEmail > 0; // Si el numero es mayor a 0, ya existe
+
+        return ResponseEntity.ok().body("{\"existe\": " + existe + "}");
+    }
+
+   
 }

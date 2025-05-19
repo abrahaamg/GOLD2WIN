@@ -33,7 +33,9 @@ import java.util.List;
         @NamedQuery(name = "User.countChats", query = "SELECT COUNT(e) FROM User u JOIN u.chats e WHERE u.id = :id"),
         @NamedQuery(name = "User.countApuestas", query = "SELECT COUNT(a) FROM User u JOIN u.apuestas a WHERE u.id = :id"),
         @NamedQuery(name = "User.countApuestasPend", query = "SELECT COUNT(a) FROM User u JOIN u.apuestas a WHERE u.id = :id AND a.formulaApuesta.resultado = 'INDETERMINADO'"),
-        @NamedQuery(name = "User.countMensajes", query = "SELECT COUNT(m) FROM User u JOIN u.mensajes m WHERE u.id = :id")
+        @NamedQuery(name = "User.countMensajes", query = "SELECT COUNT(m) FROM User u JOIN u.mensajes m WHERE u.id = :id"),
+        @NamedQuery(name = "User.existeUsername", query = "SELECT COUNT(u) FROM User u WHERE u.username = :username AND u.id != :id"),
+        @NamedQuery(name = "User.existeEmail", query = "SELECT COUNT(u) FROM User u WHERE u.email = :email AND u.id != :id")
 })
 @Table(name = "IWUser")
 public class User implements Transferable<User.Transfer> {
