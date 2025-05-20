@@ -1,5 +1,9 @@
 const userId = document.getElementById('userId').value; //Id del usuario logueado
-const eventoInicial = document.getElementById('eventoInicial').value; //Chat inicial que se abre al cargar la pagina
+let eventoInicial //Chat inicial que se abre al cargar la pagina
+
+if(document.getElementById('eventoInicial')){
+    eventoInicial = document.getElementById('eventoInicial').value;
+}
 
 let primeraCarga = true;
 let cargando = false;
@@ -12,14 +16,18 @@ var contenedorEventoSeleccionado = null; //Contenedor del evento seleccionado (p
 
 let idMensajeClicado = 0; //para el menu contextual
 
-document.addEventListener("DOMContentLoaded", function () {
+function inicializarMenusContextuales(){
+    const botonEliminarMensaje = document.getElementById("botonEliminarMensaje");
+    const formReporte = document.getElementById("formReporte");
 
-    document.getElementById("botonEliminarMensaje").addEventListener("click", function () {
-        go(config.rootUrl + '/chats/borrarMensaje/' + idMensajeClicado, 'DELETE').then(function (data) {
-        }).catch(function (error) {
-            console.log(error);
+    if(botonEliminarMensaje){
+        botonEliminarMensaje.addEventListener("click", function () {
+            go(config.rootUrl + '/chats/borrarMensaje/' + idMensajeClicado, 'DELETE').then(function (data) {
+            }).catch(function (error) {
+                console.log(error);
+            });
         });
-    });
+    }
 
     document.addEventListener("click", function () {
         let menuPropio = document.getElementById("menuPropio");
@@ -37,31 +45,29 @@ document.addEventListener("DOMContentLoaded", function () {
         menuAgeno.classList.add("desaparece");
     });
 
-    document.getElementById("formReporte").addEventListener("submit", function (e) {
-        e.preventDefault();
-        const motivo = document.getElementById("motivo").value.trim();
+    if(formReporte){
+        formReporte.addEventListener("submit", function (e) {
+            e.preventDefault();
+            const motivo = document.getElementById("motivo").value.trim();
 
-        if (!motivo) {
-            document.getElementById("motivo").classList.add("is-invalid");
-            return;
-        }
+            if (!motivo) {
+                document.getElementById("motivo").classList.add("is-invalid");
+                return;
+            }
 
-        go(config.rootUrl + '/chats/reportarMensaje/' + idMensajeClicado, 'POST', { motivo: motivo }).then(function (data) { }).catch(function (error) { console.log(error); });
+            go(config.rootUrl + '/chats/reportarMensaje/' + idMensajeClicado, 'POST', { motivo: motivo }).then(function (data) { }).catch(function (error) { console.log(error); });
 
-        const modal = bootstrap.Modal.getInstance(document.getElementById("reportarModal"));
-        modal.hide();
+            const modal = bootstrap.Modal.getInstance(document.getElementById("reportarModal"));
+            modal.hide();
 
-        this.reset();
-        document.getElementById("motivo").classList.remove("is-invalid");
-    });
-});
+            this.reset();
+            document.getElementById("motivo").classList.remove("is-invalid");
+        });
+    }
+}
 
-//El boton apostar del chat redirige al ID del evento conteniedo en "idEventoSeleccionado"
-document.addEventListener('DOMContentLoaded', function () {
+function inicializarLupaEventos(){
     const buscador = document.getElementById('queryEventos');
-    const inputMensaje = document.getElementById('campoMensaje');
-    const botonEnviar = document.getElementById('botonEnviar');
-    const botonRetroceder = document.getElementById('botonRetroceder');
 
     if (buscador) {
         buscador.addEventListener('keypress', function (event) {
@@ -71,6 +77,11 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         });
     }
+}
+
+function inicializaEnvioMensajes(){
+    const inputMensaje = document.getElementById('campoMensaje');
+    const botonEnviar = document.getElementById('botonEnviar');
 
     if (inputMensaje) {
         inputMensaje.addEventListener('keypress', function (event) {
@@ -85,6 +96,10 @@ document.addEventListener('DOMContentLoaded', function () {
             enviarMensaje();
         });
     }
+}
+
+function inicializaBotonRetroceder(){
+    const botonRetroceder = document.getElementById('botonRetroceder');
 
     if (botonRetroceder) {
         botonRetroceder.addEventListener('click', function () {
@@ -96,8 +111,14 @@ document.addEventListener('DOMContentLoaded', function () {
             document.getElementById("contenedorMenuListaChats").classList.add('paginaChatsActiva'); //foco en el input de mensaje
         });
     }
+}
 
-    cargarChats();
+//El boton apostar del chat redirige al ID del evento conteniedo en "idEventoSeleccionado"
+document.addEventListener('DOMContentLoaded', function () {
+    inicializarLupaEventos();
+    inicializaEnvioMensajes();
+    inicializaBotonRetroceder();
+    inicializarMenusContextuales();
 });
 
 
@@ -266,6 +287,8 @@ function seleccionarChat(chat, componente) {
     const imagenCabeceraChat = document.getElementById("imagenCabeceraChat");
     const tituloCabeceraChat = document.getElementById("tituloCabeceraChat");
     const tituloCabeceraChatMobile = document.getElementById("tituloCabeceraChatMobile");
+    console.log("no me hace caso");
+    console.log(chat);
 
     //Cambio la barra de cabecera de chat
     chatContainer.classList.add("d-lg-flex", "flex-column");
@@ -281,9 +304,11 @@ function seleccionarChat(chat, componente) {
     ultimoContenedorMensaje = null;
 
     //Elimino el numero de mensajes no leidos del chat (como acabo de entrar ya se han leido)
-    const indicadorMensajes = componente.querySelector('.badge');
-    indicadorMensajes.classList.add('d-none');
-    indicadorMensajes.textContent = 0;
+    if(componente){
+        const indicadorMensajes = componente.querySelector('.badge');
+        indicadorMensajes.classList.add('d-none');
+        indicadorMensajes.textContent = 0;
+    }
 
     idEventoSeleccionado = chat.idEvento;
 

@@ -332,7 +332,7 @@ public class EventoController {
     }
 
     @GetMapping("{id}/apostar")
-    public String apostar(@PathVariable long id, Model model, HttpSession session) {
+    public String apostar(@PathVariable long id, Model model, HttpSession session) throws JsonProcessingException {
         Evento eventoSel = entityManager.find(Evento.class, id);
 
         if (eventoSel == null) {
@@ -347,7 +347,11 @@ public class EventoController {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Evento cerrado para apuestas");
         }
 
-        model.addAttribute("eventoSel", eventoSel);
+        Map<String, Object> informacionEvento = new HashMap<>();
+        informacionEvento.put("idEvento", eventoSel.getId());
+        informacionEvento.put("nombreEvento", eventoSel.getNombre());
+
+        model.addAttribute("evento",informacionEvento);
 
         return "crearApuesta";
     }

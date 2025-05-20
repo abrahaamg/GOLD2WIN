@@ -347,4 +347,37 @@ public class ChatController {
 
         return response;
     }
+
+    @PostMapping(path = "/{id}/desuscribirse", produces = "application/json")
+    @ResponseBody
+    @Transactional
+    public Map<String, Object> dessuscribirseChat(@PathVariable long id, Model model, HttpSession session)throws JsonProcessingException{
+        Map<String, Object> response = new HashMap<>();
+        User user = (User) session.getAttribute("u");
+        Evento evento = entityManager.find(Evento.class, id);
+
+        if (user == null) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Usuario no autenticado");
+        }
+
+        if(evento == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Evento no encontrado");
+        }
+
+        List<ParticipacionChat> participacion = entityManager.createNamedQuery("User.estaEnChat", ParticipacionChat.class)
+                .setParameter("user", user)
+                .setParameter("evento", evento)
+                .getResultList();
+
+        if(!participacion.isEmpty()){
+            entityManager.remove(participacion.get(0));
+            entityManager.flush();
+        }
+        
+        entityManager.flush();
+
+        response.put("status", "ok");
+
+        return response;
+    }
 }
