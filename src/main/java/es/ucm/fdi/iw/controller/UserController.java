@@ -116,9 +116,57 @@ public class UserController {
 	 */
 	@GetMapping("{id}")
 	public String index(@PathVariable long id, Model model, HttpSession session) {
-		User target = entityManager.find(User.class, id);
-		model.addAttribute("user", target);
-		return "user";
+		User user = entityManager.find(User.class, 
+            ((User) session.getAttribute("u")).getId());
+
+        if(id == user.getId()) {
+			Long numChats = entityManager.createNamedQuery("User.countChats", Long.class)
+            .setParameter("id", user.getId())
+            .getSingleResult();
+
+			Long numApuestas = entityManager.createNamedQuery("User.countApuestas", Long.class)
+				.setParameter("id", user.getId())
+				.getSingleResult();
+
+			Long numApuestasPend = entityManager.createNamedQuery("User.countApuestasPend", Long.class)
+				.setParameter("id", user.getId())
+				.getSingleResult();    
+			
+			Long numMensajes = entityManager.createNamedQuery("User.countMensajes", Long.class)
+				.setParameter("id", user.getId())
+				.getSingleResult();
+
+			model.addAttribute("user", user);  
+			model.addAttribute("numChats", numChats);
+			model.addAttribute("numApuestas", numApuestas);  
+			model.addAttribute("numApuestasPend", numApuestasPend);
+			model.addAttribute("numMensajes", numMensajes);
+			return "user";
+		} else {
+			Long numChats = entityManager.createNamedQuery("User.countChats", Long.class)
+            .setParameter("id", id)
+            .getSingleResult();
+
+			Long numApuestas = entityManager.createNamedQuery("User.countApuestas", Long.class)
+				.setParameter("id", id)
+				.getSingleResult();
+
+			Long numApuestasPend = entityManager.createNamedQuery("User.countApuestasPend", Long.class)
+				.setParameter("id", id)
+				.getSingleResult();    
+			
+			Long numMensajes = entityManager.createNamedQuery("User.countMensajes", Long.class)
+				.setParameter("id", id)
+				.getSingleResult();
+
+			User target = entityManager.find(User.class, id);
+			model.addAttribute("user", target);  
+			model.addAttribute("numChats", numChats);
+			model.addAttribute("numApuestas", numApuestas);  
+			model.addAttribute("numApuestasPend", numApuestasPend);
+			model.addAttribute("numMensajes", numMensajes);
+			return "userExterno";
+		}
 	}
 
 	/**

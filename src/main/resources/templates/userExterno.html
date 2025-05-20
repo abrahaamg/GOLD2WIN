@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html class="h-100" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <th:block th:replace="~{fragments/head :: header}" />
+    <title>Perfil</title>
+</head>
+
+<body class="d-flex flex-column h-100 ">
+    <header th:replace="fragments/nav.html :: nav(null)"></header>
+
+    <main class="flex-shrink-0 scrollBarPerso" id = "contenedorGeneralUsuario">
+        <div class="container mt-5">
+            <div class="d-flex align-items-center mb-4 justify-content-center">
+                <img id = "mostrarImagenUsuario" th:src="@{/usuario/{id}/pic(id=${user.id})}" alt="Foto de perfil" class="rounded-circle" width="120" height="120">
+            </div>
+
+            <form class="mt-4">
+                <div class="row mb-3">
+                    <input type="hidden" name="id" id="inputIdUser" th:value="${user.id}">
+                    <div class="col-md-4">
+                        <label for="username" class="form-label">Username</label>
+                        <input type="text" class="form-control" id="inputUsername" th:value="${user.username}" readonly>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="nombre" class="form-label">Nombre</label>
+                        <input type="text" class="form-control" id="nombre" th:value="${user.firstName}" readonly>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="apellidos" class="form-label">Apellidos</label>
+                        <input type="text" class="form-control" id="apellidos" th:value="${user.lastName}" readonly>
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label for="email" class="form-label">Email</label>
+                        <input type="email" class="form-control" id="inputEmail" th:value="${user.email}" readonly>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="password" class="form-label">Contraseña</label>
+                        <input type="password" class="form-control" id="password" th:value="${user.password}" readonly>
+                    </div>
+                </div>
+            </form>
+
+            <hr class="my-4" />
+
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h4>Estadísticas</h4>
+            </div>
+            <ul class="list-group">
+                <li class="list-group-item" style="display: flex; align-items: center;">
+                    <span class = "spanMostrarUsuario">Número de apuestas totales:  </span>
+                    <input type="text" class="form-control ms-2 p-0 inputEstadisticasUsuario" id="apuestas" style="border: none;" th:value="${numApuestas}" readonly>
+                </li>
+                <li class="list-group-item" style="display: flex; align-items: center;">
+                    <span class = "spanMostrarUsuario">Número de apuestas pendientes: </span>
+                    <input type="text" class="form-control ms-2 p-0 inputEstadisticasUsuario" id="apuestasPend" style="border: none;" th:value="${numApuestasPend}" readonly>
+                </li>
+                <li class="list-group-item" style="display: flex; align-items: center;">
+                    <span class = "spanMostrarUsuario">Número de chats:  </span>
+                    <input type="text" class="form-control ms-2 p-0 inputEstadisticasUsuario" id="chats" style="border: none;" th:value="${numChats}" readonly>
+                </li>
+                <li class="list-group-item" style="display: flex; align-items: center;">
+                    <span class = "spanMostrarUsuario">Número de mensajes:  </span>
+                    <input type="text" class="form-control ms-2 p-0 inputEstadisticasUsuario" id="mensajes" style="border: none;" th:value="${numMensajes}" readonly>
+                </li>
+                <li class="list-group-item" style="display: flex; align-items: center;">
+                    <span class = "spanMostrarUsuario">Número de reportes:  </span>
+                    <input type="text" class="form-control ms-2 p-0 inputEstadisticasUsuario" id="reportes" style="border: none;" readonly>
+                </li>
+            </ul>
+
+        </div>
+    </main>
+
+    <th:block th:replace="fragments/footer.html :: footer" />
+</body>
+
+</html>
