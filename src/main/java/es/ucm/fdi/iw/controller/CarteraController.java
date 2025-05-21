@@ -53,7 +53,7 @@ public class CarteraController {
             model.addAttribute("parteDecimal", parteDecimal);
         }
 
-        return "ingresar";
+        return "cartera";
     }
 
     //pagina tras pulsar retirar

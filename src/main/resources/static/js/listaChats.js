@@ -909,3 +909,23 @@ function cargarVariables() {
         console.log(error); 
     });
 }
+
+function suscribirse(id){
+    go(config.rootUrl + '/chats/' + id+'/suscribirse' ,'POST').then(function (data) {
+        const botonSuscribirse = document.getElementById("btn_suscribirse");
+        const botonDesuscribirse = document.getElementById("btn_desuscribirse");
+
+        botonSuscribirse.classList.add("desaparece");
+        botonDesuscribirse.classList.remove("desaparece");
+    }).catch(function (error) {console.log(error);});
+}
+
+function desuscribirse(id){
+    go(config.rootUrl + '/chats/' + id+'/desuscribirse' ,'POST').then(function (data) {
+        const botonSuscribirse = document.getElementById("btn_suscribirse");
+        const botonDesuscribirse = document.getElementById("btn_desuscribirse");
+
+        botonSuscribirse.classList.remove("desaparece");
+        botonDesuscribirse.classList.add("desaparece");
+    }).catch(function (error) {console.log(error);});
+}
