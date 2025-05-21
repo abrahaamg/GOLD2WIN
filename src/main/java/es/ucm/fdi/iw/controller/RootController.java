@@ -19,6 +19,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.LockedException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -33,16 +34,21 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import es.ucm.fdi.iw.AppConfig;
 import es.ucm.fdi.iw.LocalData;
 
 import es.ucm.fdi.iw.model.Evento;
+import es.ucm.fdi.iw.model.ParticipacionChat;
 import es.ucm.fdi.iw.model.Seccion;
 import es.ucm.fdi.iw.model.User;
+import es.ucm.fdi.iw.model.VariableSeccion;
 import es.ucm.fdi.iw.model.Transferable;
 import java.util.stream.Collectors;
 import java.util.Map;
@@ -301,14 +307,16 @@ public class RootController {
         return os -> FileCopyUtils.copy(in, os);
     }
 
+     @GetMapping("/usuario/{id}/pic")
+    public StreamingResponseBody getPicUsuario(@PathVariable long id) throws IOException {
+        File f = localData.getFile("user", "" + id + ".jpg");
+        InputStream in = new BufferedInputStream(f.exists() ? new FileInputStream(f) : RootController.defaultPic());
+        return os -> FileCopyUtils.copy(in, os);
+    }
+
     private static InputStream defaultPic() {
         return new BufferedInputStream(Objects.requireNonNull(
                 UserController.class.getClassLoader().getResourceAsStream(
                         "static/img/default-pic.jpg")));
-    }
-
-    @GetMapping("/perfil")
-    public String perfil(Model model) {
-        return "user";
     }
 }

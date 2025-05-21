@@ -1,5 +1,5 @@
 <!DOCTYPE html >
-<html class="h-100" xmlns:th="http://www.thymeleaf.org" data-bs-theme="dark">
+<html class="h-100" xmlns:th="http://www.thymeleaf.org">
 
 <head>
     <th:block th:replace="~{fragments/head :: header}" />
@@ -117,9 +117,9 @@
     
                             </div>
                         </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                            <button id="botonAnhadirVariableSeccion" class="btn btn-success" onclick="agregarDiv(event, document.getElementById('inputIdSeccion').value)"> Añadir variable </button>
+                        <div class="modal-footer" style="display: flex; justify-content: space-between;">
+                            <button type="button" class="btn btn-secondary ms-3" data-bs-dismiss="modal">Cancelar</button>
+                            <button id="botonAnhadirVariableSeccion" class="btn btn-success me-2" onclick="agregarDiv(event, document.getElementById('inputIdSeccion').value)"> Añadir variable </button>
                         </div>
                     </form>
                 </div>
@@ -140,9 +140,9 @@
                         <div class="modal-body">
                             <span> ¿Seguro que quiere eliminar permanentemente esta sección?</span>
                         </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                            <button class="btn btn-danger botonEliminarSeccionP" onclick="eliminarSeccion()" data-bs-dismiss="modal">Eliminar sección</button>
+                        <div class="modal-footer" style="display: flex; justify-content: space-between;">
+                            <button type="button" class="btn btn-secondary ms-3" data-bs-dismiss="modal">Cancelar</button>
+                            <button class="btn btn-danger botonEliminarSeccionP me-2" onclick="eliminarSeccion()" data-bs-dismiss="modal">Eliminar sección</button>
                         </div>
                     </form>
                 </div>

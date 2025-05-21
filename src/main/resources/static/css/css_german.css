@@ -248,3 +248,45 @@
       overflow-y: auto;
     }
 }
+
+.spanMostrarUsuario{
+    white-space: nowrap;
+}
+
+.inputEstadisticasUsuario{
+    font-weight: bold;
+}
+
+#contenedorGeneralUsuario{
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    flex-grow: 1;
+    overflow-x: none;
+    max-height: 650px;
+}
+
+ .imagenUsuario {
+    position: relative;
+    display: inline-block;
+  }
+
+ .edit-icon {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: transparent;
+    color: white;
+    padding: 6px;
+    border-radius: 50%;
+    display: none;
+  }
+
+  .imagenUsuario:hover .edit-icon {
+    display: block;
+    opacity: 1;
+  }
+
+  .imagenUsuario:hover img {
+    opacity: 0.5;
+  }
