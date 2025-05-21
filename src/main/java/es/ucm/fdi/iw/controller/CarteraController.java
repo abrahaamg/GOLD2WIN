@@ -38,7 +38,7 @@ public class CarteraController {
     //Pagina inicial de la cartera
     @GetMapping("/ingresar")
     public String ingresar(Model model, HttpSession session) {
-        User user = (User) session.getAttribute("u");
+        User user = entityManager.find(User.class, ((User) session.getAttribute("u")).getId());
 
         int dineroDisponible = user.getDineroDisponible();
         int parteEntera = dineroDisponible / 100;

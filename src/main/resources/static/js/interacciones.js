@@ -556,10 +556,11 @@ async function cambiarDatosPerfil(event){
                     filename: fileName
                 },
             };
-            go(`/perfil/editar`, "POST", jsonData)
+            go(`/user/editar`, "POST", jsonData)
             .then(data => {
                 console.log("Respuesta recibida:", data.mensaje);
-                window.location.href = "/perfil";
+                const id = document.getElementById("inputIdUser").value.trim();
+                window.location.href = "/user/"+id;
             })
             .catch(error => console.error("Error go:", error));
         }
@@ -572,10 +573,11 @@ async function cambiarDatosPerfil(event){
                     filename: fileName
                 },
             };
-            go(`/perfil/editar`, "POST", jsonData)
+            go(`/user/editar`, "POST", jsonData)
             .then(data => {
                 console.log("Respuesta recibida:", data.mensaje);
-                window.location.href = "/perfil";
+                const id = document.getElementById("inputIdUser").value.trim();
+                window.location.href = "/user/"+id;
             })
             .catch(error => console.error("Error go:", error));
         }
@@ -586,7 +588,7 @@ async function verificarUsername() {
     const username = document.getElementById("inputUsername").value.trim();
     const id = document.getElementById("inputIdUser").value.trim();
     try {
-        const response = await fetch(`/verificarUsername?username=${encodeURIComponent(username)}&id=${encodeURIComponent(id)}`);
+        const response = await fetch(`/user/verificarUsername?username=${encodeURIComponent(username)}&id=${encodeURIComponent(id)}`);
         const data = await response.json();
 
         if (data.existe) {  
@@ -612,7 +614,7 @@ async function verificarEmail() {
     const email = document.getElementById("inputEmail").value.trim();
     const id = document.getElementById("inputIdUser").value.trim();
     try {
-        const response = await fetch(`/verificarEmail?email=${encodeURIComponent(email)}&id=${encodeURIComponent(id)}`);
+        const response = await fetch(`/user/verificarEmail?email=${encodeURIComponent(email)}&id=${encodeURIComponent(id)}`);
         const data = await response.json();
 
         if (data.existe) {  
