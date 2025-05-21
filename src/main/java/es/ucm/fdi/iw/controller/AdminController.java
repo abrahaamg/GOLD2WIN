@@ -130,7 +130,10 @@ public class AdminController {
         }
         else if(tipo == 1){
             int minutos = o.get("minutos").asInt();
-            duracionFinal = OffsetDateTime.now().plusMinutes(minutos);
+            OffsetDateTime actual = user.getExpulsadoHasta();
+            OffsetDateTime now = OffsetDateTime.now();
+            OffsetDateTime inicio = (actual != null && actual.isAfter(now)) ? actual : now;
+            duracionFinal = inicio.plusMinutes(minutos);
         }
 
         //Mando un mensaje WS al usuario baneado para que cierre sesion
@@ -163,6 +166,54 @@ public class AdminController {
 
         return "reportes";
     }
+
+    @PostMapping(path = "/reportes/{id}/determinar", produces = "application/json")
+    @ResponseBody
+    @Transactional
+    public Map<String, Object> determinarReporte(@PathVariable long id, @RequestBody JsonNode o) {
+        Map<String, Object> response = new HashMap<>();
+        Reporte reporte = entityManager.find(Reporte.class, id);
+        int dias = o.get("dias").asInt();
+        int horas = o.get("horas").asInt();
+        int minutos = o.get("minutos").asInt();
+        minutos += horas * 60 + dias * 24 * 60;
+
+        if (reporte == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Reporte no encontrado");
+        }
+
+        if (reporte.isResuelto()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El reporte ya ha sido resuelto");
+        }
+        
+        reporte.setResuelto(true);
+        
+        if(minutos > 0){
+            User user = entityManager.find(User.class, reporte.getMensajeReportado().getRemitente().getId());
+
+            OffsetDateTime actual = user.getExpulsadoHasta();
+            OffsetDateTime now = OffsetDateTime.now();
+            OffsetDateTime inicio = (actual != null && actual.isAfter(now)) ? actual : now;
+            user.setExpulsadoHasta(inicio.plusMinutes(minutos));
+
+            //Mando un mensaje WS al usuario baneado para que cierre sesion
+            Map<String, Object> mensaje = new HashMap<>();
+            mensaje.put("tipoEvento", "baneoRecibido");
+            ObjectMapper mapper = new ObjectMapper();
+            String json;
+
+            try {
+                json = mapper.writeValueAsString(mensaje);
+                messagingTemplate.convertAndSend("/user/" + user.getUsername() + "/queue/updates", json);
+            } catch (JsonProcessingException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return response;
+    }
+    
+
 
     @GetMapping("/reporteConcreto")
     public String reporteConcreto(Model model) {

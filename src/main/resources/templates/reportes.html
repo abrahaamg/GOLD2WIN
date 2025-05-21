@@ -49,13 +49,53 @@
                             </button>
                             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton">
                                 <li><button class="dropdown-item" type="button" data-bs-toggle="modal" th:attr="data-bs-target='#detallesModal-' + ${reporte.id}">Ver Detalles</button></li>
-                                <li><button class="dropdown-item" type="button" th:if="${!reporte.resuelto}" data-bs-toggle="modal" th:attr="data-bs-target='#resolverModal-' + ${reporte.id}">Resolver</button></li>
+                                <li><button class="dropdown-item" type="button" th:if="${!reporte.resuelto}" th:onclick="'abrirModal(' + ${reporte.id} + ')'">Resolver</button></li>
                             </ul>
                         </div>
                     </td>
                 </tr>
             </tbody>
         </table>
+
+        <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#banModal">
+            Banear usuario
+        </button>
+
+        <!-- Modal de gestionar reporte -->
+        <div class="modal fade" id="banModal" tabindex="-1" aria-labelledby="banModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+            
+            <div class="modal-header">
+                <h5 class="modal-title" id="banModalLabel">Tiempo de explusion</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            
+            <div class="modal-body">
+                <form id="banForm">
+                <div class="mb-3">
+                    <label for="banDays" class="form-label">Días</label>
+                    <input type="number" class="form-control" id="banDays" name="banDays" min="0" value="0">
+                </div>
+                <div class="mb-3">
+                    <label for="banHours" class="form-label">Horas</label>
+                    <input type="number" class="form-control" id="banHours" name="banHours" min="0" max="23" value="0">
+                </div>
+                <div class="mb-3">
+                    <label for="banMinutes" class="form-label">Minutos</label>
+                    <input type="number" class="form-control" id="banMinutes" name="banMinutes" min="0" max="59" value="0">
+                </div>
+                </form>
+            </div>
+            
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="submit" class="btn btn-danger" form="banForm">Confirmar baneo</button>
+            </div>
+            
+            </div>
+        </div>
+        </div>
     </div>
 
     <script type = "module">
@@ -87,6 +127,7 @@
     </script>
 
     <th:block th:replace="fragments/footer.html :: footer" />
+    <script th:src="@{/js/reportes.js}" src="js/reportes.js"></script>
 </body>
 
 </html>
