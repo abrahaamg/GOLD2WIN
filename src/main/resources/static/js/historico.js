@@ -3,7 +3,6 @@ const botonVerTodos = document.getElementById("todas");
 const botonVerPendientes = document.getElementById("pendientes");
 const botonVerDeterminados = document.getElementById("determinadas");
 
-const appRoot = document.getElementById('root').value;
 const contenedor = document.getElementById("contenedorPrincipal");
 var fechaInicio = new Date().toISOString();
 var offset = 0;
@@ -49,7 +48,7 @@ function cambiarApartado(nuevoApartado){
 async function cargarMasApuestas(){
     if(!cargando){
         cargando = true;
-        go(appRoot + 'misApuestas/cargarMas' + '?apartado=' + apartado + '&fechaInicio=' + fechaInicio+ '&offset=' + offset, 'GET').then((data) => {
+        go(config.rootUrl + '/misApuestas/cargarMas' + '?apartado=' + apartado + '&fechaInicio=' + fechaInicio+ '&offset=' + offset, 'GET').then((data) => {
             let apuestas = data.apuestas;
             console.log(data);
 

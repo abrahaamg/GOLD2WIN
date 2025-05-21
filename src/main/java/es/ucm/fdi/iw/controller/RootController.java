@@ -298,6 +298,11 @@ public class RootController {
     @GetMapping("/seccion/{id}/pic")
     public StreamingResponseBody getPic(@PathVariable long id) throws IOException {
         File f = localData.getFile("seccion", "" + id + ".jpg");
+        
+        if (!f.exists()) {
+            f = localData.getFile("seccion", "" + id + ".png");
+        }
+
         InputStream in = new BufferedInputStream(f.exists() ? new FileInputStream(f) : RootController.defaultPic());
         return os -> FileCopyUtils.copy(in, os);
     }

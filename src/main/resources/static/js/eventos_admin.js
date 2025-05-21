@@ -4,8 +4,6 @@ var listaVariables = new Set([]);
 var listaNombresVariables = new Set([]);
 var tipoVariableModal = true; // false = texto, true = numerico
 var cargando = false;
-const appRoot = document.getElementById("root").value;
-
 var creando = false; //Indica si se está creando evento o editando uno existente
 var viendoMas = false;
 var id_evento_editado = -1;
@@ -162,7 +160,7 @@ function modalModoEdicion(id){
         document.getElementById("textoVariablesModal").textContent = "Añadir variable"; 
     
         cargando = true;
-        go(appRoot + 'admin/eventos/cargarDatosEvento/' + id_evento_editado, 'GET').then((data) => {
+        go(config.rootUrl + '/admin/eventos/cargarDatosEvento/' + id_evento_editado, 'GET').then((data) => {
             campoTitulo.value = data.nombre;
             configurarflatpickr(new Date(data.fechaCierre));
             document.getElementById('seccionSelect').value = data.seccion;
@@ -203,7 +201,7 @@ function modalModoVerMas(id){
         document.getElementById("submit-form-eventos").classList.add("invisible");
     
         cargando = true;
-        go(appRoot + 'admin/eventos/cargarDatosEvento/' + id, 'GET').then((data) => {
+        go(config.rootUrl + '/admin/eventos/cargarDatosEvento/' + id, 'GET').then((data) => {
             campoTitulo.value = data.nombre;
             configurarflatpickr(new Date(data.fechaCierre));
             document.getElementById('seccionSelect').value = data.seccion;
@@ -492,7 +490,7 @@ document.getElementById("seccionSelect").addEventListener("change", function() {
 
         if (seccionSeleccionada !== "") {
             
-            go(appRoot + 'admin/eventos/getVariablesSeccion/' + seccionSeleccionada, 'GET').then((data) => {
+            go(config.rootUrl + '/admin/eventos/getVariablesSeccion/' + seccionSeleccionada, 'GET').then((data) => {
                 cargando = false;
     
                 for (let key in data) {
@@ -565,7 +563,7 @@ document.getElementById("submit-form-eventos").addEventListener("click", functio
         //El go es lo unico asincrono
         cargando = true;
 
-        go(appRoot + 'admin/eventos/crearEvento', 'POST', {
+        go(config.rootUrl + '/admin/eventos/crearEvento', 'POST', {
             nombre: nombreEvento,
             fecha: fecha.toISOString(),
             seccion: parseInt(seccion),

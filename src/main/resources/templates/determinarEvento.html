@@ -12,7 +12,6 @@
     <header th:replace="fragments/nav.html :: nav('administrar')"></header>
 
     <form style="display: none;" id="datos">
-        <input type="hidden" id="root" name="root" th:value="@{/}">
         <input type="hidden" id="idEvento" name="idEvento" th:value="${eventoSel.id}">
     </form>
 

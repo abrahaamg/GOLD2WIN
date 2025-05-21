@@ -1,4 +1,3 @@
-const appRoot = document.getElementById('root').value; //th:href="@{/}"
 const seccionId = document.getElementById("seccionId").value; //Id de la sección de la que se quieren los elementos
 var fechaInicio = new Date().toISOString(); //fecha en la que se almacena el primer evento
 const botonVerMas = document.getElementById("verMasEventos"); //el boton que esta abajo del contenedor de eventos (todo debe ser insertado antes)
@@ -84,9 +83,9 @@ async function cargarEventos(){ //la funcion se ejecuta de manera asincrona
         var response;
 
         if(buscado == null)
-            response = await go(appRoot + 'seccion/cargarMas' + '?seccionId=' + seccionId + '&fechaInicio=' + fechaInicio + '&offset=' + offset, 'GET');
+            response = await go(config.rootUrl + '/seccion/cargarMas' + '?seccionId=' + seccionId + '&fechaInicio=' + fechaInicio + '&offset=' + offset, 'GET');
         else 
-            response = await go(appRoot + 'seccion/buscar' + '?seccionId=' + seccionId + '&fechaInicio=' + fechaInicio +'&busqueda=' + buscado + '&offset=' + offset, 'GET');
+            response = await go(config.rootUrl + '/seccion/buscar' + '?seccionId=' + seccionId + '&fechaInicio=' + fechaInicio +'&busqueda=' + buscado + '&offset=' + offset, 'GET');
 
         response.eventos.forEach(evento => {
             let fechaActual = new Date(evento.fechaCierre);
@@ -138,14 +137,14 @@ function introducirEvento(evento){
     let botonVerMas = document.getElementById("verMasEventos");
 
     let eventoMovil = document.createElement("a");
-    eventoMovil.href = appRoot + "evento/" + evento.id+"/apostar";
+    eventoMovil.href = config.rootUrl + "/evento/" + evento.id+"/apostar";
     eventoMovil.className = "nav-link estilo-contenedor-adaptable w-100 px-2 py-2 d-flex d-sm-none";
     eventoMovil.style = "margin: 15px 0px; min-height: 98px; max-height: 98px;";
     eventoMovil.id = "contenedorEvento-"+evento.id;
     eventoMovil.setAttribute("data-fecha-evento",evento.fechaCierre);
     eventoMovil.setAttribute("name","apostar");
     
-    let html = `<img width="40" height="40" class="my-auto ms-1 flex-shrink-0" src="`+appRoot +'seccion/'+evento.id+'/pic'+`">
+    let html = `<img width="40" height="40" class="my-auto ms-1 flex-shrink-0" src="`+config.rootUrl +'/seccion/'+evento.id+'/pic'+`">
                         <div class="d-flex flex-column ms-2 flex-grow-1" style="min-width: 0;">
                             <div class="d-flex w-100">
                                 <div class="d-flex flex-column flex-grow-1 me-3" style="min-width: 0;">
@@ -156,7 +155,7 @@ function introducirEvento(evento){
                                     </p>
                                 </div>
 
-                                <button class ="btn boton-dinamico ms-auto p-1 d-flex align-items-start flex-shrink-0" style="align-self: flex-start;box-sizing: border-box;" title="Unirse a chat" data-url="`+appRoot+'chats/?eventoInicio='+evento.id+`" onclick="event.preventDefault();window.location.href=this.getAttribute('data-url')">
+                                <button class ="btn boton-dinamico ms-auto p-1 d-flex align-items-start flex-shrink-0" style="align-self: flex-start;box-sizing: border-box;" title="Unirse a chat" data-url="`+config.rootUrl+'/chats/?eventoInicio='+evento.id+`" onclick="event.preventDefault();window.location.href=this.getAttribute('data-url')">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chat-fill" viewBox="0 0 16 16">
                                         <path d="M8 15c4.418 0 8-3.134 8-7s-3.582-7-8-7-8 3.134-8 7c0 1.76.743 3.37 1.97 4.6-.097 1.016-.417 2.13-.771 2.966-.079.186.074.394.273.362 2.256-.37 3.597-.938 4.18-1.234A9 9 0 0 0 8 15"/>
                                     </svg>
@@ -173,7 +172,7 @@ function introducirEvento(evento){
     eventoMovil.innerHTML = html;
 
     let eventoOrdenador = document.createElement("a");
-    eventoOrdenador.href = appRoot + "evento/" + evento.id+"/apostar";
+    eventoOrdenador.href = config.rootUrl + "/evento/" + evento.id+"/apostar";
     eventoOrdenador.className = "nav-link d-none d-sm-inline-flex flex-column estilo-contenedor-adaptable px-3 py-2 align-items-start Evento ";
     eventoOrdenador.setAttribute("name","apostar");
     eventoOrdenador.id = "contenedorEvento-"+evento.id;
@@ -181,7 +180,7 @@ function introducirEvento(evento){
 
     htmlOrdenador = `<div class="d-flex align-items-start w-100">
                             <div class = "d-flex d-inline-flex align-items-end flex-grow-1 me-2" style="min-width: 0;">
-                                <img width="25" height="25" src="`+appRoot +'seccion/'+evento.id+`/pic">
+                                <img width="25" height="25" src="`+config.rootUrl +'/seccion/'+evento.id+`/pic">
                                 <p class="ms-2 mb-0 textoColapsable">`+evento.nombre+`</p>
                             </div>
 
@@ -191,7 +190,7 @@ function introducirEvento(evento){
                                 <p class="mb-0 tiempo-restante" style = "font-size: 12px; text-align: center;"  data-fecha-evento="`+evento.fechaCierre+`"></p>
                             </div>
 
-                            <button class ="btn boton-dinamico p-1 d-flex align-items-start ms-3 flex-shrink-0" title="Unirse a chat"data-url="`+appRoot+'chats/?eventoInicio='+evento.id+`" onclick="event.preventDefault();window.location.href=this.getAttribute('data-url')">
+                            <button class ="btn boton-dinamico p-1 d-flex align-items-start ms-3 flex-shrink-0" title="Unirse a chat"data-url="`+config.rootUrl+'/chats/?eventoInicio='+evento.id+`" onclick="event.preventDefault();window.location.href=this.getAttribute('data-url')">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chat-fill" viewBox="0 0 16 16">
                                     <path d="M8 15c4.418 0 8-3.134 8-7s-3.582-7-8-7-8 3.134-8 7c0 1.76.743 3.37 1.97 4.6-.097 1.016-.417 2.13-.771 2.966-.079.186.074.394.273.362 2.256-.37 3.597-.938 4.18-1.234A9 9 0 0 0 8 15"/>
                                 </svg>

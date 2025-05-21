@@ -1,6 +1,9 @@
-const appRoot = document.getElementById('root').value; //th:href="@{/}"
 const userId = document.getElementById('userId').value; //Id del usuario logueado
-const eventoInicial = document.getElementById('eventoInicial').value; //Chat inicial que se abre al cargar la pagina
+let eventoInicial //Chat inicial que se abre al cargar la pagina
+
+if(document.getElementById('eventoInicial')){
+    eventoInicial = document.getElementById('eventoInicial').value;
+}
 
 let primeraCarga = true;
 let cargando = false;
@@ -13,14 +16,18 @@ var contenedorEventoSeleccionado = null; //Contenedor del evento seleccionado (p
 
 let idMensajeClicado = 0; //para el menu contextual
 
-document.addEventListener("DOMContentLoaded", function () {
+function inicializarMenusContextuales(){
+    const botonEliminarMensaje = document.getElementById("botonEliminarMensaje");
+    const formReporte = document.getElementById("formReporte");
 
-    document.getElementById("botonEliminarMensaje").addEventListener("click", function () {
-        go(config.rootUrl + '/chats/borrarMensaje/' + idMensajeClicado, 'DELETE').then(function (data) {
-        }).catch(function (error) {
-            console.log(error);
+    if(botonEliminarMensaje){
+        botonEliminarMensaje.addEventListener("click", function () {
+            go(config.rootUrl + '/chats/borrarMensaje/' + idMensajeClicado, 'DELETE').then(function (data) {
+            }).catch(function (error) {
+                console.log(error);
+            });
         });
-    });
+    }
 
     document.addEventListener("click", function () {
         let menuPropio = document.getElementById("menuPropio");
@@ -38,38 +45,29 @@ document.addEventListener("DOMContentLoaded", function () {
         menuAgeno.classList.add("desaparece");
     });
 
-    document.getElementById("formReporte").addEventListener("submit", function (e) {
-        e.preventDefault();
-        const motivo = document.getElementById("motivo").value.trim();
+    if(formReporte){
+        formReporte.addEventListener("submit", function (e) {
+            e.preventDefault();
+            const motivo = document.getElementById("motivo").value.trim();
 
-        if (!motivo) {
-            document.getElementById("motivo").classList.add("is-invalid");
-            return;
-        }
+            if (!motivo) {
+                document.getElementById("motivo").classList.add("is-invalid");
+                return;
+            }
 
-        go(config.rootUrl + '/chats/reportarMensaje/' + idMensajeClicado, 'POST', { motivo: motivo }).then(function (data) {}).catch(function (error) {console.log(error);});
+            go(config.rootUrl + '/chats/reportarMensaje/' + idMensajeClicado, 'POST', { motivo: motivo }).then(function (data) { }).catch(function (error) { console.log(error); });
 
-        const modal = bootstrap.Modal.getInstance(document.getElementById("reportarModal"));
-        modal.hide();
+            const modal = bootstrap.Modal.getInstance(document.getElementById("reportarModal"));
+            modal.hide();
 
-        this.reset();
-        document.getElementById("motivo").classList.remove("is-invalid");
-    });
-});
-
-//El boton apostar del chat redirige al ID del evento conteniedo en "idEventoSeleccionado"
-document.addEventListener('DOMContentLoaded', function () {
-    const botonApostarCabecera = document.getElementById('botonApostarCabecera');
-    const buscador = document.getElementById('queryEventos');
-    const inputMensaje = document.getElementById('campoMensaje');
-    const botonEnviar = document.getElementById('botonEnviar');
-    const botonRetroceder = document.getElementById('botonRetroceder');
-
-    if (botonApostarCabecera) {
-        botonApostarCabecera.addEventListener('click', function () {
-            window.location.href = `${appRoot}evento/${idEventoSeleccionado}/apostar`;
+            this.reset();
+            document.getElementById("motivo").classList.remove("is-invalid");
         });
     }
+}
+
+function inicializarLupaEventos(){
+    const buscador = document.getElementById('queryEventos');
 
     if (buscador) {
         buscador.addEventListener('keypress', function (event) {
@@ -79,6 +77,11 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         });
     }
+}
+
+function inicializaEnvioMensajes(){
+    const inputMensaje = document.getElementById('campoMensaje');
+    const botonEnviar = document.getElementById('botonEnviar');
 
     if (inputMensaje) {
         inputMensaje.addEventListener('keypress', function (event) {
@@ -93,6 +96,10 @@ document.addEventListener('DOMContentLoaded', function () {
             enviarMensaje();
         });
     }
+}
+
+function inicializaBotonRetroceder(){
+    const botonRetroceder = document.getElementById('botonRetroceder');
 
     if (botonRetroceder) {
         botonRetroceder.addEventListener('click', function () {
@@ -104,16 +111,22 @@ document.addEventListener('DOMContentLoaded', function () {
             document.getElementById("contenedorMenuListaChats").classList.add('paginaChatsActiva'); //foco en el input de mensaje
         });
     }
+}
 
-    cargarChats();
+//El boton apostar del chat redirige al ID del evento conteniedo en "idEventoSeleccionado"
+document.addEventListener('DOMContentLoaded', function () {
+    inicializarLupaEventos();
+    inicializaEnvioMensajes();
+    inicializaBotonRetroceder();
+    inicializarMenusContextuales();
 });
 
 
 /*WEB-SOCKETS*/
 
 function suscribirseWebSocketChat(chat) {
-    ws.subscribe(appRoot + 'topic/chats/' + chat.idEvento, function (data) {
-        console.log("llega el mensaje");
+    ws.subscribe('/topic/chats/' + chat.idEvento, function (data) {
+        console.log(data);
         if (data.tipoEvento == 'nuevoMensaje') {
             if (idEventoSeleccionado != chat.idEvento) {
                 //El chat no esta abierto +1 mensaje no leido y se reintroduce ordenado
@@ -142,11 +155,24 @@ function suscribirseWebSocketChat(chat) {
                 }
 
                 //Notifico que he visto el mensaje
-                go(appRoot + 'chats/notificar/' + chat.idEvento, 'POST').then(function (data) { }).catch(function (error) { console.log(error); });
+                go(config.rootUrl + '/chats/notificar/' + chat.idEvento, 'POST').then(function (data) { }).catch(function (error) { console.log(error); });
             }
         }
         else if (data.tipoEvento == 'eliminarMensaje') {
             eliminarMensaje(data.idMensaje);
+        }
+        else if (data.tipoEvento == 'cambioCuota') {
+            let idFormula = data.idFormula;
+            let cuotaFavorable = data.cuotaFavorable;
+            let cuotaDesfavorable = data.cuotaDesfavorable;
+
+            let elementoFavorable = document.getElementById("cuota-favorable-" + idFormula);
+            let elementoDesfavorable = document.getElementById("cuota-desfavorable-" + idFormula);
+
+            if (elementoFavorable && elementoDesfavorable) {
+                elementoFavorable.innerHTML = "x" + parseFloat(cuotaFavorable).toFixed(2);
+                elementoDesfavorable.innerHTML = "x" + parseFloat(cuotaDesfavorable).toFixed(2);
+            }
         }
     });
 }
@@ -203,7 +229,7 @@ function enviarMensaje() {
 
     if (mensaje.length > 0) {
         inputMensaje.value = '';
-        go(appRoot + 'chats/mandarMensaje/' + idEventoSeleccionado, 'POST', { contenido: mensaje }).then(function (data) {
+        go(config.rootUrl + '/chats/mandarMensaje/' + idEventoSeleccionado, 'POST', { contenido: mensaje }).then(function (data) {
             inputMensaje.value = '';
         }).catch(function (error) {
             console.log(error);
@@ -215,7 +241,7 @@ function enviarMensaje() {
 //Esto permite no repetir codigo en html del servidor ya que las funciones de insertar chat/mensaje se van a tener
 //que usar en el js obligatoriamente al llegar un mensaje nuevo (un chat que esta abajo en la lista se elimina y añade arriba)
 function cargarChats() {
-    go(appRoot + 'chats/cargarChats', 'GET').then(function (data) {
+    go(config.rootUrl + '/chats/cargarChats', 'GET').then(function (data) {
         let listaChats = data.chats;
         console.log(listaChats);
 
@@ -232,24 +258,24 @@ function cargarChats() {
                 }
             }
         }
-        cargando = false;
+        cargandoFormulas = false;
     }).catch(function (error) {
-        cargando = false;
+        cargandoFormulas = false;
     });
 }
 
 //Rellena la zona de mensajes con los mensajes del chat relacionado al evento "idEvento"
 function cargarMensajes(idEvento) {
-    go(appRoot + 'chats/cargarMensajes/' + idEvento, 'GET').then(function (data) {
+    go(config.rootUrl + '/chats/cargarMensajes/' + idEvento, 'GET').then(function (data) {
         data.mensajes.forEach(mensaje => {
             anadirMensajeAbajo(mensaje);
         });
 
         deslizarHaciaAbajo();
-        cargando = false; //ya no estoy cargando mensajes
+        cargandoFormulas = false; //ya no estoy cargando mensajes
     }).catch(function (error) {
         console.log(error);
-        cargando = false; //ya no estoy cargando mensajes
+        cargandoFormulas = false; //ya no estoy cargando mensajes
     });
 }
 
@@ -261,11 +287,13 @@ function seleccionarChat(chat, componente) {
     const imagenCabeceraChat = document.getElementById("imagenCabeceraChat");
     const tituloCabeceraChat = document.getElementById("tituloCabeceraChat");
     const tituloCabeceraChatMobile = document.getElementById("tituloCabeceraChatMobile");
+    console.log("no me hace caso");
+    console.log(chat);
 
     //Cambio la barra de cabecera de chat
     chatContainer.classList.add("d-lg-flex", "flex-column");
 
-    imagenCabeceraChat.setAttribute("src", appRoot + "seccion/" + chat.idEvento + "/pic");
+    imagenCabeceraChat.setAttribute("src", config.rootUrl + "/seccion/" + chat.idEvento + "/pic");
     tituloCabeceraChat.textContent = chat.nombreEvento;
     tituloCabeceraChatMobile.textContent = chat.nombreEvento;
 
@@ -276,11 +304,28 @@ function seleccionarChat(chat, componente) {
     ultimoContenedorMensaje = null;
 
     //Elimino el numero de mensajes no leidos del chat (como acabo de entrar ya se han leido)
-    const indicadorMensajes = componente.querySelector('.badge');
-    indicadorMensajes.classList.add('d-none');
-    indicadorMensajes.textContent = 0;
+    if(componente){
+        const indicadorMensajes = componente.querySelector('.badge');
+        indicadorMensajes.classList.add('d-none');
+        indicadorMensajes.textContent = 0;
+    }
 
     idEventoSeleccionado = chat.idEvento;
+
+    //Reinicio zona de formulas
+    fechaInicio = new Date().toISOString();
+    buscado = null;
+    vaciarContenedorFormulas();
+    offset = 0;
+    document.getElementById("queryApuestas").value = "";
+    cargandoFormulas = true;
+    cargarVariables();
+    cargarFormulas().then(() => {
+        cargandoFormulas = false;
+    }).catch((error) => {
+        cargandoFormulas = false;
+        console.log(error);
+    });
 }
 
 //chat: {idEvento, mensajesNoLeidos, ultimoMensaje, fechaUltimoMensaje, nombreEvento}
@@ -294,7 +339,7 @@ function anadirChat(chat) {
     chatDiv.setAttribute('role', 'button');
     chatDiv.setAttribute('class', 'd-flex w-100 mt-2 p-2 resaltaHover');
     chatDiv.setAttribute('style', 'border-radius: 15px;');
-    chatDiv.innerHTML = `<img class="flex-shrink-0" width="55" height="55" src="${appRoot}seccion/${chat.idEvento}/pic" style="border-radius: 50%;">
+    chatDiv.innerHTML = `<img class="flex-shrink-0" width="55" height="55" src="${config.rootUrl}/seccion/${chat.idEvento}/pic" style="border-radius: 50%;">
                         <div class="d-flex flex-column h-100 justify-content-center ms-2 flex-grow-1" style="width: calc(100% - 71px);">
                             <div class="d-flex flex-row justify-content-between">
                                 <h5 class="m-0 text-nowrap text-truncate">${chat.nombreEvento}</h5>
@@ -311,8 +356,8 @@ function anadirChat(chat) {
         document.getElementById("chatContainer").classList.add('paginaChatsActiva'); //foco en el input de mensaje
         document.getElementById("contenedorMenuListaChats").classList.remove('paginaChatsActiva'); //foco en el input de mensaje
 
-        if (cargando || idEventoSeleccionado === chat.idEvento) return;
-        cargando = true;
+        if (cargandoFormulas || idEventoSeleccionado === chat.idEvento) return;
+        cargandoFormulas = true;
 
         if (contenedorEventoSeleccionado) contenedorEventoSeleccionado.classList.remove("resaltaHoverSelected");
         chatDiv.classList.add("resaltaHoverSelected");
@@ -417,28 +462,28 @@ function anadirMensajeAbajo(mensaje) {
                                     </div>`;
     }
 
-    if(propio){
+    if (propio) {
         const menu = document.getElementById("menuPropio");
         const menuAgeno = document.getElementById("menuAgeno");
 
-        nuevoMensajeDiv.addEventListener("contextmenu", function(e){
+        nuevoMensajeDiv.addEventListener("contextmenu", function (e) {
             e.preventDefault();
 
-            idMensajeClicado = mensaje.id; 
+            idMensajeClicado = mensaje.id;
             menu.style.left = `${e.pageX}px`;
             menu.style.top = `${e.pageY}px`;
             menu.classList.remove("desaparece");
             menuAgeno.classList.add("desaparece");
         });
     }
-    else{
+    else {
         const menu = document.getElementById("menuAgeno");
         const menuPropio = document.getElementById("menuPropio");
 
-        nuevoMensajeDiv.addEventListener("contextmenu", function(e){
+        nuevoMensajeDiv.addEventListener("contextmenu", function (e) {
             e.preventDefault();
             idMensajeClicado = mensaje.id;
-            
+
             menu.style.left = `${e.pageX}px`;
             menu.style.top = `${e.pageY}px`;
             menu.classList.remove("desaparece");
@@ -553,4 +598,334 @@ function deslizarHaciaAbajo() {
         top: contenedor.scrollHeight,
         behavior: 'smooth'
     });
+}
+
+/*Funciones para el modal*/
+
+const botonVerMas = document.getElementById("verMasEventos");
+var offset = 0; // numElementos cargados
+var buscado = null; // indica la ultima busqueda realizada (para sobre la busqueda ver mas)
+let fechaInicio = new Date().toISOString(); // fecha en que se trajeron eventos por primera vez (para evitar que las cosas se descuadren)
+var cargandoFormulas = true;
+
+cargarFormulas().then(() => {
+    cargandoFormulas = false;
+});
+
+botonVerMas.addEventListener("click", function () {
+    if (!cargandoFormulas) {
+        cargandoFormulas = true;
+        cargarFormulas().then(() => {
+            cargandoFormulas = false;
+        }).catch((error) => {
+            cargandoFormulas = false;
+            console.log(error);
+        });
+    }
+});
+
+/* FUNCION PARA LA LUPA */
+document.getElementById("queryApuestas").addEventListener("keypress", function (event) {
+    if (event.key === "Enter" && !cargandoFormulas) {
+        cargandoFormulas = true;
+        var busqueda = document.getElementById("queryApuestas").value;
+
+        if (busqueda == "") { //si no hay nada escrito se cargan los eventos por defecto
+            if (buscado != null) {
+                fechaInicio = new Date().toISOString();
+                buscado = null;
+                vaciarContenedorFormulas();
+                offset = 0;
+
+                cargarFormulas().then(() => {
+                    cargandoFormulas = false;
+                }).catch((error) => {
+                    cargandoFormulas = false;
+                    console.log(error);
+                });
+            }
+            else {
+                cargandoFormulas = false;
+            }
+        }
+        else if (buscado != busqueda) {
+            offset = 0;
+            fechaInicio = new Date().toISOString();
+            buscado = busqueda;
+            vaciarContenedorFormulas();
+
+            cargarFormulas().then(() => {
+                cargandoFormulas = false;
+            }).catch((error) => {
+                cargandoFormulas = false;
+                console.log(error);
+            });
+        }
+    }
+});
+
+function vaciarContenedorFormulas() {
+    contenedor = document.getElementById("contendorFormulas");
+
+    while (contenedor.firstChild) {
+        contenedor.removeChild(contenedor.firstChild);
+    }
+}
+
+async function cargarFormulas() {
+    if (idEventoSeleccionado == -1) return; //no hay evento seleccionado
+    botonVerMas.disabled = true;
+
+    try {
+        var response;
+
+        if (buscado == null)
+            response = await go(config.rootUrl + "/evento/" + idEventoSeleccionado + "/apostar/cargarMas" + '?fechaInicio=' + fechaInicio + '&offset=' + offset, 'GET');
+        else
+            response = await go(config.rootUrl + "/evento/" + idEventoSeleccionado + "/apostar/buscar" + '?fechaInicio=' + fechaInicio + '&busqueda=' + buscado + '&offset=' + offset, 'GET');
+
+        response.formulas.forEach(formula => {
+            anadirFormula(formula);
+        });
+
+        if (response.hayMasFormulas) {
+            botonVerMas.disabled = false;
+            botonVerMas.style.display = "block";
+        }
+        else {
+            botonVerMas.style.display = "none";
+        }
+
+        offset += response.formulas.length;
+        console.log(response)
+    } catch (error) {
+        console.error('Error:', error);
+    }
+}
+
+function anadirFormula(formula) {
+    let elementoHTML = document.createElement("div");
+    elementoHTML.className = "d-flex flex-column contenedor-apuesta";
+    elementoHTML.style = "position: relative;";
+    elementoHTML.id = "formula-" + formula.id;
+    elementoHTML.innerHTML =
+        `
+        <h5 class="pb-2 border-bottom"> ${formula.nombre}</h5>
+        <div id="descripcion-contendor-apuesta">
+            <div class="d-flex align-items-start mb-2">
+                <span class="titulo-campo-apuesta me-2">Formula:</span>
+                <div class="border w-100 scrollBarPerso contenedor-info">
+                    <span class="spanAdaptable" style="white-space: nowrap;"> ${formula.formula}</span>
+                </div>
+            </div>
+        </div>
+        
+        <div id="cuestionario-form-${formula.id}" class="w-100 d-flex align-items-center mt-3">
+            <button type="button" class="btn btn-success botonApostarFavorable d-flex flex-column g-0" onclick="enviarFormulario(true,${formula.id})">
+                <span style="font-size:14px;" id="cuota-favorable-${formula.id}">x${parseFloat(formula.cuotaFaborable).toFixed(2)}</span>
+                <span style="font-size:12px;">(favorable)</span>
+            </button>
+
+            <input type="number" id="cantidad-${formula.id}" class ="form-control mx-2 flex-grow-1" placeholder="cantidad..." required>
+
+            <button type="button" class="btn btn-success botonApostarDesfavorable d-flex flex-column g-0" style="gap: 0px;" onclick="enviarFormulario(false,${formula.id})">
+                <span style="font-size:14px;" id="cuota-desfavorable-${formula.id}">x${parseFloat(formula.cuotaDesfavorable).toFixed(2)}</span>
+                <span style="font-size:12px;">(desfavorable)</span>
+            </button>
+        </div>
+
+        <svg id="confirmacionApuesta-${formula.id}" xmlns="http://www.w3.org/2000/svg" fill="currentColor" class=" confirmacionApuesta bi bi-check-circle-fill text-success invisible" viewBox="0 0 16 16">
+            <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0m-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>
+        </svg>
+        `;
+
+    document.getElementById("contendorFormulas").appendChild(elementoHTML);
+}
+
+
+/*  CODIGO PARA EL MODAL Y LAS APUESTAS  */
+
+//cuando abres el model siempre está en la primera pestaña
+document.getElementById("boton-crear-formula-reducido").addEventListener("click", () => {
+    mostrarModal();
+});
+
+function mostrarModal() {
+    console.log("entra");
+    var elementos1 = document.querySelectorAll('.vision-creatuApuesta-1');
+    var elementos2 = document.querySelectorAll('.vision-creatuApuesta-2');
+
+    elementos1.forEach(function (elemento) {
+        elemento.classList.remove('desaparece');
+    });
+
+    elementos2.forEach(function (elemento) {
+        elemento.classList.add('desaparece');
+    });
+
+    document.getElementById("botonRetrocederCrearApuesta").classList.add('invisible');
+}
+
+document.getElementById("botonSiguienteCrearApuesta").addEventListener("click", () => {
+    console.log("entra");
+    var elementos1 = document.querySelectorAll('.vision-creatuApuesta-1');
+    var elementos2 = document.querySelectorAll('.vision-creatuApuesta-2');
+
+    var titulo = document.getElementById('tituloModal');
+    var formula = document.getElementById('formulaModal');
+
+    if (titulo.checkValidity() && formula.checkValidity()) {
+        elementos1.forEach(function (elemento) {
+            elemento.classList.add('desaparece');
+        });
+
+        elementos2.forEach(function (elemento) {
+            elemento.classList.remove('desaparece');
+        });
+
+        document.getElementById("botonRetrocederCrearApuesta").classList.remove('invisible');
+    }
+
+});
+
+document.getElementById("botonRetrocederCrearApuesta").addEventListener("click", () => {
+    var elementos1 = document.querySelectorAll('.vision-creatuApuesta-1');
+    var elementos2 = document.querySelectorAll('.vision-creatuApuesta-2');
+
+    elementos1.forEach(function (elemento) {
+        elemento.classList.remove('desaparece');
+    });
+
+    elementos2.forEach(function (elemento) {
+        elemento.classList.add('desaparece');
+    });
+
+    document.getElementById("botonRetrocederCrearApuesta").classList.add('invisible');
+});
+
+document.getElementById("crearApuestaForm").addEventListener("submit", function (event) {
+    event.preventDefault();
+    if (!enviandoFormulario) {
+        enviandoFormulario = true;
+        const titulo = document.getElementById("tituloModal").value;
+        const formula = document.getElementById("formulaModal").value;
+        var cantidad = parseFloat(document.getElementById("cantidadModal").value);
+        cantidad = Math.floor(cantidad * 100);
+        const tipoApuesta = document.getElementById("tipoApuestaModal").value == "favorable";
+
+        go(config.rootUrl + "/evento/"+idEventoSeleccionado+"/crearFormula", 'POST', { titulo, formula, cantidad, tipoApuesta }).then((response) => {
+            if (response.status == "OK") {
+                document.getElementById("ocultador-formulario2").classList.add("invisible");
+                let check = document.getElementById("confirmacionApuesta2");
+                check.classList.remove("invisible");
+                check.style.animation = "fadeIn 0.5s ease-in-out";
+
+                setTimeout(() => {
+                    check.classList.add("invisible");
+                    document.getElementById("ocultador-formulario2").classList.remove("invisible");
+                    const modalEl = document.getElementById('modalCrearApuesta');
+                    const modalInstance = bootstrap.Modal.getInstance(modalEl);
+                    modalInstance.hide();
+                    anadirFormula(response.formula);
+                    enviandoFormulario = false;
+                }, 1000);
+            }
+            else {
+                if (response.status == "ERROR-TITULO") {
+                    document.getElementById("tituloModal").classList.add("border", "border-danger");
+                    mostrarModal();
+                }
+                else if (response.status == "ERROR-FORMULA") {
+                    document.getElementById("formulaModal").classList.add("border", "border-danger");
+                    mostrarModal();
+                }
+                else if (response.status == "ERROR-CANTIDAD")
+                    document.getElementById("cantidadModal").classList.add("border", "border-danger");
+                else if (response.status == "ERROR-TIPO")
+                    document.getElementById("tipoApuestaModal").classList.add("border", "border-danger");
+                else
+                    console.log(response);
+
+                enviandoFormulario = false;
+            }
+        }).catch((error) => {
+            enviandoFormulario = false;
+        });
+    }
+});
+
+var enviandoFormulario = false; // Para evitar que si clicas varias veces en el mismo botón apuestes varias veces
+
+function enviarFormulario(esFavorable, id) {
+    var input = document.getElementById("cantidad-" + id);
+
+    if (!enviandoFormulario && input.value != "") {
+        enviandoFormulario = true;
+        var cantidad = parseFloat(input.value);
+        cantidad = Math.floor(cantidad * 100); // Convertir a centimos
+        const idFormula = id;
+        const decision = esFavorable;
+
+        console.log({ idFormula, decision, cantidad });
+
+        goTexto(config.rootUrl + '/evento/apostar', 'POST', { idFormula, decision, cantidad }).then((response) => {
+            enviandoFormulario = false;
+            if (response == "OK") {
+                const contenedorFormula = document.getElementById("formula-" + id);
+
+                //Todos los hijos invisibles
+                for (let child of contenedorFormula.children) {
+                    child.classList.add("invisible");
+                }
+
+                let check = document.getElementById("confirmacionApuesta-" + id);
+                check.classList.remove("invisible");
+                check.style.animation = "fadeIn 0.5s ease-in-out";
+
+                setTimeout(() => {
+                    for (let child of contenedorFormula.children) {
+                        child.classList.remove("invisible");
+                    }
+                    check.classList.add("invisible");
+                    input.value = "";
+                }, 1500);
+            }
+            else {
+                console.log(response);
+                input.classList.add("border", "border-danger");
+            }
+        }).catch((error) => {
+            console.log(error);
+            enviandoFormulario = false;
+        });
+    }
+}
+
+function cargarVariables() {
+    go(config.rootUrl + '/evento/' + idEventoSeleccionado + '/getVariables', 'GET').then(function (data) { 
+        const contenedor = document.getElementById("lista-Variables-texto");
+        contenedor.textContent = data.variables.join(", ");
+    }).catch(function (error) { 
+        console.log(error); 
+    });
+}
+
+function suscribirse(id){
+    go(config.rootUrl + '/chats/' + id+'/suscribirse' ,'POST').then(function (data) {
+        const botonSuscribirse = document.getElementById("btn_suscribirse");
+        const botonDesuscribirse = document.getElementById("btn_desuscribirse");
+
+        botonSuscribirse.classList.add("desaparece");
+        botonDesuscribirse.classList.remove("desaparece");
+    }).catch(function (error) {console.log(error);});
+}
+
+function desuscribirse(id){
+    go(config.rootUrl + '/chats/' + id+'/desuscribirse' ,'POST').then(function (data) {
+        const botonSuscribirse = document.getElementById("btn_suscribirse");
+        const botonDesuscribirse = document.getElementById("btn_desuscribirse");
+
+        botonSuscribirse.classList.remove("desaparece");
+        botonDesuscribirse.classList.add("desaparece");
+    }).catch(function (error) {console.log(error);});
 }

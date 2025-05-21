@@ -11,7 +11,9 @@
 
     <div class="d-flex justify-content-center align-items-center" style="min-height: 100vh;">
         <div class="saldo-box">
-            <div class="saldo-header d-flex justify-content-center" th:text = "'SALDO: '+ ${parteEntera} + ',' + ${parteDecimal}+ '€'" ></div>
+            <div class="saldo-header d-flex justify-content-center"  ></div>
+                <span style="font-weight: bold; font-size: 25px;">SALDO: </span>
+                <span style="font-weight: bold; font-size: 25px;" class="dineroDisponible" th:text = "${parteEntera} + ',' + ${parteDecimal} + '€'"></span>
             <div class="divider"></div>
 
             <div class="dropdown">
