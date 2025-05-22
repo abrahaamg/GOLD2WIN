@@ -232,18 +232,6 @@ public class AdminController {
 
         return response;
     }
-    
-
-
-    @GetMapping("/reporteConcreto")
-    public String reporteConcreto(Model model) {
-        return "reporteConcreto";
-    }
-
-    @GetMapping("/verificarEvento")
-    public String verificarEvento(Model model) {
-        return "verificarEvento";
-    }
 
     @GetMapping("/eventos")
     public String eventos(Model model) {

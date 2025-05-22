@@ -307,7 +307,7 @@ public class RootController {
         return os -> FileCopyUtils.copy(in, os);
     }
 
-     @GetMapping("/usuario/{id}/pic")
+    @GetMapping("/usuario/{id}/pic")
     public StreamingResponseBody getPicUsuario(@PathVariable long id) throws IOException {
         File f = localData.getFile("user", "" + id + ".jpg");
         InputStream in = new BufferedInputStream(f.exists() ? new FileInputStream(f) : RootController.defaultPic());
