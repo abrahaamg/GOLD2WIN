@@ -75,7 +75,7 @@
                                 </svg>
                             </button>
                             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton">
-                                <li><a class="dropdown-item" href="#" th:href="@{/usuarios/verMas/{id}(id=${usuario.id})}">Ver Más</a></li>
+                                <li><a class="dropdown-item" href="#" th:href="@{/user/{id}(id=${usuario.id})}">Ver Más</a></li>
                                 <li>
                                     <a class="dropdown-item abridorModalExpulsion" href="#" role="button" th:data-id="${usuario.id}" th:data-nombre="${usuario.username}" th:data-fecha="${usuario.expulsadoHasta}">
                                         Expulsar

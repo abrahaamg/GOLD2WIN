@@ -535,7 +535,7 @@ function insertarGrupoMensajes(idUsuario, propio) {
     contenedorGlobal.setAttribute('class', 'd-flex flex-row mt-2');
     contenedorGlobal.setAttribute('data-idUsuario', idUsuario);
 
-    contenedorGlobal.innerHTML = `<img class="flex-shrink-0" width="40" height="40" src="/user/${idUsuario}/pic" style="border-radius: 50%;">`;
+    contenedorGlobal.innerHTML = `<a style="max-width:40px; max-height:40px;" href="${config.rootUrl}/user/${idUsuario}"><img class="flex-shrink-0" width="40" height="40" src="/user/${idUsuario}/pic" style="border-radius: 50%;"></a>`;
 
     ultimoContenedorMensaje = document.createElement('div');
     if (propio) ultimoContenedorMensaje.setAttribute('class', 'd-flex flex-column mx-2 ms-auto');
