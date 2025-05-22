@@ -53,6 +53,7 @@ Feature: Testeo UI con Karate
     * delay(500)
     * click('#botonEtiquetas')
     * click('#inputEtiqueta')
+    * delay(500)
     And input('#inputEtiqueta' , 'etiquetaPrueba')
     * delay(300)
     * script("document.querySelector('#inputEtiqueta').dispatchEvent(new KeyboardEvent('keydown', {key: 'Enter'}))")
@@ -60,7 +61,7 @@ Feature: Testeo UI con Karate
     * click('#botonVariables')
     * delay(500)
     * click('#submit-form-eventos')
-    * delay(500)
+    * delay(000)
 
     # Se loguea en otro usuario no admin y se ingresa dinero
     * click('#usuarioNav')
@@ -83,7 +84,7 @@ Feature: Testeo UI con Karate
     * delay(300)
     * click('#contenedorEvento-1075')
     * delay(300)
-    * click('#boton-crear-formula')
+    * click('#boton-crear-formula-reducido')
     * delay(300)
     And input('#tituloModal', 'Formula Prueba')
     * delay(500)
