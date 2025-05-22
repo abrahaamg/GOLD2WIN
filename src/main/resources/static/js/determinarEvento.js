@@ -3,8 +3,6 @@ document.getElementById("btn_determinar").addEventListener("click", function () 
     if (enviando) return;
 
     enviando = true;
-    var idEvento = document.getElementById("idEvento").value;
-    var root = document.getElementById("root").value;
     contendorVariables = document.getElementById("contendorVariables");
 
     var valido = true;
@@ -40,7 +38,7 @@ document.getElementById("btn_determinar").addEventListener("click", function () 
         .then(result => {
             if (result.success) {
                 console.log("hola");
-                window.location.href = root + "admin/eventos"; //redirijo
+                window.location.href = config.rootUrl + "/admin/eventos"; //redirijo
             } else {
                 alert("Ocurrió un error en el servidor");
             }
