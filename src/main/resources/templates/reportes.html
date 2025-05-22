@@ -4,22 +4,22 @@
 <head>
     <th:block th:replace="~{fragments/head :: header}" />
     <title>REPORTES</title>
-    
+
     <link rel="stylesheet" th:href="@{/css/simple-datatables-10.css}" href="/css/simple-datatables-10.css"
-    type="text/css" />
+        type="text/css" />
 </head>
 
 <body class="d-flex flex-column h-100">
-    
+
     <header th:replace="fragments/nav.html :: nav('administrar')"></header>
-    
-    <div style = "width: 90%" class = "mx-auto">
+
+    <div style="width: 90%" class="mx-auto">
         <div class="pb-3">
             <div th:replace="fragments/menuAdmin.html :: navAdmin('Reportes')"></div>
         </div>
 
-        <div class = "container-fluid">
-            <div class = "table-responsive">
+        <div class="container-fluid">
+            <div class="table-responsive">
                 <table id="myTableReports" class="display">
                     <thead>
                         <tr>
@@ -32,28 +32,36 @@
                             <th> </th>
                         </tr>
                     </thead>
-                    
+
                     <tbody id="myTableReportsBody">
                         <tr th:each="reporte : ${reportes}">
                             <td th:text="${reporte.id}"></td>
                             <td th:text="${reporte.mensajeReportado.remitente.username}"></td>
-                            <td th:text="${#temporals.format(reporte.fechaEnvio, 'dd-MM-yyyy')}"></td>               
+                            <td th:text="${#temporals.format(reporte.fechaEnvio, 'dd-MM-yyyy')}"></td>
                             <td th:text="${reporte.resuelto}"></td>
                             <td>
-                                <span th:if="${reporte.resuelto}" th:text="${#temporals.format(reporte.fechaResolucion, 'dd-MM-yyyy')}"></span>
+                                <span th:if="${reporte.resuelto}"
+                                    th:text="${#temporals.format(reporte.fechaResolucion, 'dd-MM-yyyy')}"></span>
                                 <span th:if="${!reporte.resuelto}">Sin resolver</span>
                             </td>
-                            <td class="text-truncate" style="max-width: 200px;" th:text="${reporte.mensajeReportado.contenido}"></td> 
+                            <td class="text-truncate" style="max-width: 200px;"
+                                th:text="${reporte.mensajeReportado.contenido}"></td>
                             <td>
                                 <div class="dropdown">
-                                    <button class="btn btn-sm" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-three-dots-vertical" viewBox="0 0 16 16">
-                                            <path d="M9.5 13a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0"/>
+                                    <button class="btn btn-sm" type="button" id="dropdownMenuButton"
+                                        data-bs-toggle="dropdown" aria-expanded="false">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                            fill="currentColor" class="bi bi-three-dots-vertical" viewBox="0 0 16 16">
+                                            <path
+                                                d="M9.5 13a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0" />
                                         </svg>
                                     </button>
                                     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton">
-                                        <li><button class="dropdown-item ver-detalles-btn" type="button"  th:onclick="'abrirModalVerMasReporte(' + ${reporte.id} + ')'"> Ver Detalles </button></li>                                        
-                                        <li><button class="dropdown-item" type="button" th:if="${!reporte.resuelto}" th:onclick="'abrirModal(' + ${reporte.id} + ')'">Resolver</button></li>
+                                        <li><button class="dropdown-item ver-detalles-btn" type="button"
+                                                th:onclick="'abrirModalVerMasReporte(' + ${reporte.id} + ')'"> Ver
+                                                Detalles </button></li>
+                                        <li><button class="dropdown-item" type="button" th:if="${!reporte.resuelto}"
+                                                th:onclick="'abrirModal(' + ${reporte.id} + ')'">Resolver</button></li>
                                     </ul>
                                 </div>
                             </td>
@@ -65,116 +73,125 @@
 
         <!-- Modal único para ver detalles -->
         <div id="modalReporte" class="modal fade" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modal-lg">
-            <div class="modal-content bg-dark text-light border-secondary">
-            <div class="modal-header">
-                <h5 class="modal-title">Detalles del Reporte</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            <div class="modal-dialog modal-dialog-centered modal-lg">
+                <div class="modal-content bg-dark text-light border-secondary">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Detalles del Reporte</h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                            aria-label="Cerrar"></button>
+                    </div>
+
+                    <div class="modal-body flex-column">
+                        <div>
+                            <div class="row mb-2">
+                                <div class="col-md-6">
+                                    <strong>ID del Reporte:</strong>
+                                    <p id="reporteId"></p>
+                                </div>
+                                <div class="col-md-6">
+                                    <strong>Reportador:</strong>
+                                    <p id="reporteReportador"></p>
+                                </div>
+                            </div>
+
+                            <div class="row mb-2">
+                                <div class="col-md-6">
+                                    <strong>Usuario Reportado:</strong>
+                                    <p id="reporteUsuarioReportado"></p>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <strong>Resuelto:</strong>
+                                    <p id="reporteResuelto"></p>
+                                </div>
+                            </div>
+
+                            <div class="row mb-2">
+                                <div class="col-md-6">
+                                    <strong>Fecha del Reporte:</strong>
+                                    <p id="reporteFechaEnvio"></p>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <strong>Fecha de Resolución:</strong>
+                                    <p id="reporteFechaResolucion"></p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-2">
+                            <strong>Motivo:</strong>
+                            <p class="text-break" id="reporteMotivo"></p>
+                        </div>
+
+                        <div class="mb-2">
+                            <strong>Mensaje Reportado:</strong>
+                            <p class= "text-break" id="reporteMensaje"></p>
+                        </div>
+
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    </div>
+                </div>
             </div>
-            <div class="modal-body">
-                <div class="row mb-2">
-                <div class="col-md-6">
-                    <strong>ID del Reporte:</strong>
-                    <p id="reporteId"></p>
-                </div>
-                <div class="col-md-6">
-                    <strong>Reportador:</strong>
-                    <p id="reporteReportador"></p>
-                </div>
-                </div>
-
-                <div class="row mb-2">
-                <div class="col-md-6">
-                    <strong>Usuario Reportado:</strong>
-                    <p id="reporteUsuarioReportado"></p>
-                </div>
-                <div class="col-md-6">
-                    <strong>Motivo:</strong>
-                    <p id="reporteMotivo"></p>
-                </div>
-                </div>
-
-                <div class="mb-2">
-                <strong>Mensaje Reportado:</strong>
-                <p id="reporteMensaje"></p>
-                </div>
-
-                <div class="row mb-2">
-                <div class="col-md-6">
-                    <strong>Fecha del Reporte:</strong>
-                    <p id="reporteFechaEnvio"></p>
-                </div>
-                <div class="col-md-6">
-                    <strong>Resuelto:</strong>
-                    <p id="reporteResuelto"></p>
-                </div>
-                </div>
-
-                <div class="mb-2">
-                <strong>Fecha de Resolución:</strong>
-                <p id="reporteFechaResolucion"></p>
-                </div>
-            </div>
-
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-            </div>
-            </div>
-        </div>
         </div>
 
         <!-- Modal de gestionar reporte -->
         <div class="modal fade" id="banModal" tabindex="-1" aria-labelledby="banModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-            
-            <div class="modal-header">
-                <h5 class="modal-title" id="banModalLabel">Tiempo de explusion</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-            </div>
-            
-            <div class="modal-body">
-                <form id="banForm">
-                <div class="mb-3">
-                    <label for="banDays" class="form-label">Días</label>
-                    <input type="number" class="form-control" id="banDays" name="banDays" min="0" value="0">
+            <div class="modal-dialog">
+                <div class="modal-content">
+
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="banModalLabel">Tiempo de explusion</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                    </div>
+
+                    <div class="modal-body">
+                        <form id="banForm">
+                            <div class="mb-3">
+                                <label for="banDays" class="form-label">Días</label>
+                                <input type="number" class="form-control" id="banDays" name="banDays" min="0" value="0">
+                            </div>
+                            <div class="mb-3">
+                                <label for="banHours" class="form-label">Horas</label>
+                                <input type="number" class="form-control" id="banHours" name="banHours" min="0" max="23"
+                                    value="0">
+                            </div>
+                            <div class="mb-3">
+                                <label for="banMinutes" class="form-label">Minutos</label>
+                                <input type="number" class="form-control" id="banMinutes" name="banMinutes" min="0"
+                                    max="59" value="0">
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-danger" form="banForm">Confirmar baneo</button>
+                    </div>
+
                 </div>
-                <div class="mb-3">
-                    <label for="banHours" class="form-label">Horas</label>
-                    <input type="number" class="form-control" id="banHours" name="banHours" min="0" max="23" value="0">
-                </div>
-                <div class="mb-3">
-                    <label for="banMinutes" class="form-label">Minutos</label>
-                    <input type="number" class="form-control" id="banMinutes" name="banMinutes" min="0" max="59" value="0">
-                </div>
-                </form>
             </div>
-            
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                <button type="submit" class="btn btn-danger" form="banForm">Confirmar baneo</button>
-            </div>
-            
-            </div>
-        </div>
         </div>
 
     </div>
 
-    <script type = "module">
+    <script type="module">
         import { DataTable } from "../js/simple-datatables-10.js"
         const tableUsers = new DataTable("#myTableReports", {
-        searchable: true,
-        perPageSelect: false,
-        perPage: 9,
-        sortable: true,
-        labels: {
-            placeholder: "Buscar...",
-            perPage: "{select} resultados por página",
-            noRows: "No hay registros",
-            noResults: "No se encontraron resultados",
-            info: "Mostrando {start} a {end} de {rows} entradas"
-        }
+            searchable: true,
+            perPageSelect: false,
+            perPage: 9,
+            sortable: true,
+            labels: {
+                placeholder: "Buscar...",
+                perPage: "{select} resultados por página",
+                noRows: "No hay registros",
+                noResults: "No se encontraron resultados",
+                info: "Mostrando {start} a {end} de {rows} entradas"
+            }
         });
 
         tableUsers.on("datatable.init", () => {
@@ -188,8 +205,6 @@
             }
         });
     </script>
-
-    <script th:src="@{/js/detalles-reporte-admin.js}" src="js/detalles-reporte-admin.js"></script>
 
 
     <th:block th:replace="fragments/footer.html :: footer" />
