@@ -158,6 +158,25 @@ public class AdminController {
         return ResponseEntity.ok(response);
     }
 
+    @PostMapping("/usuarios/{id}/ascender")
+    @ResponseBody
+    @Transactional
+    public ResponseEntity<JsonNode> ascenderUsuario(@PathVariable long id) {
+        User user = entityManager.find(User.class, id);
+
+        if (user == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario no encontrado");
+        }
+
+        user.setRoles("ADMIN,USER");
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        ObjectNode response = objectMapper.createObjectNode();
+        response.put("mensaje", "Usuario ascendido correctamente");
+
+        return ResponseEntity.ok(response);
+    }
+
     @GetMapping("/reportes")
     public String tablaReportes(Model model) {
         String queryReportes = "SELECT r FROM Reporte r";

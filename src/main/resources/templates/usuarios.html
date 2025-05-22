@@ -81,6 +81,11 @@
                             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton">
                                 <li><a class="dropdown-item" href="#" th:href="@{/user/{id}(id=${usuario.id})}">Ver Más</a></li>
                                 <li>
+                                    <a class="dropdown-item" th:if="${!usuario.hasRole('ADMIN')}" href="#" role="button" th:onclick="'ascenderUsuario('+${usuario.id}+')'">
+                                        ascender    
+                                    </a>
+                                </li>
+                                <li>
                                     <a class="dropdown-item abridorModalExpulsion" href="#" role="button" th:data-id="${usuario.id}" th:data-nombre="${usuario.username}" th:data-fecha="${usuario.expulsadoHasta}">
                                         Expulsar
                                     </a>

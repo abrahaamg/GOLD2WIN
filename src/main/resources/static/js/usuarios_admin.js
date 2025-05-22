@@ -102,4 +102,12 @@ function confirmarExpulsion() {
     .catch(function(error) {
         console.log(error);
     });
-}   
+}
+
+function ascenderUsuario(id) {
+    go(config.rootUrl + "/admin/usuarios/" + id + "/ascender", "POST").then((response) => {
+        location.reload();
+    }).catch((error) => {
+        console.error("Error al ascender el usuario:", error);
+    });
+}
