@@ -29,8 +29,8 @@
 1. **Clonar el repositorio**
 
 ```bash
-git https://github.com/abrahaamg/IW.git
-cd IW
+git https://github.com/abrahaamg/GOLD2WIN
+cd GOLD2WIN
 ```
 
 2. **Compilar el proyecto**
