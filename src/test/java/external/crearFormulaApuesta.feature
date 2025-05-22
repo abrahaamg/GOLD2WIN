@@ -1,4 +1,5 @@
-Feature: Testeo UI con Karate
+
+    Feature: Testeo UI con Karate
 
   Scenario: Prueba que consiste en crear una formula de apuesta y verla desde otro usuario
     Given driver baseUrl + '/login'
@@ -12,7 +13,7 @@ Feature: Testeo UI con Karate
     * delay(300)
     And input('#tituloModal', 'Puntos')
     * delay(200)
-    And input('#formulaModal', 'Puntos > 200')
+    And input('#formulaModal', 'PuntosLosAngelesLakers > 200')
     * delay(1000)
     * click('#botonSiguienteCrearApuesta')
     * delay(500)
