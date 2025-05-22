@@ -29,7 +29,7 @@
 1. **Clonar el repositorio**
 
 ```bash
-git clone https://github.com/abrahaamg/GOLD2WIN
+git clone https://github.com/abrahaamg/GOLD2WIN.git
 cd GOLD2WIN
 ```
 
