@@ -1,5 +1,6 @@
 package es.ucm.fdi.iw.controller;
 
+import es.ucm.fdi.iw.AppConfig;
 import es.ucm.fdi.iw.LocalData;
 import es.ucm.fdi.iw.model.Message;
 import es.ucm.fdi.iw.model.Transferable;
@@ -10,7 +11,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -40,7 +43,9 @@ import java.io.*;
 import java.security.SecureRandom;
 import java.time.LocalDateTime;
 import java.util.Base64;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -67,12 +72,19 @@ public class UserController {
 	@Autowired
 	private PasswordEncoder passwordEncoder;
 
+    private final AdminController adminController;
+
+
 	@ModelAttribute
 	public void populateModel(HttpSession session, Model model) {
 		for (String name : new String[] { "u", "url", "ws", "topics" }) {
 			model.addAttribute(name, session.getAttribute(name));
 		}
 	}
+
+	UserController(AdminController adminController) {
+        this.adminController = adminController;
+    }
 
 	/**
 	 * Exception to use when denying access to unauthorized users.
@@ -116,10 +128,135 @@ public class UserController {
 	 */
 	@GetMapping("{id}")
 	public String index(@PathVariable long id, Model model, HttpSession session) {
-		User target = entityManager.find(User.class, id);
-		model.addAttribute("user", target);
-		return "user";
+		User user = entityManager.find(User.class, 
+            ((User) session.getAttribute("u")).getId());
+
+        if(id == user.getId()) {
+			Long numChats = entityManager.createNamedQuery("User.countChats", Long.class)
+            .setParameter("id", user.getId())
+            .getSingleResult();
+
+			Long numApuestas = entityManager.createNamedQuery("User.countApuestas", Long.class)
+				.setParameter("id", user.getId())
+				.getSingleResult();
+
+			Long numApuestasPend = entityManager.createNamedQuery("User.countApuestasPend", Long.class)
+				.setParameter("id", user.getId())
+				.getSingleResult();    
+			
+			Long numMensajes = entityManager.createNamedQuery("User.countMensajes", Long.class)
+				.setParameter("id", user.getId())
+				.getSingleResult();
+
+			model.addAttribute("user", user);  
+			model.addAttribute("numChats", numChats);
+			model.addAttribute("numApuestas", numApuestas);  
+			model.addAttribute("numApuestasPend", numApuestasPend);
+			model.addAttribute("numMensajes", numMensajes);
+			return "user";
+		} else {
+			Long numChats = entityManager.createNamedQuery("User.countChats", Long.class)
+            .setParameter("id", id)
+            .getSingleResult();
+
+			Long numApuestas = entityManager.createNamedQuery("User.countApuestas", Long.class)
+				.setParameter("id", id)
+				.getSingleResult();
+
+			Long numApuestasPend = entityManager.createNamedQuery("User.countApuestasPend", Long.class)
+				.setParameter("id", id)
+				.getSingleResult();    
+			
+			Long numMensajes = entityManager.createNamedQuery("User.countMensajes", Long.class)
+				.setParameter("id", id)
+				.getSingleResult();
+
+			User target = entityManager.find(User.class, id);
+			model.addAttribute("user", target);  
+			model.addAttribute("numChats", numChats);
+			model.addAttribute("numApuestas", numApuestas);  
+			model.addAttribute("numApuestasPend", numApuestasPend);
+			model.addAttribute("numMensajes", numMensajes);
+			return "userExterno";
+		}
 	}
+
+	@PostMapping("/editar")
+    @Transactional
+    @ResponseBody
+    public Map<String, Object> editarPerfil(@RequestBody JsonNode o, Model model, HttpSession session) throws IOException{
+        Map<String, Object> response = new HashMap<>();
+
+        User user = entityManager.find(User.class, ((User) session.getAttribute("u")).getId());
+
+        String username = o.get("username").asText();
+        String email = o.get("email").asText();
+        if(o.has("contrasenha")) {
+            String password = o.get("contrasenha").asText();
+            user.setPassword(encodePassword(password));
+        }
+
+        Long countUsername = entityManager
+            .createNamedQuery("User.existeUsername", Long.class)
+            .setParameter("username", username).setParameter("id", user.getId()).getSingleResult();
+        
+
+        if (countUsername > 0) {
+            response.put("success", false);
+            response.put("error", "username");
+            return response;
+        }
+
+        Long countEmail = entityManager
+            .createNamedQuery("User.existeEmail", Long.class)
+            .setParameter("email", email).setParameter("id", user.getId()).getSingleResult();
+
+        if (countEmail > 0) {
+            response.put("success", false);
+            response.put("error", "email");
+            return response;
+        }
+
+        user.setUsername(username);
+        user.setEmail(email);
+
+        entityManager.merge(user);
+        JsonNode imageDataNode = o.get("imageData");
+        if (imageDataNode != null && imageDataNode.has("image") && !imageDataNode.get("image").isNull()) {
+            String base64Image = imageDataNode.get("image").asText();
+            String filename = imageDataNode.has("filename") ? imageDataNode.get("filename").asText() : "";
+
+            if (!base64Image.isEmpty()) {
+                MultipartFile photo = adminController.convertirBase64AMultipartFile(base64Image, filename);
+                adminController.setPic(photo, "user", "" + user.getId());
+            }
+        }
+
+        response.put("success", true);
+        return response;
+    }
+
+	@GetMapping("/verificarUsername")
+    public ResponseEntity<?> verificarUsername(@RequestParam String username, @RequestParam Long id) {
+        Long countUsername = entityManager
+            .createNamedQuery("User.existeUsername", Long.class)
+            .setParameter("username", username).setParameter("id", id).getSingleResult();
+
+        boolean existe = countUsername > 0; // Si el numero es mayor a 0, ya existe
+
+        return ResponseEntity.ok().body("{\"existe\": " + existe + "}");
+    }
+
+    @GetMapping("/verificarEmail")
+    public ResponseEntity<?> verificarEmail(@RequestParam String email, @RequestParam Long id) {
+        Long countEmail = entityManager
+            .createNamedQuery("User.existeEmail", Long.class)
+            .setParameter("email", email).setParameter("id", id).getSingleResult();
+
+        boolean existe = countEmail > 0; // Si el numero es mayor a 0, ya existe
+
+        return ResponseEntity.ok().body("{\"existe\": " + existe + "}");
+    }
 
 	/**
 	 * Alter or create a user

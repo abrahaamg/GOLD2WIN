@@ -251,6 +251,12 @@
 
     <th:block th:replace="fragments/footer.html :: footer" />
     <script th:src="@{/js/listaChats.js}" src="js/listaChats.js"></script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            cargarChats();
+        });
+    </script>
 </body>
 
 </html>

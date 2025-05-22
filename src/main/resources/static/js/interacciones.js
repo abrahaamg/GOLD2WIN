@@ -161,6 +161,24 @@ if (inputImagenSeccionesForm != null) {
     });
 }
 
+var inputImagenUsuarioForm = document.getElementById("inputImagenUsuario");
+if (inputImagenUsuarioForm != null) {
+    console.log("entra");
+    document.getElementById('inputImagenUsuario').addEventListener('change', function (event) {
+        var file = event.target.files[0];
+        console.log("efwdcs");
+        if (file) {
+            console.log("entra");
+            var reader = new FileReader();
+            reader.onload = function (e) {
+                var imgPreview = document.getElementById('mostrarImagenUsuario');
+                imgPreview.src = e.target.result; // Mostrar la imagen
+            }
+            reader.readAsDataURL(file);
+        }
+    });
+}
+
 var menuOpcionesSeccionForm = document.getElementById("menuOpcionesSeccion");
 let seccionSeleccionadaId = null;
 if (menuOpcionesSeccionForm != null) {
@@ -317,11 +335,13 @@ async function verificarNombreSeccion() {
         if (data.existe) {  //el nombre existe
             document.getElementById("inputNombreSeccion").classList.add("is-invalid");
             document.getElementById("mensajeError").classList.add("invalid-feedback");
+            document.getElementById("mensajeError").style.display = 'block';
             console.log("false");
             return false;
         } else {    //el nombre no existe
             document.getElementById("inputNombreSeccion").classList.remove("is-invalid");
             document.getElementById("mensajeError").classList.remove("invalid-feedback");
+            document.getElementById("mensajeError").style.display = 'none';
             console.log("true");
             return true;
         }
@@ -350,11 +370,13 @@ function evitarNombresVarRepetidos() { //esta funcion sirve para verificarnombre
         if (existe) { //el nombre existe
             document.getElementById("inputnombreVarNueva").classList.add("is-invalid");
             document.getElementById("mensajeErrorVar").classList.add("invalid-feedback");
+            document.getElementById("mensajeErrorVar").style.display = 'block';
             console.log("false");
             return false;
         } else {    //el nombre no existe
             document.getElementById("inputnombreVarNueva").classList.remove("is-invalid");
             document.getElementById("mensajeErrorVar").classList.remove("invalid-feedback");
+            document.getElementById("mensajeErrorVar").style.display = 'none';
             console.log("true");
             return true;
         }
@@ -441,5 +463,175 @@ function actualizarClasePocos() {
         contenedor.classList.add('limitar');
     } else {
         contenedor.classList.remove('limitar');
+    }
+}
+
+
+function cambiarContrasenha(event) {
+    event.preventDefault();
+
+    let form = document.getElementById("cambiarContrasenhaForm");
+    if (!form.checkValidity()) { //esto sirve para los mensajes de required cuando arriba esta rel preventDefault
+        form.reportValidity();
+        return;
+    }
+
+    var con = document.getElementById('inputContrasenha').value.trim();
+
+    var coniguales = confirmarContrasenhas();
+    if (!coniguales) {
+        return;
+    }
+    else{
+        const inputCon = document.getElementById("password");
+        inputCon.value = con;
+        inputCon.dataset.bd = "false"
+        var botonVis = document.getElementById("botonVisualizarCon");
+        botonVis.style.display = "block";
+
+        document.getElementById('inputContrasenha').value = '';
+        document.getElementById('inputContrasenha2').value = '';
+
+        const modal = bootstrap.Modal.getInstance(document.getElementById('modalCambiarContrasenha'));
+        modal.hide();
+    }
+};
+
+function confirmarContrasenhas() { 
+    const con = document.getElementById("inputContrasenha").value.trim();
+    const con2 = document.getElementById('inputContrasenha2').value.trim();
+    try {
+
+        let iguales = false;
+        if (con == con2) {
+            iguales = true;
+        }
+
+        if (!iguales) { 
+            document.getElementById("inputContrasenha").classList.add("is-invalid");
+            document.getElementById("mensajeErrorCon").classList.add("invalid-feedback");
+            document.getElementById("mensajeErrorCon").style.display = 'block';
+            return false;
+        } else {  
+            document.getElementById("inputContrasenha").classList.remove("is-invalid");
+            document.getElementById("mensajeErrorCon").classList.remove("invalid-feedback");
+            document.getElementById("mensajeErrorCon").style.display = 'none';
+            return true;
+        }
+    } catch (error) {
+        console.error("Error al comparar contraseñas:", error);
+        return false;
+    }
+}
+
+function hacerVisible(objetivo) {
+    const passwordInput = document.getElementById(objetivo);
+    console.log(objetivo);
+    passwordInput.type = passwordInput.type === 'password' ? 'text' : 'password';
+}
+
+async function cambiarDatosPerfil(event){
+    event.preventDefault();
+
+    const username = document.getElementById("inputUsername").value.trim();
+    const email = document.getElementById("inputEmail").value.trim();
+
+    const file = document.getElementById("inputImagenUsuario").files[0] || null;
+
+    let base64Image = null;
+    let fileName = null;
+    if (file != null) { base64Image = await toBase64(file); fileName = file.name; }
+
+    const isUsernameValido = await verificarUsername();
+    const isEmailValido = await verificarEmail();
+    if(isUsernameValido && isEmailValido){
+        if(document.getElementById("password").dataset.bd == "false"){
+            const contrasenha = document.getElementById("password").value.trim();
+            const jsonData = {
+                username: username,
+                email: email,
+                contrasenha: contrasenha,
+                imageData: { // Aquí se incluye la imagen
+                    image: base64Image,
+                    filename: fileName
+                },
+            };
+            go(`/user/editar`, "POST", jsonData)
+            .then(data => {
+                console.log("Respuesta recibida:", data.mensaje);
+                const id = document.getElementById("inputIdUser").value.trim();
+                window.location.href = "/user/"+id;
+            })
+            .catch(error => console.error("Error go:", error));
+        }
+        else{
+            const jsonData = {
+                username: username,
+                email: email,
+                imageData: { // Aquí se incluye la imagen
+                    image: base64Image,
+                    filename: fileName
+                },
+            };
+            go(`/user/editar`, "POST", jsonData)
+            .then(data => {
+                console.log("Respuesta recibida:", data.mensaje);
+                const id = document.getElementById("inputIdUser").value.trim();
+                window.location.href = "/user/"+id;
+            })
+            .catch(error => console.error("Error go:", error));
+        }
+    }
+}
+
+async function verificarUsername() {
+    const username = document.getElementById("inputUsername").value.trim();
+    const id = document.getElementById("inputIdUser").value.trim();
+    try {
+        const response = await fetch(`/user/verificarUsername?username=${encodeURIComponent(username)}&id=${encodeURIComponent(id)}`);
+        const data = await response.json();
+
+        if (data.existe) {  
+            document.getElementById("inputUsername").classList.add("is-invalid");
+            document.getElementById("mensajeErrorUsername").classList.add("invalid-feedback");
+            document.getElementById("mensajeErrorUsername").style.display = 'block';
+            console.log("false");
+            return false;
+        } else {    
+            document.getElementById("inputUsername").classList.remove("is-invalid");
+            document.getElementById("mensajeErrorUsername").classList.remove("invalid-feedback");
+            document.getElementById("mensajeErrorUsername").style.display = 'none';
+            console.log("true");
+            return true;
+        }
+    } catch (error) {
+        console.error("Error al verificar el nombre:", error);
+        return false;
+    }
+}
+
+async function verificarEmail() {
+    const email = document.getElementById("inputEmail").value.trim();
+    const id = document.getElementById("inputIdUser").value.trim();
+    try {
+        const response = await fetch(`/user/verificarEmail?email=${encodeURIComponent(email)}&id=${encodeURIComponent(id)}`);
+        const data = await response.json();
+
+        if (data.existe) {  
+            document.getElementById("inputEmail").classList.add("is-invalid");
+            document.getElementById("mensajeErrorEmail").classList.add("invalid-feedback");
+            document.getElementById("mensajeErrorEmail").style.display = 'block';
+            console.log("false");
+            return false;
+        } else {    
+            document.getElementById("inputEmail").classList.remove("is-invalid");
+            document.getElementById("mensajeErrorEmail").classList.remove("invalid-feedback");
+            document.getElementById("mensajeErrorEmail").style.display = 'none';
+            console.log("true");
+            return true;
+        }
+    } catch (error) {
+        console.error("Error al verificar el nombre:", error);
+        return false;
     }
 }

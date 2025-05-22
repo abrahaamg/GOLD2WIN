@@ -2,134 +2,256 @@
 <html class="h-100" xmlns:th="http://www.thymeleaf.org" data-bs-theme="dark">
 
 <head>
-        <th:block th:replace="~{fragments/head :: header}" />
+    <th:block th:replace="~{fragments/head :: header}" />
 
     <title>CREAR APUESTA</title>
 </head>
 
 <body class="d-flex flex-column h-100">
-    
     <header th:replace="fragments/nav.html :: nav('deportes')"></header>
 
-    <div class="w-100 px-3 pt-2 d-flex flex-column">
-        <div class="d-flex justify-content-between align-items-center border-bottom pb-2">
-            <h5 class="mb-0" th:text="${eventoSel.nombre}"></h5>
-            <a th:href="@{/}" href="/" class="btn-close" aria-label="Cerrar"></a>
+    <form style="display: none;" id="datos">
+        <input type="hidden" id="userId" name="userId" th:value="${session.u.id}">
+    </form>
+
+    <main class="d-flex flex-grow-1 overflow-hidden">
+        <ul id="menuPropio" class="menuDesplegable desaparece" style="position: absolute; z-index: 1000;">
+            <li id="botonEliminarMensaje" class="resaltaHover" role="button">Eliminar</li>
+        </ul>
+
+        <ul id="menuAgeno" class="menuDesplegable desaparece" style="position: absolute; z-index: 1000;">
+            <li id="botonReportarMensaje" class="resaltaHover" role="button" data-bs-toggle="modal"
+                data-bs-target="#reportarModal">Reportar</li>
+        </ul>
+
+
+        <div id="contenedorMenuListaChats"
+            class="d-none d-lg-flex flex-column pt-2 border-end border-bottom border-secondary paginaChatsActiva scrollBarPerso overflow-y-auto" 
+            style=" height: 100%; width: 550px; padding: 0px 25px 0 25px;">
+            <h4 id="tituloChats" class="text-start pe-3">Formulas</h4>
+
+            <div class="w-100 d-flex flex-column">
+                <div class="d-flex justify-content-between align-items-center ">
+                    <div class="barraBuscador " style>
+                        <svg viewBox="0 0 24 24" aria-hidden="true" class="iconoBuscador">
+                            <g>
+                                <path
+                                    d="M21.53 20.47l-3.66-3.66C19.195 15.24 20 13.214 20 11c0-4.97-4.03-9-9-9s-9 4.03-9 9 4.03 9 9 9c2.215 0 4.24-.804 5.808-2.13l3.66 3.66c.147.146.34.22.53.22s.385-.073.53-.22c.295-.293.295-.767.002-1.06zM3.5 11c0-4.135 3.365-7.5 7.5-7.5s7.5 3.365 7.5 7.5-3.365 7.5-7.5 7.5-7.5-3.365-7.5-7.5z">
+                                </path>
+                            </g>
+                        </svg>
+
+                        <input id="queryApuestas" class="inputBuscador" type="search"
+                            placeholder="Busca por nombre..." name="searchbar" />
+                    </div>
+
+                    <button type="button" class="btn btn-primary d-block p-2 ms-3" id="boton-crear-formula-reducido"
+                        data-bs-toggle="modal" data-bs-target="#modalCrearApuesta">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor"
+                            class="bi bi-plus-circle" viewBox="0 0 16 16">
+                            <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16" />
+                            <path
+                                d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4" />
+                        </svg>
+                    </button>
+                </div>
+
+                <div id="contendorFormulas" class="h-100 w-100 d-flex flex-column  align-items-center" style="margin-top: 10px;">
+                </div>
+
+                <div class="width-100 d-flex justify-content-center mt-1">
+                    <button class="btn btn-outline-primary mt-3 botonVerMas" id="verMasEventos"
+                        style="display: none;">ver mas</button>
+                </div>
+            </div>
         </div>
 
-        
-        <div class="d-flex justify-content-between align-items-center mt-4">
-            <div class="barraBuscador " style>
-                <svg viewBox="0 0 24 24" aria-hidden="true" class="iconoBuscador">
-                <g>
-                    <path
-                    d="M21.53 20.47l-3.66-3.66C19.195 15.24 20 13.214 20 11c0-4.97-4.03-9-9-9s-9 4.03-9 9 4.03 9 9 9c2.215 0 4.24-.804 5.808-2.13l3.66 3.66c.147.146.34.22.53.22s.385-.073.53-.22c.295-.293.295-.767.002-1.06zM3.5 11c0-4.135 3.365-7.5 7.5-7.5s7.5 3.365 7.5 7.5-3.365 7.5-7.5 7.5-7.5-3.365-7.5-7.5z"
-                    ></path>
-                </g>
+        <div class="d-none flex-column w-100" id="chatContainer">
+            <div class="d-none d-lg-flex flex-row justify-content-between align-items-center ps-1 ps-lg-4 p-2 border-bottom border-1 border-secondary"
+                style="min-height:85px; max-height: 100%;">
+
+                <svg id="botonRetroceder" role="button" xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                    fill="currentColor" class="bi bi-arrow-left  me-1 d-block d-lg-none" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd"
+                        d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8" />
                 </svg>
-            
-                <input
-                id="queryApuestas"
-                class="inputBuscador"
-                type="search"
-                placeholder="Busca por nombre..."
-                name="searchbar"
-                />
+
+                <img id="imagenCabeceraChat" width="45" height="45" src="" style="border-radius: 50%;">
+                <h5 id="tituloCabeceraChat" class="m-0 ms-3 d-none d-lg-block text-nowrap text-truncate"
+                    style="width: calc(100% - 255px);">Nombre</h5>
+                <h5 id="tituloCabeceraChatMobile" class="m-0 ms-1 d-block d-lg-none text-nowrap text-truncate"
+                    style="width: calc(100% - 145px); font-size: 14;">Nombre</h5>
+
+                <div id="btn_suscribirse" class="d-flex flex-row ms-auto me-3 btn boton-dinamico" th:classappend="${suscrito} ? 'desaparece' : ''" role="button">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-bell" viewBox="0 0 16 16">
+                        <path d="M8 16a2 2 0 0 0 2-2H6a2 2 0 0 0 2 2M8 1.918l-.797.161A4 4 0 0 0 4 6c0 .628-.134 2.197-.459 3.742-.16.767-.376 1.566-.663 2.258h10.244c-.287-.692-.502-1.49-.663-2.258C12.134 8.197 12 6.628 12 6a4 4 0 0 0-3.203-3.92zM14.22 12c.223.447.481.801.78 1H1c.299-.199.557-.553.78-1C2.68 10.2 3 6.88 3 6c0-2.42 1.72-4.44 4.005-4.901a1 1 0 1 1 1.99 0A5 5 0 0 1 13 6c0 .88.32 4.2 1.22 6"/>
+                    </svg>
+                    <span class="ms-2 d-none d-lg-block">Suscribirse</span>
+                </div>
+
+                <div id="btn_desuscribirse" class="d-flex flex-row ms-auto me-3 btn boton-dinamico" th:classappend="${suscrito} ? '' : 'desaparece'" role="button">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-bell-slash" viewBox="0 0 16 16">
+                        <path d="M5.164 14H15c-.299-.199-.557-.553-.78-1-.9-1.8-1.22-5.12-1.22-6q0-.396-.06-.776l-.938.938c.02.708.157 2.154.457 3.58.161.767.377 1.566.663 2.258H6.164zm5.581-9.91a4 4 0 0 0-1.948-1.01L8 2.917l-.797.161A4 4 0 0 0 4 7c0 .628-.134 2.197-.459 3.742q-.075.358-.166.718l-1.653 1.653q.03-.055.059-.113C2.679 11.2 3 7.88 3 7c0-2.42 1.72-4.44 4.005-4.901a1 1 0 1 1 1.99 0c.942.19 1.788.645 2.457 1.284zM10 15a2 2 0 1 1-4 0zm-9.375.625a.53.53 0 0 0 .75.75l14.75-14.75a.53.53 0 0 0-.75-.75z"/>
+                    </svg>
+                    <span class="ms-2 d-none d-lg-block">Desuscribirse</span>
+                </div>
             </div>
 
-            <button type="button" class="btn btn-primary d-none d-sm-block" id="boton-crear-formula" data-bs-toggle="modal" data-bs-target="#modalCrearApuesta" style="margin-left:10px; min-width:185px;">
-                crea tu propia formula
-            </button>
-            <button type="button" class="btn btn-primary d-block d-sm-none" id="boton-crear-formula-reducido" data-bs-toggle="modal" data-bs-target="#modalCrearApuesta" style="margin-left:10px;">
-                <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-plus-circle" viewBox="0 0 16 16">
-                    <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
-                    <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"/>
-                </svg>
-            </button>
+            <div class="d-flex flex-column w-100 pe-4 ps-4 pt-2 overflow-y-auto scrollBarPerso flex-grow-1 pb-2"
+                id="contenedorMensajes"></div>
+
+            <div class="d-flex flex-row align-items-center w-100 p-2 border-top border-bottom border-1 border-secondary"
+                style="box-sizing: border-box;min-height:85px;margin-top: 1px;">
+                <button id="botonEnviar" type="button" class="btn btn-primary">Enviar</button>
+                <input id="campoMensaje" type="text" class="d-flex form-control ms-3 flex-grow-1"
+                    placeholder="Escribe un mensaje...">
+            </div>
+
         </div>
 
-        <div id = "contendorFormulas" class="h-100 w-100 d-flex flex" style="margin-top: 10px;">
-        </div>
-
-        <div class="width-100 d-flex justify-content-center mt-3">
-            <button class="btn btn-outline-primary mt-3 botonVerMas" id="verMasEventos" style="display: none;">ver mas</button>
-        </div>
-    </div>
-
-    <div class="modal fade" id="modalCrearApuesta" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modal-fullscreen-sm-down">
-            <div class="modal-content" style="position: relative;">
-                <div id="ocultador-formulario2">
-                    <form id="crearApuestaForm">
+        <!-- Modal Reportar-->
+        <div class="modal fade" id="reportarModal" tabindex="-1" aria-labelledby="reportarModalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog">
+                <form id="formReporte">
+                    <div class="modal-content">
                         <div class="modal-header">
-                            <button type="button" id="botonRetrocederCrearApuesta" class="btn btn-svg invisible" aria-label="atras">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="white" class="bi bi-arrow-left-short" viewBox="0 0 16 16">
-                                    <path fill-rule="evenodd" d="M12 8a.5.5 0 0 1-.5.5H5.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L5.707 7.5H11.5a.5.5 0 0 1 .5.5"/>
-                                </svg>
-                            </button>
-                            <h5 class="modal-title mx-auto">Crea tu apuesta</h5>
-                            <button type="button" class="btn-close ms-0" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                            <h5 class="modal-title" id="reportarModalLabel">Reportar mensaje</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                aria-label="Cerrar"></button>
                         </div>
-                    
                         <div class="modal-body">
-                            <div class="vision-creatuApuesta-1">
-                                <div class="mb-3">
-                                    <label for="tituloModal" class="form-label">Título:</label>
-                                    <input type="text" class="form-control" id="tituloModal" name="titulo" maxlength="30" required>
-                                    <span id="tituloError" class="text-danger"></span>
-                                </div>
-    
-                                <div class="mb-3">
-                                    <label for="formulaModal" class="form-label">Formula:</label>
-                                    <input type="text" class="form-control" id="formulaModal" name="formula" maxlength="30" required>
-                                    <span id="formulaError" class="text-danger"></span>
-                                </div>
-    
-                                <div class="d-flex align-items-start mt-4">
-                                    <label for="variables" class="form-label mb-0 me-2">Variables:</label>
-                                    <div id="lista-Variables-Cr" class="border w-100 scrollBarPerso">
-                                        <span class="spanAdaptable">                                            
-                                            <span th:each="variable, iterStat : ${eventoSel.variables}" 
-                                              th:text="${variable.nombre + (iterStat.last ? '' : ', ')}">
-                                            </span>
-                                        </span>
-                                    </div>
-                                </div>
+                            <div class="mb-3">
+                                <label for="motivo" class="form-label">Motivo del reporte</label>
+                                <textarea class="form-control" id="motivo" rows="3" required></textarea>
+                                <div class="invalid-feedback">Por favor, escribe un motivo.</div>
                             </div>
-
-                            <div class="vision-creatuApuesta-2 desaparece">
-                                <div class="mb-3">
-                                    <label for="cantidadModal" class="form-label">Cantidad a apostar:</label>
-                                    <input type="number" class="form-control" id="cantidadModal" name="cantidad" min="1" required>
-                                    <span id="cantidadError" class="text-danger"></span>
-                                </div>
-            
-                                <div class="mb-3">
-                                    <label for="tipoApuestaModal" class="form-label">Tipo de apuesta:</label>
-                                    <select class="form-select" id="tipoApuestaModal" name="tipoApuesta" required>
-                                        <option value="favorable">A favor</option>
-                                        <option value="contraria">En contra</option>
-                                    </select>
-                                </div>
-                            </div>
-
                         </div>
                         <div class="modal-footer">
-                            <button type="button" id="botonSiguienteCrearApuesta"class="btn btn-secondary mx-auto vision-creatuApuesta-1">siguiente</button>
-                            <button type="submit" class="btn btn-success mx-auto vision-creatuApuesta-2 desaparece" id = "botonCrearApuestaDefinitiva">Apostar</button>
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                            <button type="submit" class="btn btn-primary">Enviar reporte</button>
                         </div>
-                    </form>
-                </div>
-                
-                <svg id="confirmacionApuesta2" xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="bi bi-check-circle-fill text-success invisible confirmacionApuesta" viewBox="0 0 16 16">
-                    <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0m-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>
-                </svg>
+                    </div>
+                </form>
             </div>
         </div>
-    </div>
+
+        <!-- Modal para crear formula apuesta -->
+        <div class="modal fade" id="modalCrearApuesta" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-fullscreen-sm-down">
+                <div class="modal-content" style="position: relative;">
+                    <div id="ocultador-formulario2">
+                        <form id="crearApuestaForm">
+                            <div class="modal-header">
+                                <button type="button" id="botonRetrocederCrearApuesta"
+                                    class="btn btn-svg invisible" aria-label="atras">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="white"
+                                        class="bi bi-arrow-left-short" viewBox="0 0 16 16">
+                                        <path fill-rule="evenodd"
+                                            d="M12 8a.5.5 0 0 1-.5.5H5.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L5.707 7.5H11.5a.5.5 0 0 1 .5.5" />
+                                    </svg>
+                                </button>
+                                <h5 class="modal-title mx-auto">Crea tu apuesta</h5>
+                                <button type="button" class="btn-close ms-0" data-bs-dismiss="modal"
+                                    aria-label="Cerrar"></button>
+                            </div>
+
+                            <div class="modal-body">
+                                <div class="vision-creatuApuesta-1">
+                                    <div class="mb-3">
+                                        <label for="tituloModal" class="form-label">Título:</label>
+                                        <input type="text" class="form-control" id="tituloModal" name="titulo"
+                                            maxlength="30" required>
+                                        <span id="tituloError" class="text-danger"></span>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label for="formulaModal" class="form-label">Formula:</label>
+                                        <input type="text" class="form-control" id="formulaModal" name="formula"
+                                            maxlength="30" required>
+                                        <span id="formulaError" class="text-danger"></span>
+                                    </div>
+
+                                    <div class="d-flex align-items-start mt-4">
+                                        <label class="form-label mb-0 me-2">Variables:</label>
+                                        <div id="lista-Variables-Cr" class="border w-100 scrollBarPerso">
+                                            <span id="lista-Variables-texto" class="spanAdaptable">
+                                                <!-- Aquí se llenarán las variables -->
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="vision-creatuApuesta-2 desaparece">
+                                    <div class="mb-3">
+                                        <label for="cantidadModal" class="form-label">Cantidad a
+                                            apostar:</label>
+                                        <input type="number" class="form-control" id="cantidadModal"
+                                            name="cantidad" min="1" required>
+                                        <span id="cantidadError" class="text-danger"></span>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label for="tipoApuestaModal" class="form-label">Tipo de
+                                            apuesta:</label>
+                                        <select class="form-select" id="tipoApuestaModal" name="tipoApuesta"
+                                            required>
+                                            <option value="favorable">A favor</option>
+                                            <option value="contraria">En contra</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" id="botonSiguienteCrearApuesta"
+                                    class="btn btn-secondary mx-auto vision-creatuApuesta-1">siguiente</button>
+                                <button type="submit"
+                                    class="btn btn-success mx-auto vision-creatuApuesta-2 desaparece"
+                                    id="botonCrearApuestaDefinitiva">Apostar</button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <svg id="confirmacionApuesta2" xmlns="http://www.w3.org/2000/svg" fill="currentColor"
+                        class="bi bi-check-circle-fill text-success invisible confirmacionApuesta"
+                        viewBox="0 0 16 16">
+                        <path
+                            d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0m-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z" />
+                    </svg>
+                </div>
+            </div>
+        </div>
+
+    </main>
 
     <th:block th:replace="fragments/footer.html :: footer" />
-    <script th:src="@{/js/crearApuesta.js}" src="js/crearApuesta.js"></script>
+    <script th:src="@{/js/listaChats.js}" src="js/listaChats.js"></script>
+
+    <script th:inline="javascript">
+        document.addEventListener("DOMContentLoaded", function () {
+            const evento = [[${evento}]];
+            const boton_suscribirse = document.getElementById("btn_suscribirse");
+            const boton_desuscribirse = document.getElementById("btn_desuscribirse");
+            seleccionarChat(evento,null);
+
+            boton_desuscribirse.addEventListener("click", function () {
+                desuscribirse(evento.idEvento);
+            });
+
+            boton_suscribirse.addEventListener("click", function () {
+                suscribirse(evento.idEvento);
+            });
+
+            setTimeout(() => {
+                suscribirseWebSocketChat(evento);
+            }, 1000);
+
+            cargarMensajes(evento.idEvento);
+        });
+    </script>
 </body>
+
+</html>
 
 </html>

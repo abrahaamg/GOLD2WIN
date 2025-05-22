@@ -33,6 +33,7 @@ import es.ucm.fdi.iw.model.Apuesta;
 
 import es.ucm.fdi.iw.model.Evento;
 import es.ucm.fdi.iw.model.FormulaApuesta;
+import es.ucm.fdi.iw.model.ParticipacionChat;
 import es.ucm.fdi.iw.model.Resultado;
 import es.ucm.fdi.iw.model.User;
 import es.ucm.fdi.iw.model.Variable;
@@ -332,8 +333,9 @@ public class EventoController {
     }
 
     @GetMapping("{id}/apostar")
-    public String apostar(@PathVariable long id, Model model, HttpSession session) {
+    public String apostar(@PathVariable long id, Model model, HttpSession session) throws JsonProcessingException {
         Evento eventoSel = entityManager.find(Evento.class, id);
+        User usuario = entityManager.find(User.class, ((User) session.getAttribute("u")).getId());
 
         if (eventoSel == null) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Evento no encontrado");
@@ -347,7 +349,18 @@ public class EventoController {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Evento cerrado para apuestas");
         }
 
-        model.addAttribute("eventoSel", eventoSel);
+        Map<String, Object> informacionEvento = new HashMap<>();
+        informacionEvento.put("idEvento", eventoSel.getId());
+        informacionEvento.put("nombreEvento", eventoSel.getNombre());
+
+        boolean pertenece = !entityManager.createNamedQuery("User.estaEnChat", ParticipacionChat.class)
+                .setParameter("user", usuario)
+                .setParameter("evento", eventoSel)
+                .getResultList().isEmpty();
+
+        
+        model.addAttribute("suscrito", pertenece);
+        model.addAttribute("evento",informacionEvento);
 
         return "crearApuesta";
     }

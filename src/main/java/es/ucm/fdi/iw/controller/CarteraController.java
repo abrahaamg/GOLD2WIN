@@ -38,7 +38,7 @@ public class CarteraController {
     //Pagina inicial de la cartera
     @GetMapping("/ingresar")
     public String ingresar(Model model, HttpSession session) {
-        User user = (User) session.getAttribute("u");
+        User user = entityManager.find(User.class, ((User) session.getAttribute("u")).getId());
 
         int dineroDisponible = user.getDineroDisponible();
         int parteEntera = dineroDisponible / 100;
@@ -53,7 +53,7 @@ public class CarteraController {
             model.addAttribute("parteDecimal", parteDecimal);
         }
 
-        return "ingresar";
+        return "cartera";
     }
 
     //pagina tras pulsar retirar
@@ -98,8 +98,8 @@ public class CarteraController {
             session.setAttribute("u", user); //actualizo el usuario para que cuando recargue la pagina siga apareciendo el dinero
         }
 
-        if (total > 150000) {
-            response.put("mensaje", "La cantidad a ingresar debe ser menor a 1500 euros: " + total);
+        if (total < 300 || total > 150000) {
+            response.put("mensaje", "La cantidad a ingresar debe estar entre 3 y 1500 euros: " + total);
             return ResponseEntity.badRequest().body(response);
         }
 
