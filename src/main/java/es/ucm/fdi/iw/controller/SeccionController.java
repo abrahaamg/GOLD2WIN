@@ -38,7 +38,7 @@ import java.util.Map;
 
 import java.io.File;
 
-
+//Controlador para la zona inicial donde se ven los eventos filtrados por secciones
 @Controller()
 @RequestMapping("seccion")
 public class SeccionController {

@@ -4,7 +4,6 @@ import jakarta.persistence.EntityManager;
 import jakarta.servlet.http.HttpSession;
 import jakarta.transaction.Transactional;
 
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -22,12 +21,14 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import es.ucm.fdi.iw.model.User;
 
+//Controlador para la zona de cartera
 @Controller
 @RequestMapping("cartera")
 public class CarteraController {
-  
+
     @Autowired
     private EntityManager entityManager;
+
     @ModelAttribute
     public void populateModel(HttpSession session, Model model) {
         for (String name : new String[] { "u", "url", "ws", "topics" }) {
@@ -35,7 +36,7 @@ public class CarteraController {
         }
     }
 
-    //Pagina inicial de la cartera
+    // Pagina inicial de la cartera
     @GetMapping("/ingresar")
     public String ingresar(Model model, HttpSession session) {
         User user = entityManager.find(User.class, ((User) session.getAttribute("u")).getId());
@@ -56,7 +57,7 @@ public class CarteraController {
         return "cartera";
     }
 
-    //pagina tras pulsar retirar
+    // pagina tras pulsar retirar
     @GetMapping("/retirar")
     public String retirar(Model model, HttpSession session) {
         User user = (User) session.getAttribute("u");
@@ -66,7 +67,7 @@ public class CarteraController {
         return "retirar";
     }
 
-    //Pagina tras pulsar ingresar
+    // Pagina tras pulsar ingresar
     @GetMapping("/ingreso")
     public String ingreso(Model model) {
         return "ingreso";
@@ -88,14 +89,15 @@ public class CarteraController {
     public ResponseEntity<JsonNode> ingresarDinero(@RequestBody JsonNode json, HttpSession session) {
         ObjectMapper objectMapper = new ObjectMapper();
         ObjectNode response = objectMapper.createObjectNode();
-        User user = entityManager.find(User.class, ((User)session.getAttribute("u")).getId());
+        User user = entityManager.find(User.class, ((User) session.getAttribute("u")).getId());
 
         int cantEntera = json.get("entera").asInt();
         int cantDecimal = json.get("decimal").asInt();
         int total = (cantEntera * 100) + cantDecimal;
 
-        if(total == 0){
-            session.setAttribute("u", user); //actualizo el usuario para que cuando recargue la pagina siga apareciendo el dinero
+        if (total == 0) {
+            session.setAttribute("u", user); // actualizo el usuario para que cuando recargue la pagina siga apareciendo
+                                             // el dinero
         }
 
         if (total < 300 || total > 150000) {
@@ -116,7 +118,7 @@ public class CarteraController {
     public ResponseEntity<JsonNode> retirarDinero(@RequestBody JsonNode json, HttpSession session) {
         ObjectMapper objectMapper = new ObjectMapper();
         ObjectNode response = objectMapper.createObjectNode();
-        User user = entityManager.find(User.class, ((User)session.getAttribute("u")).getId());
+        User user = entityManager.find(User.class, ((User) session.getAttribute("u")).getId());
 
         int cantEntera = json.get("entera").asInt();
         int cantDecimal = json.get("decimal").asInt();

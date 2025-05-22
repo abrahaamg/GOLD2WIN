@@ -27,6 +27,7 @@ import es.ucm.fdi.iw.model.Apuesta;
 import es.ucm.fdi.iw.model.Transferable;
 import es.ucm.fdi.iw.model.User;
 
+//Controlador para la zona del historial
 @Controller
 @RequestMapping("misApuestas")
 public class HistorialController {

@@ -16,9 +16,10 @@
     - [6.3 Eventos](#63-eventos)
     - [6.4 Secciones](#64-secciones)
 - [Modelo de la base de datos](#modelo-de-la-base-de-datos)
+- [Rutas de la aplicacion](#rutas-de-la-aplicación)
 - [Recursos utilizados](#recursos-utilizados)
 
-## Cómo ejecutar
+## 🚀Cómo ejecutar
 
 #### Requisitos previos
 - Java 21 o superior instalado.
@@ -46,7 +47,7 @@ mvn spring-boot:run
 4. **Abrir la aplicación**
 Busca https://localhost:8080 en el navegador.
 
-## Descripción del proyecto
+## 📋Descripción del proyecto
 Gold2Win es una casa de apuestas en la cual se puede apostar a diferentes eventos que se pueden ir añadiendo. Estos eventos se clasifican en secciones como deportes, esports, juegos de mesa o cualquier cosa imaginable. 
 
 Cada evento lleva asociadas una serie de variables como por ejemplos (goles-barcelona) con las que los apostadores pueden crear sus propias fórmulas y apostar a ellas. Las cuotas se calculan dinámicamente según cuanto dinero se ha apostado a favor y en contra de la fórmula, quedandose un pequeño porcentaje la página por sus servicios. Los eventos también llevan asociados etiquetas que sirven para resaltar cosas importantes del evento como la competición, la ronda, los equipos, etc. Los eventos llevan asociada la fecha en que se van a llevar a cabo y una vez llevados a cabo un administrador debe encargarse de determinar como ha sucedido el evento. Es decir, dar valores a las variables previamente definidas para poder determinar automáticamente que formulas se han cumplido y poder repartir el dinero entre los apostadores. 
@@ -62,7 +63,7 @@ Las cuentas se dividen en 2 tipos:
 - **Administrador**: Este usuario tiene las mismas funciones que un usuario normal pero además puede acceder a la zona de administración donde puede ver la lista de usuarios, reportes, eventos y secciones. Puede expulsar a un usuario, indicar que se ha revisado un reporte aplicando la penalización necesaria, crear un evento, editar un evento ya creado, cancelar un evento (esto devuelve todo el dinero a los usuarios), ver los detalles de un evento, crear una sección y editar las ya existentes. 
 
 
-## Vistas
+## 👁️‍🗨️Vistas{#vistas}
 ### 1. Todas las secciones
 Es la recepción de la página y donde se pueden ver todos los eventos apostables que aún no han ocurrido. En cada uno se ve el título, la fecha, imagen de a sección, las etiquetas y un botón para unirse al chat de texto e ir a verlo. Pulsando sobre los eventos el usuario es redirigido a la pagina de crear apuesta del evento donde puede empezar a apostar. 
 
@@ -124,10 +125,86 @@ En esta parte de la aplicación es donde se realiza todo lo relacionado con las 
 - **Editar una sección**: Permite editar todos los campos de la sección menos el nombre que se considera fijo. Estos campos son: el tipo, la imagen representativa y las variables de sección. Estas variables se pueden ir eliminando y creando, esto último se hace con un modal que solicita los dos campos de las variables.
 - **Crear una sección**: sería como el formulario de editar pero con todos los campos vacíos.
 
-## Modelo de la base de datos
-![Diagrama de BD](ER_IW.png)
+## 🗄️Modelo de la base de datos {#modelo-de-la-base-de-datos}
+![Diagrama de BD](ER_IW.svg)
 
-## Recursos utilizados
+## 🌐Rutas de la Aplicación
+```
+/
+├── GET /                                  Página de inicio
+├── login
+│   ├── GET /login                         Login por defecto
+│   └── GET /login_error                   Página de error de login
+├── register
+│   ├── GET /register                      Formulario de registro
+│   └── POST /register                     Envío de registro
+├── seccion
+│   ├── GET /seccion/{id}                  Ver eventos apostables
+│   ├── GET /seccion/{id}/pic              Obtener nombre imagen
+│   ├── GET /seccion/cargarMas             AJAX: cargar eventos con offset
+│   └── GET /seccion/buscar                AJAX: buscar eventos con offset
+├── misApuestas
+│   ├── GET /misApuestas                   HTML: historial de apuestas
+│   └── GET /misApuestas/cargarMas         AJAX: cargar más apuestas
+├── user
+│   ├── GET /user/{id}                     Ver perfil (propio o ajeno)
+│   ├── POST /user/editar                  AJAX: editar datos usuario
+│   ├── GET /user/verificarUsername        AJAX: verificar username
+│   ├── GET /user/verificarEmail           AJAX: verificar email
+│   ├── POST /user/{id}                    AJAX: crear/modificar usuario
+│   ├── GET /user/{id}/pic                 Obtener imagen de usuario
+│   └── POST /user/{id}/pic                AJAX: cambiar imagen usuario
+├── evento
+│   ├── GET /evento/{id}/apostar           Página de apuestas (fórmulas)
+│   ├── GET /evento/{id}/apostar/cargarMas AJAX: cargar más fórmulas
+│   ├── GET /evento/{id}/apostar/buscar    AJAX: buscar fórmulas
+│   ├── GET /evento/{id}/getVariables      AJAX: obtener variables
+│   ├── POST /evento/apostar               AJAX: crear apuesta
+│   └── POST /evento/{id}/crearFormula     AJAX: crear fórmula
+├── chats
+│   ├── GET /chats/                        Cargar HTML de chats
+│   ├── GET /chats/cargarChats             AJAX: cargar chats suscritos
+│   ├── GET /chats/cargarMensajes/{id}     AJAX: mensajes de un chat
+│   ├── POST /chats/mandarMensaje/{id}     AJAX: mandar mensaje
+│   ├── POST /chats/notificar/{id}         AJAX: notificar visita (ws)
+│   ├── DELETE /chats/borrarMensaje/{id}   AJAX: borrar mensaje
+│   ├── POST /chats/reportarMEnsaje/{id}   AJAX: reportar mensaje
+│   ├── POST /chats/{id}/suscribirse       AJAX: suscribirse a chat
+│   └── POST /chats/{id}/desuscribirse     AJAX: desuscribirse de chat
+├── cartera
+│   ├── GET /cartera/ingresar              Página inicial de cartera
+│   ├── GET /cartera/paypal                Iniciar sesión en PayPal
+│   ├── GET /cartera/tarjeta               Introducir tarjeta
+│   ├── GET /cartera/retirar               Página para retirar
+│   ├── GET /cartera/ingreso               Página para ingresar
+│   ├── POST /cartera/ingresarDinero       AJAX: ingresar dinero
+│   └── POST /cartera/retirarDinero        AJAX: retirar dinero
+└── admin
+    ├── usuarios
+    │   ├── GET  /admin/usuarios                         HTML: tabla usuarios
+    │   ├── POST /admin/usuarios/{id}/banear             AJAX: banear usuario
+    │   └── POST /admin/usuario/{id}/ascender            AJAX: ascender usuario
+    ├── eventos
+    │   ├── GET /admin/eventos                           HTML: tabla eventos
+    │   ├── GET /admin/eventos/determinar/{id}           HTML: determinar evento
+    │   ├── GET  /admin/eventos/getVariablesSeccion/{id} AJAX: obtener variables sección
+    │   ├── POST /admin/eventos/determinar/{id}          AJAX: determinar evento
+    │   ├── POST /admin/eventos/cancelar/{id}            AJAX: cancelar evento
+    │   ├── POST /admin/eventos/crearEvento              AJAX: crear evento
+    │   └── GET  /admin/eventos/cargarDatosEvento/{id}    AJAX: cargar más datos del evento
+    ├── secciones
+    │   ├── GET  /admin/secciones                         HTML: tabla secciones
+    │   ├── GET  /admin/secciones/{id}/editar             HTML: editar sección
+    │   ├── GET  /admin/secciones-crearSeccion            HTML: crear sección
+    │   ├── POST /admin/guardarSeccion                   AJAX: guardar sección
+    │   ├── POST /admin/editarSeccion                    AJAX: editar sección
+    │   └── DELETE /admin/eliminarSeccion/{id}           AJAX: eliminar sección
+    └── reportes
+        ├── GET /admin/reportes                          HTML: tabla reportes
+        ├── GET /admin/reporte/{id}/determinar           AJAX: determinar castigo
+        └── GET /admin/reportes/cargarDatosReporte/{id}  AJAX: cargar más datos del reporte
+```
+## 🔧Recursos utilizados
 - https://www.web-leb.com/es/code/609 (Barra búsqueda todas las secciones. Se ha modificado un poco)
 
 - https://chatgpt.com/ : Sobretodo para entender como funciona bootstrap, html y css. Para detectar donde están los errores más rápido y para fragmentos de código básicos.
