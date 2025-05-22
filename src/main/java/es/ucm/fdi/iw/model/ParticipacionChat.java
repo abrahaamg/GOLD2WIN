@@ -48,10 +48,10 @@ public class ParticipacionChat implements Transferable<ParticipacionChat.Transfe
         OffsetDateTime fechaUltimo = evento.getFechaCreacion();
         String ultimoMensaje = "Creacion chat";
 
-        int i = 0; 
-        while(evento.getMensajes().size() > i && ultimaVisita.isBefore(evento.getMensajes().get(i).getFechaEnvio())) {
-            mensajesNoLeidos++;
-            i++;
+        for (Mensaje mensaje : evento.getMensajes()) {
+            if (mensaje.getFechaEnvio().isAfter(ultimaVisita)) {
+                mensajesNoLeidos++;
+            }
         }
 
         if (evento.getMensajes().size() != 0){
