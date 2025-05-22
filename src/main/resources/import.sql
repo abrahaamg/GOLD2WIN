@@ -1,7 +1,7 @@
 -- INSERT DE USERS (username a, password aa)
 INSERT INTO IWUser (ID, DINERO_DISPONIBLE, DINERO_RETENIDO, EMAIL, ENABLED, FIRST_NAME, LAST_NAME, PASSWORD, ROLES, USERNAME) VALUES
-(1, 13055, 0, 'Jose_Luis@gmail.com', TRUE, 'Jose Luis', 'apellido1 apellido2', '{bcrypt}$2a$10$2BpNTbrsarbHjNsUWgzfNubJqBRf.0Vz9924nRSHBqlbPKerkgX.W', 'USER', 'Jose Luis'),
-(2, 13055, 0, 'ramon@gmail.com', TRUE, 'Ramon', 'apellido1 apellido2', '{bcrypt}$2a$10$2BpNTbrsarbHjNsUWgzfNubJqBRf.0Vz9924nRSHBqlbPKerkgX.W', 'ADMIN,USER', 'Ramon'),
+(1, 13055, 11200, 'Jose_Luis@gmail.com', TRUE, 'Jose Luis', 'apellido1 apellido2', '{bcrypt}$2a$10$2BpNTbrsarbHjNsUWgzfNubJqBRf.0Vz9924nRSHBqlbPKerkgX.W', 'USER', 'Jose Luis'),
+(2, 13055, 5300, 'ramon@gmail.com', TRUE, 'Ramon', 'apellido1 apellido2', '{bcrypt}$2a$10$2BpNTbrsarbHjNsUWgzfNubJqBRf.0Vz9924nRSHBqlbPKerkgX.W', 'ADMIN,USER', 'Ramon'),
 (3, 20000, 0, 'carlos.hernandez@example.com', TRUE, 'Carlos', 'Hernández Ruiz', '{bcrypt}$2a$10$2BpNTbrsarbHjNsUWgzfNubJqBRf.0Vz9924nRSHBqlbPKerkgX.W', 'USER', 'chernandez'),
 (4, 5000, 0, 'ana.martinez@example.com', TRUE, 'Ana', 'Martínez Sánchez', '{bcrypt}$2a$10$2BpNTbrsarbHjNsUWgzfNubJqBRf.0Vz9924nRSHBqlbPKerkgX.W', 'USER', 'amartinez'),
 (5, 30000, 0, 'luis.flores@example.com', TRUE, 'Luis', 'Flores Mendoza', '{bcrypt}$2a$10$2BpNTbrsarbHjNsUWgzfNubJqBRf.0Vz9924nRSHBqlbPKerkgX.W', 'ADMIN', 'lflores'),
@@ -745,25 +745,18 @@ INSERT INTO FORMULA_APUESTA (ID, DINERO_AFAVOR, DINERO_EN_CONTRA, FORMULA, NOMBR
 (1, 0, 0, 'GolesCeltaDeVigo > GolesOsasuna', 'Gana Celta de Vigo', 'INDETERMINADO', 1, 1, '2025-05-22 12:00:00'),
 (2, 0, 0, 'CornersOsasuna > CornersCeltaDeVigo', 'Más corners Osasuna', 'INDETERMINADO', 1, 1, '2025-05-22 12:00:00'),
 (3, 0, 0, 'TriplesLosAngelesLakers > TriplesBostonCeltics', 'Más triples Lakers', 'INDETERMINADO', 2, 2, '2025-05-22 12:00:00'),
-(4, 0, 0, 'PuntosBostonCeltics > PuntosLosAngelesLakers', 'Gana Boston Celtics', 'INDETERMINADO', 2, 2, '2025-05-22 12:00:00'),
+(4, 0, 0, 'PuntosBostonCeltics > PuntosLosAngelesLakers', 'Gana Boston Celtics', 'INDETERMINADO', 2, 2, '2025-05-22 12:00:00');
 
 -- INSERT APUESTA con FECHA_CREACION en formato OffsetDateTime
 INSERT INTO APUESTA (ID, CANTIDAD, A_FAVOR, APOSTADOR_ID, FORMULA, FECHA_CREACION) VALUES
-(1, 5000, TRUE, 1, 1, '2025-03-22T14:53:00+01:00'),
-(2, 3000, FALSE, 2, 2, '2025-03-22T14:53:00+01:00'),
-(3, 7505, TRUE, 3, 3, '2025-03-22T14:53:00+01:00'),
-(4, 2000, FALSE, 4, 4, '2025-03-22T14:53:00+01:00'),
-(5, 10000, TRUE, 11, 5, '2025-03-22T14:53:00+01:00'),
-(6, 4500, TRUE, 6, 6, '2025-03-22T14:53:00+01:00'),
-(7, 6000, FALSE, 7, 7, '2025-03-22T14:53:00+01:00'),
-(9, 9000, FALSE, 9, 9, '2025-03-22T14:53:00+01:00'),
-(10, 1500, TRUE, 10, 10, '2025-03-22T14:53:00+01:00'),
-(11, 12000, FALSE, 11, 11, '2025-03-22T14:53:00+01:00'),
-(12, 3500, TRUE, 12, 12, '2025-03-22T14:53:00+01:00'),
-(13, 40000, FALSE, 12, 12, '2025-03-22T14:53:00+01:00'),
-(14, 35000, FALSE, 12, 12, '2025-03-22T14:53:00+01:00'),
-(15, 1500, TRUE, 12, 12, '2025-03-22T14:53:00+01:00'),
-(16, 3000, FALSE, 11, 5, '2025-03-22T14:53:00+01:00');
+(1, 2000, TRUE, 1, 1, '2025-05-22 15:00:00'),
+(2, 1500, FALSE, 2, 1, '2025-05-22 16:00:00'),
+(3, 5000, FALSE, 1, 2, '2025-05-22 17:00:00'),
+(4, 700, TRUE, 2, 2, '2025-05-22 15:30:00'),
+(5, 3500, TRUE, 1, 3, '2025-05-22 16:30:00'),
+(6, 2200, FALSE, 2, 3, '2025-05-22 17:30:00'),
+(7, 700, FALSE, 1, 4, '2025-05-22 18:00:00'),
+(8, 900, TRUE, 2, 4, '2025-05-22 19:00:00');
 
 INSERT INTO PARTICIPACION_CHAT (EVENTO_ID, ULTIMA_VISITA, USUARIO_ID) VALUES
 (1, '2025-05-03 09:30:00', 1),
@@ -792,18 +785,9 @@ INSERT INTO MENSAJE (ENABLED, FECHA_ENVIO, ID, ID_EVENTO, REMITENTE, CONTENIDO) 
 
 INSERT INTO REPORTE (RESUELTO, FECHA_ENVIO, FECHA_RESOLUCION, ID, ID_MENSAJE, ID_REPORTADOR, MOTIVO)
 VALUES 
-(FALSE, '2025-05-01', NULL, 1, 1, 2, 'Contenido ofensivo en el mensaje'),
-(FALSE, '2025-05-02', NULL, 2, 2, 3, 'Spam repetitivo detectado'),
-(TRUE, '2025-04-28', '2025-05-03', 3, 3, 4, 'Manipulación de resultados en mensaje'),
-(TRUE, '2025-04-20', '2025-04-22', 4, 4, 5, 'Lenguaje inapropiado'),
-(FALSE, '2025-05-03', NULL, 5, 5, 2, 'Incitación al odio'),
-(TRUE, '2025-04-15', '2025-04-18', 6, 6, 6, 'Publicidad no solicitada'),
-(FALSE, '2025-05-04', NULL, 7, 7, 3, 'Amenazas en el mensaje'),
-(TRUE, '2025-04-10', '2025-04-12', 8, 8, 7, 'Suplantación de identidad'),
-(FALSE, '2025-05-04', NULL, 9, 9, 4, 'Contenido falso'),
-(FALSE, '2025-05-04', NULL, 10, 10, 5, 'Contenido explícito sin aviso'),
-(TRUE, '2025-04-01', '2025-04-05', 11, 11, 8, 'Violación de normas comunitarias'),
-(TRUE, '2025-03-28', '2025-03-30', 12, 12, 9, 'Abuso verbal en conversación');
+(FALSE, '2025-05-04 15:30:00', NULL, 1, 6, 2, 'Es demasiado pesimista :(('),
+(FALSE, '2025-03-03 19:30:00', NULL, 2, 9, 3, 'Es un bot solo sabe decir Mensaje 1,2,3...'),
+(FALSE, '2025-05-03 19:30:00', NULL, 3, 12, 4, 'Me cae muy mal. Expulsadlo porfa');
 
 -- start id numbering from a value that is larger than any assigned above
 ALTER SEQUENCE "PUBLIC"."GEN" RESTART WITH 1024;
