@@ -124,7 +124,7 @@ El administrador puede añadir una nueva sección o editar una sección poniendo
 -----------------------------
 
 ## Modelo de la base de datos
-![Diagrama de BD](ER_IW.png)
+![Diagrama de BD](ER_IW.svg)
 
 ## Recursos utilizados
 - https://www.web-leb.com/es/code/609 (Barra busqueda todas las secciones. Se ha modificado un poco)
