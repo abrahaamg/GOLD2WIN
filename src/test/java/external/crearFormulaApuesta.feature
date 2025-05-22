@@ -8,9 +8,10 @@ Feature: Testeo UI con Karate
     # Clicka en el evento de NBA
     * click('#contenedorEvento-2')
     # Se crea la formula
-    * click('#boton-crear-formula')
+    * click('#boton-crear-formula-reducido')
     * delay(300)
-    And input('#tituloModal', 'Victoria Lakers')
+    And input('#tituloModal', 'Puntos')
+    * delay(200)
     And input('#formulaModal', 'Puntos > 200')
     * delay(1000)
     * click('#botonSiguienteCrearApuesta')
@@ -20,7 +21,7 @@ Feature: Testeo UI con Karate
     * click('#botonCrearApuestaDefinitiva')
     * delay(1000)
 
-    # Se cambia de usuario y se ve la formula creada con el otro usuario
+    # Se cambia de usuario y se ve la fórmula creada con el otro usuario
     * click('#usuarioNav')
     * delay(300)
     * click('#botonNavCerrarSesion')
