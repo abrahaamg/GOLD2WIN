@@ -11,7 +11,7 @@
     <header th:replace="fragments/nav.html :: nav('ingresar')"></header>
     
     <div class="login-container">
-        <form class="login-form" action="/login" method="post">
+        <form id="formularioTarjeta" class="login-form" method="post">
             <img src="/img/redsys.png" alt="RedSys logo" style="width: 170px; height: 70px; display: block; 
             margin-left: auto; margin-right: auto;">
 
@@ -38,9 +38,19 @@
 
     <th:block th:replace="fragments/footer.html :: footer" />
 
-    <!-- Script Thymeleaf -->
-    <script th:src="@{/js/ajax-demo.js}"></script>
+    <script th:inline="javascript">
+        document.getElementById("formularioTarjeta").addEventListener("submit", function(event) {
+            if (!this.checkValidity()) {
+            return;
+            }
 
+            event.preventDefault(); // Evita el envío real del formulario
+
+            // Thymeleaf inserta la URL aquí directamente
+            var url = /*[[@{/cartera/ingresar(tarjeta=true)}]]*/ "";
+            window.location.href = url;
+        });
+    </script>
 </body>
 
 </html>

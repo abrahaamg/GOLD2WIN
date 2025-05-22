@@ -121,8 +121,6 @@ Esta es de las vistas mas complejas de administrador ya que muestra la tabla de 
 #### 6.4 Secciones
 El administrador puede añadir una nueva sección o editar una sección poniendo la imagen de perfil, el grupo de secciones al que pertenece y poniendo las variables de la plantilla.
 
------------------------------
-
 ## Modelo de la base de datos
 ![Diagrama de BD](ER_IW.svg)
 

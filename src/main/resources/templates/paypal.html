@@ -11,7 +11,7 @@
     <header th:replace="fragments/nav.html :: nav('ingresar')"></header>
     
     <div class="login-container">
-        <form class="login-form" action="/login" method="post">
+        <form class="login-form" id="formPaypal" method="post">
             <img src="/img/paypal.png" alt="PayPal logo" style="width: 130px; height: 90px; display: block; 
             margin-left: auto; margin-right: auto;">
 
@@ -26,7 +26,7 @@
                 <input type="password" class="form-control" id="password" name="password" placeholder="Ingrese su contraseña" required>
             </div>
 
-            <button type="submit" class="btn btn-paypal">Iniciar Sesión</button>
+            <a th:href="@{/cartera/ingresar?paypal}"><button type="submit" class="btn btn-paypal">Iniciar Sesión</button></a>
 
             <div class="form-text">
     <!-- Hay que poner el olvidaste tu contraseña?? -->
@@ -37,9 +37,19 @@
 
     <th:block th:replace="fragments/footer.html :: footer" />
 
-    <!-- Script Thymeleaf -->
-    <script th:src="@{/js/ajax-demo.js}"></script>
+    <script th:inline="javascript">
+        document.getElementById("formPaypal").addEventListener("submit", function(event) {
+            if (!this.checkValidity()) {
+            return;
+            }
 
+            event.preventDefault(); // Evita el envío real del formulario
+
+            // Thymeleaf inserta la URL aquí directamente
+            var url = /*[[@{/cartera/ingresar(paypal=true)}]]*/ "";
+            window.location.href = url;
+        });
+    </script>
 </body>
 
 </html>
