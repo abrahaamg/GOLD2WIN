@@ -97,23 +97,12 @@ public class AdminController {
         return "usuarios";
     }
 
-    @GetMapping("/usuarios/usuarioDetalles")
-    public String usuarioDetalles(Model model) {
-        return "usuarioDetalles";
-    }
-
-    @GetMapping("/usuarios/transacciones")
-    public String transacciones(Model model) {
-        return "transacciones";
-    }
-
     @PostMapping("/usuarios/{id}/banear")
     @ResponseBody
     @Transactional
     public ResponseEntity<JsonNode> banearUsuario(@PathVariable long id, @RequestBody JsonNode o) {
         User user = entityManager.find(User.class, id);
         int tipo = o.get("tipo").asInt(); // 0 = nueva fecha, 1 = cantidad de minutos
-         
 
         if (user == null) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario no encontrado");
@@ -121,15 +110,13 @@ public class AdminController {
 
         OffsetDateTime duracionFinal = user.getExpulsadoHasta();
 
-        if(tipo == 0){
-            if(o.get("fecha").isNull()){
-                duracionFinal = null; //quita el baneo
-            }
-            else{
+        if (tipo == 0) {
+            if (o.get("fecha").isNull()) {
+                duracionFinal = null; // quita el baneo
+            } else {
                 duracionFinal = OffsetDateTime.parse(o.get("fecha").asText());
             }
-        }
-        else if(tipo == 1){
+        } else if (tipo == 1) {
             int minutos = o.get("minutos").asInt();
             OffsetDateTime actual = user.getExpulsadoHasta();
             OffsetDateTime now = OffsetDateTime.now();
@@ -137,7 +124,7 @@ public class AdminController {
             duracionFinal = inicio.plusMinutes(minutos);
         }
 
-        //Mando un mensaje WS al usuario baneado para que cierre sesion
+        // Mando un mensaje WS al usuario baneado para que cierre sesion
         user.setExpulsadoHasta(duracionFinal);
         Map<String, Object> mensaje = new HashMap<>();
         mensaje.put("tipoEvento", "baneoRecibido");
@@ -205,10 +192,10 @@ public class AdminController {
         if (reporte.isResuelto()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El reporte ya ha sido resuelto");
         }
-        
+
         reporte.setResuelto(true);
-        
-        if(minutos > 0){
+
+        if (minutos > 0) {
             User user = entityManager.find(User.class, reporte.getMensajeReportado().getRemitente().getId());
 
             OffsetDateTime actual = user.getExpulsadoHasta();
@@ -216,7 +203,7 @@ public class AdminController {
             OffsetDateTime inicio = (actual != null && actual.isAfter(now)) ? actual : now;
             user.setExpulsadoHasta(inicio.plusMinutes(minutos));
 
-            //Mando un mensaje WS al usuario baneado para que cierre sesion
+            // Mando un mensaje WS al usuario baneado para que cierre sesion
             Map<String, Object> mensaje = new HashMap<>();
             mensaje.put("tipoEvento", "baneoRecibido");
             ObjectMapper mapper = new ObjectMapper();
@@ -231,18 +218,6 @@ public class AdminController {
         }
 
         return response;
-    }
-    
-
-
-    @GetMapping("/reporteConcreto")
-    public String reporteConcreto(Model model) {
-        return "reporteConcreto";
-    }
-
-    @GetMapping("/verificarEvento")
-    public String verificarEvento(Model model) {
-        return "verificarEvento";
     }
 
     @GetMapping("/eventos")
@@ -612,14 +587,161 @@ public class AdminController {
         result.put("fechaEnvio", reporte.getFechaEnvio().format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm")));
         result.put("resuelto", reporte.isResuelto());
         result.put("fechaResolucion", reporte.isResuelto() && reporte.getFechaResolucion() != null
-            ? reporte.getFechaResolucion().format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm"))
-            : null);
+                ? reporte.getFechaResolucion().format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm"))
+                : null);
 
         return result;
     }
 
+    
+    @Transactional
+    @ResponseBody
+    @PostMapping("/guardarSeccion")
+    public ResponseEntity<JsonNode> guardarSeccion(@RequestBody JsonNode json) throws IOException {
+        // Crear una respuesta JSON con el mensaje
+        ObjectMapper objectMapper = new ObjectMapper();
+        ObjectNode response = objectMapper.createObjectNode();
+        response.put("mensaje", "Seccion guardada correctamente");
 
+        JsonNode seccionNode = json.get("seccionN");
+        if (seccionNode == null || !seccionNode.has("nombre") || !seccionNode.has("tipo")) {
+            return ResponseEntity.badRequest()
+                    .body(objectMapper.createObjectNode().put("error", "Datos de seccionN incompletos"));
+        }
 
+        String nombre = seccionNode.get("nombre").asText();
+        String grupo = seccionNode.get("tipo").asText();
+
+        Seccion nuevaSeccion = new Seccion();
+        nuevaSeccion.setNombre(nombre);
+        nuevaSeccion.setGrupo(grupo);
+        nuevaSeccion.setEnabled(true);
+        entityManager.persist(nuevaSeccion);
+        entityManager.flush(); // para asegurar que exista la sección cuando se añadan variables
+
+        JsonNode itemsNode = json.get("arrayVariables");
+        if (itemsNode != null && itemsNode.isArray()) {
+            for (JsonNode item : itemsNode) {
+
+                String nombreV = item.get("nombreV").asText();
+                String tipoV = item.get("tipoV").asText();
+
+                VariableSeccion nuevaVariable = new VariableSeccion();
+                nuevaVariable.setNombre(nombreV);
+                nuevaVariable.setNumerico(tipoV.equals("Valor numérico"));
+                nuevaVariable.setSeccion(nuevaSeccion);
+                entityManager.persist(nuevaVariable);
+            }
+        }
+
+        JsonNode imageDataNode = json.get("imageData");
+        if (imageDataNode != null && imageDataNode.has("image")) {
+            String base64Image = imageDataNode.get("image").asText();
+            String filename = imageDataNode.get("filename").asText();
+
+            MultipartFile photo = convertirBase64AMultipartFile(base64Image, filename);
+            setPic(photo, "seccion", "" + nuevaSeccion.getId());
+        }
+        return ResponseEntity.ok(response);
+    }
+
+    @Transactional
+    @ResponseBody
+    @DeleteMapping("/eliminarSeccion/{id}")
+    public ResponseEntity<JsonNode> eliminarSeccion(@PathVariable Long id) {
+        Seccion seccion = entityManager.find(Seccion.class, id);
+
+        if (seccion != null) {
+            seccion.setEnabled(false);
+            entityManager.merge(seccion);
+        }
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        ObjectNode response = objectMapper.createObjectNode();
+        response.put("mensaje", "Seccion eliminada correctamente");
+        return ResponseEntity.ok(response);
+    }
+
+    @Transactional
+    @ResponseBody
+    @PostMapping("/editarSeccion")
+    public ResponseEntity<JsonNode> editarSeccion(@RequestBody JsonNode json) throws IOException {
+        // Crear una respuesta JSON con el mensaje
+        ObjectMapper objectMapper = new ObjectMapper();
+        ObjectNode response = objectMapper.createObjectNode();
+        response.put("mensaje", "Seccion editada correctamente");
+
+        JsonNode seccionNode = json.get("seccionN");
+        if (seccionNode == null || !seccionNode.has("nombre") || !seccionNode.has("tipo")) {
+            return ResponseEntity.badRequest()
+                    .body(objectMapper.createObjectNode().put("error", "Datos de seccionN incompletos"));
+        }
+
+        String nombre = seccionNode.get("nombre").asText();
+        String grupo = seccionNode.get("tipo").asText();
+
+        Seccion seccion = entityManager.createNamedQuery("Seccion.getPorNombre", Seccion.class)
+                .setParameter("nombre", nombre).getSingleResult();
+
+        seccion.setGrupo(grupo);
+        entityManager.merge(seccion);
+
+        JsonNode itemsNode = json.get("arrayVariables");
+
+        List<VariableSeccion> vars = entityManager
+                .createNamedQuery("VarSeccion.filtrarPorSeccion", VariableSeccion.class)
+                .setParameter("seccion", seccion).getResultList();
+        for (VariableSeccion variable : vars) {
+            seccion.getPlantilla().remove(variable);
+            entityManager.persist(seccion);
+
+            entityManager.remove(variable);
+        }
+        if (itemsNode != null && itemsNode.isArray() && itemsNode.size() > 0) {
+            // borrar las variables antiguas
+            // String queryDelete = "DELETE FROM VariableSeccion v WHERE v.seccion =
+            // :seccion";
+            // entityManager.createQuery(queryDelete).setParameter("seccion",
+            // seccion).executeUpdate();
+
+            for (JsonNode item : itemsNode) {
+
+                String nombreV = item.get("nombreV").asText();
+                String tipoV = item.get("tipoV").asText();
+
+                VariableSeccion nuevaVariable = new VariableSeccion();
+                nuevaVariable.setNombre(nombreV);
+                nuevaVariable.setNumerico(tipoV.equals("Valor numérico"));
+                nuevaVariable.setSeccion(seccion);
+                entityManager.persist(nuevaVariable);
+            }
+        }
+
+        JsonNode imageDataNode = json.get("imageData");
+        if (imageDataNode != null && imageDataNode.has("image") && !imageDataNode.get("image").isNull()) {
+            String base64Image = imageDataNode.get("image").asText();
+            String filename = imageDataNode.has("filename") ? imageDataNode.get("filename").asText() : "";
+
+            if (!base64Image.isEmpty()) {
+                MultipartFile photo = convertirBase64AMultipartFile(base64Image, filename);
+                setPic(photo, "seccion", "" + seccion.getId());
+            }
+        }
+        return ResponseEntity.ok(response);
+    }
+
+    
+    @GetMapping("/verificarSeccion")
+    public ResponseEntity<?> verificarSeccion(@RequestParam String nombre) {
+        nombre = nombre.trim();
+
+        Long count = entityManager.createNamedQuery("Seccion.countByNombre", Long.class).setParameter("nombre", nombre)
+                .getSingleResult();
+
+        boolean existe = count > 0; // Si el numero es mayor a 0, ya existe
+
+        return ResponseEntity.ok().body("{\"existe\": " + existe + "}");
+    }
 
     // Logica para determinar evento
     // El evento tiene que haberse traido previamente de la base de datos y
@@ -770,142 +892,6 @@ public class AdminController {
         entityManager.flush();
     }
 
-    @Transactional
-    @ResponseBody
-    @PostMapping("/guardarSeccion")
-    public ResponseEntity<JsonNode> guardarSeccion(@RequestBody JsonNode json) throws IOException {
-        // Crear una respuesta JSON con el mensaje
-        ObjectMapper objectMapper = new ObjectMapper();
-        ObjectNode response = objectMapper.createObjectNode();
-        response.put("mensaje", "Seccion guardada correctamente");
-
-        JsonNode seccionNode = json.get("seccionN");
-        if (seccionNode == null || !seccionNode.has("nombre") || !seccionNode.has("tipo")) {
-            return ResponseEntity.badRequest()
-                    .body(objectMapper.createObjectNode().put("error", "Datos de seccionN incompletos"));
-        }
-
-        String nombre = seccionNode.get("nombre").asText();
-        String grupo = seccionNode.get("tipo").asText();
-
-        Seccion nuevaSeccion = new Seccion();
-        nuevaSeccion.setNombre(nombre);
-        nuevaSeccion.setGrupo(grupo);
-        nuevaSeccion.setEnabled(true);
-        entityManager.persist(nuevaSeccion);
-        entityManager.flush(); // para asegurar que exista la sección cuando se añadan variables
-
-        JsonNode itemsNode = json.get("arrayVariables");
-        if (itemsNode != null && itemsNode.isArray()) {
-            for (JsonNode item : itemsNode) {
-
-                String nombreV = item.get("nombreV").asText();
-                String tipoV = item.get("tipoV").asText();
-
-                VariableSeccion nuevaVariable = new VariableSeccion();
-                nuevaVariable.setNombre(nombreV);
-                nuevaVariable.setNumerico(tipoV.equals("Valor numérico"));
-                nuevaVariable.setSeccion(nuevaSeccion);
-                entityManager.persist(nuevaVariable);
-            }
-        }
-
-        JsonNode imageDataNode = json.get("imageData");
-        if (imageDataNode != null && imageDataNode.has("image")) {
-            String base64Image = imageDataNode.get("image").asText();
-            String filename = imageDataNode.get("filename").asText();
-
-            MultipartFile photo = convertirBase64AMultipartFile(base64Image, filename);
-            setPic(photo, "seccion", "" + nuevaSeccion.getId());
-        }
-        return ResponseEntity.ok(response);
-    }
-
-    @Transactional
-    @ResponseBody
-    @DeleteMapping("/eliminarSeccion/{id}")
-    public ResponseEntity<JsonNode> eliminarSeccion(@PathVariable Long id) {
-        Seccion seccion = entityManager.find(Seccion.class, id);
-
-        if (seccion != null) {
-            seccion.setEnabled(false);
-            entityManager.merge(seccion);
-        }
-
-        ObjectMapper objectMapper = new ObjectMapper();
-        ObjectNode response = objectMapper.createObjectNode();
-        response.put("mensaje", "Seccion eliminada correctamente");
-        return ResponseEntity.ok(response);
-    }
-
-    @Transactional
-    @ResponseBody
-    @PostMapping("/editarSeccion")
-    public ResponseEntity<JsonNode> editarSeccion(@RequestBody JsonNode json) throws IOException {
-        // Crear una respuesta JSON con el mensaje
-        ObjectMapper objectMapper = new ObjectMapper();
-        ObjectNode response = objectMapper.createObjectNode();
-        response.put("mensaje", "Seccion editada correctamente");
-
-        JsonNode seccionNode = json.get("seccionN");
-        if (seccionNode == null || !seccionNode.has("nombre") || !seccionNode.has("tipo")) {
-            return ResponseEntity.badRequest()
-                    .body(objectMapper.createObjectNode().put("error", "Datos de seccionN incompletos"));
-        }
-
-        String nombre = seccionNode.get("nombre").asText();
-        String grupo = seccionNode.get("tipo").asText();
-
-        Seccion seccion = entityManager.createNamedQuery("Seccion.getPorNombre", Seccion.class)
-                .setParameter("nombre", nombre).getSingleResult();
-
-        seccion.setGrupo(grupo);
-        entityManager.merge(seccion);
-
-        JsonNode itemsNode = json.get("arrayVariables");
-
-        List<VariableSeccion> vars = entityManager
-                .createNamedQuery("VarSeccion.filtrarPorSeccion", VariableSeccion.class)
-                .setParameter("seccion", seccion).getResultList();
-        for (VariableSeccion variable : vars) {
-            seccion.getPlantilla().remove(variable);
-            entityManager.persist(seccion);
-
-            entityManager.remove(variable);
-        }
-        if (itemsNode != null && itemsNode.isArray() && itemsNode.size() > 0) {
-            // borrar las variables antiguas
-            // String queryDelete = "DELETE FROM VariableSeccion v WHERE v.seccion =
-            // :seccion";
-            // entityManager.createQuery(queryDelete).setParameter("seccion",
-            // seccion).executeUpdate();
-
-            for (JsonNode item : itemsNode) {
-
-                String nombreV = item.get("nombreV").asText();
-                String tipoV = item.get("tipoV").asText();
-
-                VariableSeccion nuevaVariable = new VariableSeccion();
-                nuevaVariable.setNombre(nombreV);
-                nuevaVariable.setNumerico(tipoV.equals("Valor numérico"));
-                nuevaVariable.setSeccion(seccion);
-                entityManager.persist(nuevaVariable);
-            }
-        }
-
-        JsonNode imageDataNode = json.get("imageData");
-        if (imageDataNode != null && imageDataNode.has("image") && !imageDataNode.get("image").isNull()) {
-            String base64Image = imageDataNode.get("image").asText();
-            String filename = imageDataNode.has("filename") ? imageDataNode.get("filename").asText() : "";
-
-            if (!base64Image.isEmpty()) {
-                MultipartFile photo = convertirBase64AMultipartFile(base64Image, filename);
-                setPic(photo, "seccion", "" + seccion.getId());
-            }
-        }
-        return ResponseEntity.ok(response);
-    }
-
     @ResponseBody
     public String setPic(MultipartFile photo, String carpeta, String nombre) throws IOException {
         log.info("Updating photo for user {}", nombre);
@@ -922,18 +908,6 @@ public class AdminController {
             }
         }
         return "{\"status\":\"photo uploaded correctly\"}";
-    }
-
-    @GetMapping("/verificarSeccion")
-    public ResponseEntity<?> verificarSeccion(@RequestParam String nombre) {
-        nombre = nombre.trim();
-
-        Long count = entityManager.createNamedQuery("Seccion.countByNombre", Long.class).setParameter("nombre", nombre)
-                .getSingleResult();
-
-        boolean existe = count > 0; // Si el numero es mayor a 0, ya existe
-
-        return ResponseEntity.ok().body("{\"existe\": " + existe + "}");
     }
 
     public MultipartFile convertirBase64AMultipartFile(String base64, String filename) throws IOException {
