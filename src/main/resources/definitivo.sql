@@ -742,7 +742,7 @@ INSERT INTO VARIABLE (ID, NOMBRE, NUMERICO, RESOLUCION, ID_EVENTO) VALUES
 
 -- INSERT FORMULA_APUESTA con FECHA_CREACION
 INSERT INTO FORMULA_APUESTA (ID, DINERO_AFAVOR, DINERO_EN_CONTRA, FORMULA, NOMBRE, RESULTADO, CREADOR_ID, EVENTO_ID, FECHA_CREACION) VALUES
-(1, 0, 0, 'GolesCeltaDeVigo > GolesOsasuna', 'Gana Celta de Vigo', 'INDETERMINADO', 1, 1, '2025-05-22 12:00:00'),
+(1, 5000, 3000, 'GolesCeltaDeVigo > GolesOsasuna', 'Gana Celta de Vigo', 'INDETERMINADO', 1, 1, '2025-05-22 12:00:00'),
 (2, 0, 0, 'CornersOsasuna > CornersCeltaDeVigo', 'Más corners Osasuna', 'INDETERMINADO', 1, 1, '2025-05-22 12:00:00'),
 (3, 0, 0, 'TriplesLosAngelesLakers > TriplesBostonCeltics', 'Más triples Lakers', 'INDETERMINADO', 2, 2, '2025-05-22 12:00:00'),
 (4, 0, 0, 'PuntosBostonCeltics > PuntosLosAngelesLakers', 'Gana Boston Celtics', 'INDETERMINADO', 2, 2, '2025-05-22 12:00:00');

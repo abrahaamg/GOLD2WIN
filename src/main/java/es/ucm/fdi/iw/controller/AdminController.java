@@ -194,6 +194,7 @@ public class AdminController {
         }
 
         reporte.setResuelto(true);
+        reporte.setFechaResolucion(OffsetDateTime.now());
 
         if (minutos > 0) {
             User user = entityManager.find(User.class, reporte.getMensajeReportado().getRemitente().getId());
