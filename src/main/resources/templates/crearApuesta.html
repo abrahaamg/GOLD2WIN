@@ -104,7 +104,7 @@
                 style="box-sizing: border-box;min-height:85px;margin-top: 1px;">
                 <button id="botonEnviar" type="button" class="btn btn-primary">Enviar</button>
                 <input id="campoMensaje" type="text" class="d-flex form-control ms-3 flex-grow-1"
-                    placeholder="Escribe un mensaje...">
+                    placeholder="Escribe un mensaje..." maxlength="250" required>
             </div>
 
         </div>
@@ -123,7 +123,7 @@
                         <div class="modal-body">
                             <div class="mb-3">
                                 <label for="motivo" class="form-label">Motivo del reporte</label>
-                                <textarea class="form-control" id="motivo" rows="3" required></textarea>
+                                <textarea class="form-control" id="motivo" rows="3"  maxlength="250" required></textarea>
                                 <div class="invalid-feedback">Por favor, escribe un motivo.</div>
                             </div>
                         </div>

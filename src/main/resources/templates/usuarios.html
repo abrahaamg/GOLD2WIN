@@ -9,7 +9,7 @@
     type="text/css" />
 </head>
 
-<body class="d-flex flex-column h-100">
+<body >
     
     <header th:replace="fragments/nav.html :: nav('administrar')"></header>
 
@@ -46,6 +46,7 @@
         <div class="pb-3">
             <div th:replace="fragments/menuAdmin.html :: navAdmin('Usuarios')"></div>
         </div>
+
         <table id="myTableUsers" class="display">
             <thead>
                 <tr>
@@ -54,7 +55,7 @@
                     <th>Email</th>
                     <th>Saldo</th>
                     <th>Rol</th>
-                    <th>Expulsion</th>
+                    <th>Expulsado Hasta</th>
                     <th> </th> <!-- columna para el menú de 3 puntos -->
                 </tr>
             </thead>
@@ -66,7 +67,10 @@
                     <td th:text="${usuario.email}"></td>
                     <td th:text="${usuario.dineroDisponible}"></td>
                     <td th:text="${usuario.roles}"></td>              
-                    <td th:text="${usuario.dineroRetenido}"></td>
+                    <td>
+                        <span th:if="${usuario.expulsadoHasta != NULL}" th:text="${#temporals.format(usuario.expulsadoHasta, 'dd-MM-yyyy')}"></span>
+                        <span th:if="${usuario.expulsadoHasta == NULL}">No ha sido expulsado</span>
+                    </td>
                     <td>
                         <div class="dropdown">
                             <button class="btn btn-sm" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">

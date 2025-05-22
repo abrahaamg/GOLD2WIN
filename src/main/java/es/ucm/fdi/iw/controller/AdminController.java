@@ -7,6 +7,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.time.OffsetDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.HashMap;
@@ -574,6 +575,32 @@ public class AdminController {
 
         return "secciones-crearSeccion";
     }
+
+    @GetMapping(path = "/reportes/cargarDatosReporte/{id}", produces = "application/json")
+    @ResponseBody
+    public Map<String, Object> cargarDatosReporte(@PathVariable long id) {
+        Reporte reporte = entityManager.find(Reporte.class, id);
+        if (reporte == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Reporte no encontrado");
+        }
+
+        Map<String, Object> result = new HashMap<>();
+        result.put("id", reporte.getId());
+        result.put("reportador", reporte.getReportador().getUsername());
+        result.put("usuarioReportado", reporte.getMensajeReportado().getRemitente().getUsername());
+        result.put("motivo", reporte.getMotivo());
+        result.put("mensaje", reporte.getMensajeReportado().getContenido());
+        result.put("fechaEnvio", reporte.getFechaEnvio().format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm")));
+        result.put("resuelto", reporte.isResuelto());
+        result.put("fechaResolucion", reporte.isResuelto() && reporte.getFechaResolucion() != null
+            ? reporte.getFechaResolucion().format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm"))
+            : null);
+
+        return result;
+    }
+
+
+
 
     // Logica para determinar evento
     // El evento tiene que haberse traido previamente de la base de datos y
