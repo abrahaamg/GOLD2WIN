@@ -63,7 +63,7 @@ Las cuentas se dividen en 2 tipos:
 - **Administrador**: Este usuario tiene las mismas funciones que un usuario normal pero además puede acceder a la zona de administración donde puede ver la lista de usuarios, reportes, eventos y secciones. Puede expulsar a un usuario, indicar que se ha revisado un reporte aplicando la penalización necesaria, crear un evento, editar un evento ya creado, cancelar un evento (esto devuelve todo el dinero a los usuarios), ver los detalles de un evento, crear una sección y editar las ya existentes. 
 
 
-## 👁️‍🗨️Vistas{#vistas}
+## 👁️‍🗨️Vistas
 ### 1. Todas las secciones
 Es la recepción de la página y donde se pueden ver todos los eventos apostables que aún no han ocurrido. En cada uno se ve el título, la fecha, imagen de a sección, las etiquetas y un botón para unirse al chat de texto e ir a verlo. Pulsando sobre los eventos el usuario es redirigido a la pagina de crear apuesta del evento donde puede empezar a apostar. 
 
@@ -125,7 +125,7 @@ En esta parte de la aplicación es donde se realiza todo lo relacionado con las 
 - **Editar una sección**: Permite editar todos los campos de la sección menos el nombre que se considera fijo. Estos campos son: el tipo, la imagen representativa y las variables de sección. Estas variables se pueden ir eliminando y creando, esto último se hace con un modal que solicita los dos campos de las variables.
 - **Crear una sección**: sería como el formulario de editar pero con todos los campos vacíos.
 
-## 🗄️Modelo de la base de datos {#modelo-de-la-base-de-datos}
+## 🗄️Modelo de la base de datos
 ![Diagrama de BD](ER_IW.svg)
 
 ## 🌐Rutas de la Aplicación
