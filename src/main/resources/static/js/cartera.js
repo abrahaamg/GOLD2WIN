@@ -9,11 +9,13 @@ function ingresarDinero(event){
     if(cant < 3 || cant > 1500){
         document.getElementById("ingresoDineroInput").classList.add("is-invalid");
         document.getElementById("mensajeErrorVar").classList.add("invalid-feedback");
+        document.getElementById("mensajeErrorVar").style.display = 'block';
         return;
     }
     else{
         document.getElementById("ingresoDineroInput").classList.remove("is-invalid");
         document.getElementById("mensajeErrorVar").classList.remove("invalid-feedback");
+        document.getElementById("mensajeErrorVar").style.display = 'none';
     }
  
     if (cant % 1 === 0) {
@@ -56,14 +58,16 @@ function retirarDinero() {
     const cant = document.getElementById("retirarDineroInput").value;
     const dineroDisponible = document.getElementById("dineroDisponible").value;
     const cantAux = cant*100;
-    if(cant <= 2 || cant > 1000 || cantAux > dineroDisponible){
+    if(cant < 5 || cant > 1000 || cantAux > dineroDisponible){
         document.getElementById("retirarDineroInput").classList.add("is-invalid");
         document.getElementById("mensajeErrorVar").classList.add("invalid-feedback");
+        document.getElementById("mensajeErrorVar").style.display = 'block';
         return;
     }
     else{
         document.getElementById("retirarDineroInput").classList.remove("is-invalid");
         document.getElementById("mensajeErrorVar").classList.remove("invalid-feedback");
+        document.getElementById("mensajeErrorVar").style.display = 'none';
     }
 
     if (cant % 1 === 0) {
