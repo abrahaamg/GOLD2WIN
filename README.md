@@ -4,7 +4,7 @@
 
 - [Cómo ejecutar](#cómo-ejecutar)
 - [Descripción del proyecto](#descripción-del-proyecto)
-- [Vistas](#vistas)
+- [Vistas](#️️vistas)
   - [1. Todas las secciones](#1-todas-las-secciones)
   - [2. Crear apuesta](#2-crear-apuesta)
   - [3. Cartera](#3-cartera)
@@ -15,7 +15,7 @@
     - [6.2 Reportes](#62-reportes)
     - [6.3 Eventos](#63-eventos)
     - [6.4 Secciones](#64-secciones)
-- [Modelo de la base de datos](#modelo-de-la-base-de-datos)
+- [Modelo de la base de datos](#️modelo-de-la-base-de-datos)
 - [Rutas de la aplicacion](#rutas-de-la-aplicación)
 - [Recursos utilizados](#recursos-utilizados)
 
