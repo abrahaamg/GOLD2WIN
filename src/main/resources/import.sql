@@ -769,36 +769,6 @@ INSERT INTO VARIABLE (ID, NOMBRE, NUMERICO, RESOLUCION, ID_EVENTO) VALUES
 (704, 'PenalizacionesJugB', TRUE, NULL, 5);
 (12, 'Esports'), (12, 'Rocket League'), (12, 'RLCS'), (12, 'Final'), (12, 'Team BDS'), (12, 'Gen.G Mobil1');
 
-INSERT INTO VARIABLE (ID, NOMBRE, NUMERICO, RESOLUCION, ID_EVENTO) VALUES
-(501, 'GolesTeamBDS', TRUE, NULL, 12),
-(502, 'GolesGenGMobil1', TRUE, NULL, 12),
-(503, 'PrimerEquipoEnMarcar', FALSE, NULL, 12),
-(504, 'TirosAPuertaTeamBDS', TRUE, NULL, 12),
-(505, 'TirosAPuertaGenGMobil1', TRUE, NULL, 12),
-(506, 'DemolicionesTeamBDS', TRUE, NULL, 12),
-(507, 'DemolicionesGenGMobil1', TRUE, NULL, 12),
-(508, 'TurbosTeamBDS', TRUE, NULL, 12),
-(509, 'TurbosGenGMobil1', TRUE, NULL, 12),
-(510, 'PrimerAnotador', FALSE, NULL, 12),
-(511, 'PrimerGoleador', FALSE, NULL, 12),
-(512, 'MVP', FALSE, NULL, 12),
-(513, 'JuegosGanadosTeamBDS', TRUE, NULL, 12),
-(514, 'JuegosGanadosGenGMobil1', TRUE, NULL, 12),
-(515, 'NumTiemposExtras', TRUE, NULL, 12),
-(516, 'SalvadasTeamBDS', TRUE, NULL, 12),
-(517, 'SalvadasGenGMobil1', TRUE, NULL, 12),
-(518, 'AsistenciasTeamBDS', TRUE, NULL, 12),
-(519, 'AsistenciasGenGMobil1', TRUE, NULL, 12),
-(520, 'DuracionDelJuego', TRUE, NULL, 12);
-
--- COPIADO PEGADO DEL ANTERIOR IMPORT.SQL:
-
--- INSERT FORMULA_APUESTA con FECHA_CREACION
-INSERT INTO FORMULA_APUESTA (ID, DINERO_AFAVOR, DINERO_EN_CONTRA, FORMULA, NOMBRE, RESULTADO, CREADOR_ID, EVENTO_ID, FECHA_CREACION) VALUES
-(1, 2000, 1500, 'GolesCeltaDeVigo > GolesOsasuna', 'Gana Celta de Vigo', 'INDETERMINADO', 1, 1, '2025-05-22 12:00:00'),
-(2, 700, 5000, 'CornersOsasuna > CornersCeltaDeVigo', 'Más corners Osasuna', 'INDETERMINADO', 1, 1, '2025-05-22 12:00:00'),
-(3, 3500, 2200, 'TriplesLosAngelesLakers > TriplesBostonCeltics', 'Más triples Lakers', 'INDETERMINADO', 2, 2, '2025-05-22 12:00:00'),
-(4, 700, 900, 'PuntosBostonCeltics > PuntosLosAngelesLakers', 'Gana Boston Celtics', 'INDETERMINADO', 2, 2, '2025-05-22 12:00:00');
 INSERT INTO FORMULA_APUESTA 
     (ID, DINERO_AFAVOR, DINERO_EN_CONTRA, FORMULA, NOMBRE, RESULTADO, CREADOR_ID, EVENTO_ID, FECHA_CREACION)
 VALUES
@@ -807,17 +777,14 @@ VALUES
 INSERT INTO APUESTA (ID, CANTIDAD, A_FAVOR, APOSTADOR_ID, FORMULA, FECHA_CREACION) VALUES
 (700, 5000, TRUE, 2, 500, '2025-03-22T14:53:00+01:00'),
 (701, 3000, FALSE, 2, 500, '2025-03-22T14:53:00+01:00');
-
 -- COPIADO PEGADO DEL ANTERIOR IMPORT.SQL:
 
 -- INSERT FORMULA_APUESTA con FECHA_CREACION
-INSERT INTO FORMULA_APUESTA 
-    (ID, DINERO_AFAVOR, DINERO_EN_CONTRA, FORMULA, NOMBRE, RESULTADO, CREADOR_ID, EVENTO_ID, FECHA_CREACION)
-VALUES
-(1, 5000, 0, 'GolesCeltaDeVigo > GolesOsasuna', 'Gana Celta de Vigo', 'INDETERMINADO', 1, 1, '2025-05-22 12:00:00'),
-(2, 0, 3000, 'CornersOsasuna > CornersCeltaDeVigo', 'Más corners Osasuna', 'INDETERMINADO', 1, 1, '2025-05-22 12:00:00'),
-(3, 7505, 0, 'TriplesLosAngelesLakers > TriplesBostonCeltics', 'Más triples Lakers', 'INDETERMINADO', 2, 2, '2025-05-22 12:00:00'),
-(4, 0, 2000, 'PuntosBostonCeltics > PuntosLosAngelesLakers', 'Gana Boston Celtics', 'INDETERMINADO', 2, 2, '2025-05-22 12:00:00');
+INSERT INTO FORMULA_APUESTA (ID, DINERO_AFAVOR, DINERO_EN_CONTRA, FORMULA, NOMBRE, RESULTADO, CREADOR_ID, EVENTO_ID, FECHA_CREACION) VALUES
+(1, 2000, 1500, 'GolesCeltaDeVigo > GolesOsasuna', 'Gana Celta de Vigo', 'INDETERMINADO', 1, 1, '2025-05-22 12:00:00'),
+(2, 700, 5000, 'CornersOsasuna > CornersCeltaDeVigo', 'Más corners Osasuna', 'INDETERMINADO', 1, 1, '2025-05-22 12:00:00'),
+(3, 3500, 2200, 'TriplesLosAngelesLakers > TriplesBostonCeltics', 'Más triples Lakers', 'INDETERMINADO', 2, 2, '2025-05-22 12:00:00'),
+(4, 700, 900, 'PuntosBostonCeltics > PuntosLosAngelesLakers', 'Gana Boston Celtics', 'INDETERMINADO', 2, 2, '2025-05-22 12:00:00');
 
 -- INSERT APUESTA con FECHA_CREACION en formato OffsetDateTime
 INSERT INTO APUESTA (ID, CANTIDAD, A_FAVOR, APOSTADOR_ID, FORMULA, FECHA_CREACION) VALUES
