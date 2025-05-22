@@ -5,10 +5,7 @@ Feature: Testeo UI con Karate
 
     * click('#debugButtonA')
     # Se va a la parte de mis apuestas y se despliegan las apuestas relacionadas con Campeonato Mundial de Esgrima
-    * click('#enlaceNavMisApuestas')
-    * delay(300)
-    * click('#bettingBox-5')
-    * click('#bettingBox-16')
+    * click('#enlaceNavMisApuestas') 
     * delay(1000)
 
     #Se va a la parte de admin/eventos y se rellenan las variables para determinar el evento
@@ -19,23 +16,14 @@ Feature: Testeo UI con Karate
     * click('#dropdownMenuButton-5')
     * delay(300)
     * click('#botonDropdownDeterminarEvento-5')
-    And input('#_Toques', '8')
-    And input('#_NumToquesEspaña', '5')
-    And input('#_NumToquesRusia', '3')
-    And input('#_DuracionCombateSegundos', '200')
-    And input('#_ToquesDobles', '4')
-    And input('#_TarjetasAmarillasEspaña', '1')
-    And input('#_TarjetasAmarillasRusia', '2')
-    And input('#_TarjetasRojasEspaña', '0')
-    And input('#_TarjetasRojasRusia', '0')
-    And input('#_ParadasEspaña', '2')
-    And input('#_ParadasRusia', '2')
-    * delay(1000)
+    And input('#_ToquesJugA', '8')
+    And input('#_ToquesJugB', '5')
+    And input('#_PenalizacionesJugA', '3')
+    And input('#_PenalizacionesJugB', '12')
+
+    * delay(500)
     * click('#btn_determinar')
-    * delay(5000)
+    * delay(500)
     # Se vuelve a mis apuestas para ver que se han determinado
     * click('#enlaceNavMisApuestas')
-    * delay(500)
-    * click('#bettingBox-5')
-    * click('#bettingBox-16')
-    * delay(5000)
+    * delay(3000)
