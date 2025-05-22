@@ -1257,9 +1257,7 @@ a.botonOvalado.nav-link:hover {
 
 .contendorIngresarRetirar {
     max-width: 90vw;
-    /* 90% del ancho de la ventana */
     margin: 0 auto;
-    /* centra el div horizontalmente si es menor al 90% */
     overflow-x: none;
 }
 
