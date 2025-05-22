@@ -1,7 +1,7 @@
 -- INSERT DE USERS (username a, password aa)
 INSERT INTO IWUser (ID, DINERO_DISPONIBLE, DINERO_RETENIDO, EMAIL, ENABLED, FIRST_NAME, LAST_NAME, PASSWORD, ROLES, USERNAME) VALUES
 (1, 13055, 11200, 'Jose_Luis@gmail.com', TRUE, 'Jose Luis', 'apellido1 apellido2', '{bcrypt}$2a$10$2BpNTbrsarbHjNsUWgzfNubJqBRf.0Vz9924nRSHBqlbPKerkgX.W', 'USER', 'Jose Luis'),
-(2, 13055, 5300, 'ramon@gmail.com', TRUE, 'Ramon', 'apellido1 apellido2', '{bcrypt}$2a$10$2BpNTbrsarbHjNsUWgzfNubJqBRf.0Vz9924nRSHBqlbPKerkgX.W', 'ADMIN,USER', 'Ramon'),
+(2, 13055, 13300, 'ramon@gmail.com', TRUE, 'Ramon', 'apellido1 apellido2', '{bcrypt}$2a$10$2BpNTbrsarbHjNsUWgzfNubJqBRf.0Vz9924nRSHBqlbPKerkgX.W', 'ADMIN,USER', 'Ramon'),
 (3, 20000, 0, 'carlos.hernandez@example.com', TRUE, 'Carlos', 'Hernández Ruiz', '{bcrypt}$2a$10$2BpNTbrsarbHjNsUWgzfNubJqBRf.0Vz9924nRSHBqlbPKerkgX.W', 'USER', 'chernandez'),
 (4, 5000, 0, 'ana.martinez@example.com', TRUE, 'Ana', 'Martínez Sánchez', '{bcrypt}$2a$10$2BpNTbrsarbHjNsUWgzfNubJqBRf.0Vz9924nRSHBqlbPKerkgX.W', 'USER', 'amartinez'),
 (5, 30000, 0, 'luis.flores@example.com', TRUE, 'Luis', 'Flores Mendoza', '{bcrypt}$2a$10$2BpNTbrsarbHjNsUWgzfNubJqBRf.0Vz9924nRSHBqlbPKerkgX.W', 'ADMIN', 'lflores'),
@@ -796,16 +796,6 @@ INSERT INTO APUESTA (ID, CANTIDAD, A_FAVOR, APOSTADOR_ID, FORMULA, FECHA_CREACIO
 (6, 2200, FALSE, 2, 3, '2025-05-22 17:30:00'),
 (7, 700, FALSE, 1, 4, '2025-05-22 18:00:00'),
 (8, 900, TRUE, 2, 4, '2025-05-22 19:00:00');
-(1, 5000, TRUE, 1, 1, '2025-03-22T14:53:00+01:00'),
-(2, 3000, FALSE, 2, 2, '2025-03-22T14:53:00+01:00'),
-(3, 7505, TRUE, 3, 3, '2025-03-22T14:53:00+01:00'),
-(4, 2000, FALSE, 4, 4, '2025-03-22T14:53:00+01:00'),
-(5, 500, FALSE, 3, 1, '2025-03-22T14:53:00+01:00'),
-(6, 800, TRUE, 4, 2, '2025-03-22T14:53:00+01:00'),
-(7, 1050, FALSE, 1, 3, '2025-03-22T14:53:00+01:00'),
-(8, 234, TRUE, 2, 4, '2025-03-22T14:53:00+01:00');
-
-
 
 INSERT INTO PARTICIPACION_CHAT (EVENTO_ID, ULTIMA_VISITA, USUARIO_ID) VALUES
 (1, '2025-05-03 09:30:00', 1),
