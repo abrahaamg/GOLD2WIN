@@ -1,25 +1,5 @@
 -- INSERT DE USERS (username a, password aa)
 INSERT INTO IWUser (ID, DINERO_DISPONIBLE, DINERO_RETENIDO, EMAIL, ENABLED, FIRST_NAME, LAST_NAME, PASSWORD, ROLES, USERNAME) VALUES
-(1, 13055, 11200, 'Jose_Luis@gmail.com', TRUE, 'Jose Luis', 'apellido1 apellido2', '{bcrypt}$2a$10$2BpNTbrsarbHjNsUWgzfNubJqBRf.0Vz9924nRSHBqlbPKerkgX.W', 'USER', 'Jose Luis'),
-(2, 13055, 5300, 'ramon@gmail.com', TRUE, 'Ramon', 'apellido1 apellido2', '{bcrypt}$2a$10$2BpNTbrsarbHjNsUWgzfNubJqBRf.0Vz9924nRSHBqlbPKerkgX.W', 'ADMIN,USER', 'Ramon'),
-(3, 20000, 0, 'carlos.hernandez@example.com', TRUE, 'Carlos', 'Hernández Ruiz', '{bcrypt}$2a$10$2BpNTbrsarbHjNsUWgzfNubJqBRf.0Vz9924nRSHBqlbPKerkgX.W', 'USER', 'chernandez'),
-(4, 5000, 0, 'ana.martinez@example.com', TRUE, 'Ana', 'Martínez Sánchez', '{bcrypt}$2a$10$2BpNTbrsarbHjNsUWgzfNubJqBRf.0Vz9924nRSHBqlbPKerkgX.W', 'USER', 'amartinez'),
-(5, 30000, 0, 'luis.flores@example.com', TRUE, 'Luis', 'Flores Mendoza', '{bcrypt}$2a$10$2BpNTbrsarbHjNsUWgzfNubJqBRf.0Vz9924nRSHBqlbPKerkgX.W', 'ADMIN', 'lflores'),
-(6, 0, 0, 'sofia.rodriguez@example.com', TRUE, 'Sofía', 'Rodríguez Gómez', '{bcrypt}$2a$10$2BpNTbrsarbHjNsUWgzfNubJqBRf.0Vz9924nRSHBqlbPKerkgX.W', 'USER', 'srodriguez'),
-(7, 12000, 0, 'andres.lopez@example.com', TRUE, 'Andrés', 'López Martínez', '{bcrypt}$2a$10$2BpNTbrsarbHjNsUWgzfNubJqBRf.0Vz9924nRSHBqlbPKerkgX.W', 'USER', 'alopez'),
-(8, 8000, 0, 'carla.gomez@example.com', TRUE, 'Carla', 'Gómez García', '{bcrypt}$2a$10$2BpNTbrsarbHjNsUWgzfNubJqBRf.0Vz9924nRSHBqlbPKerkgX.W', 'USER', 'cgomez'),
-(9, 50000, 0, 'diego.sanchez@example.com', TRUE, 'Diego', 'Sánchez Pérez', '{bcrypt}$2a$10$2BpNTbrsarbHjNsUWgzfNubJqBRf.0Vz9924nRSHBqlbPKerkgX.W', 'ADMIN,USER', 'dsanchez'),
-(10, 6000, 0, 'lucia.ramirez@example.com', TRUE, 'Lucía', 'Ramírez Torres', '{bcrypt}$2a$10$2BpNTbrsarbHjNsUWgzfNubJqBRf.0Vz9924nRSHBqlbPKerkgX.W', 'USER', 'lramirez'),
-(11, 10000, 0, 'maria.garcia@example.com', TRUE, 'María', 'García López', '{bcrypt}$2a$10$2BpNTbrsarbHjNsUWgzfNubJqBRf.0Vz9924nRSHBqlbPKerkgX.W', 'USER', 'mgarcia'),
-(12, 0, 0, 'julianix882@gmail.com', TRUE, 'julián', 'Reguera Peñalosa', '{bcrypt}$2a$10$2BpNTbrsarbHjNsUWgzfNubJqBRf.0Vz9924nRSHBqlbPKerkgX.W', 'ADMIN,USER', 'julianix'),
-(13, 40000, 0, 'elena.fernandez@example.com', TRUE, 'Elena', 'Fernández Díaz', '{bcrypt}$2a$10$2BpNTbrsarbHjNsUWgzfNubJqBRf.0Vz9924nRSHBqlbPKerkgX.W', 'USER', 'efernandez'),
-(14, 58000, 0, 'pedro.alvarez@example.com', TRUE, 'Pedro', 'Álvarez Ruiz', '{bcrypt}$2a$10$2BpNTbrsarbHjNsUWgzfNubJqBRf.0Vz9924nRSHBqlbPKerkgX.W', 'USER', 'palvarez'),
-(15, 25000, 0, 'isabel.perez@example.com', TRUE, 'Isabel', 'Pérez López', '{bcrypt}$2a$10$2BpNTbrsarbHjNsUWgzfNubJqBRf.0Vz9924nRSHBqlbPKerkgX.W', 'ADMIN', 'iperez');
-
-
---INSERT DE SECCIONES
--- INSERT DE USERS (username a, password aa)
-INSERT INTO IWUser (ID, DINERO_DISPONIBLE, DINERO_RETENIDO, EMAIL, ENABLED, FIRST_NAME, LAST_NAME, PASSWORD, ROLES, USERNAME) VALUES
 (1, 13055, 0, 'Jose_Luis@gmail.com', TRUE, 'Jose Luis', 'apellido1 apellido2', '{bcrypt}$2a$10$2BpNTbrsarbHjNsUWgzfNubJqBRf.0Vz9924nRSHBqlbPKerkgX.W', 'USER', 'Jose Luis'),
 (2, 13055, 0, 'ramon@gmail.com', TRUE, 'Ramon', 'apellido1 apellido2', '{bcrypt}$2a$10$2BpNTbrsarbHjNsUWgzfNubJqBRf.0Vz9924nRSHBqlbPKerkgX.W', 'ADMIN,USER', 'Ramon'),
 (3, 20000, 0, 'carlos.hernandez@example.com', TRUE, 'Carlos', 'Hernández Ruiz', '{bcrypt}$2a$10$2BpNTbrsarbHjNsUWgzfNubJqBRf.0Vz9924nRSHBqlbPKerkgX.W', 'USER', 'chernandez'),
@@ -398,7 +378,7 @@ INSERT INTO VARIABLE (ID, NOMBRE, NUMERICO, RESOLUCION, ID_EVENTO) VALUES
 
 -- BALONCESTO
 INSERT INTO EVENTO (ID, CANCELADO, DETERMINADO, FECHA_CIERRE, FECHA_CREACION, NOMBRE, SECCION_ID) VALUES
-(2, false, false, '2025-07-11 20:30:00', '2025-03-02 10:00:00', 'NBA Playoffs: Los Angeles Lakers vs Boston Celtics', 2);
+(2, false, false, '2025-06-11 20:30:00', '2025-03-02 10:00:00', 'NBA Playoffs: Los Angeles Lakers vs Boston Celtics', 2);
 
 INSERT INTO EVENTO_ETIQUETAS (EVENTO_ID, ETIQUETAS) VALUES
 (2, 'Baloncesto'), (2, 'NBA'), (2, 'Estados Unidos'), (2, 'Deportes'), (2, 'Balón');
@@ -489,32 +469,32 @@ INSERT INTO VARIABLE (ID, NOMBRE, NUMERICO, RESOLUCION, ID_EVENTO) VALUES
 
 -- ESGRIMA
 INSERT INTO EVENTO (ID, CANCELADO, DETERMINADO, FECHA_CIERRE, FECHA_CREACION, NOMBRE, SECCION_ID) VALUES
-(13, false, false, '2025-06-14 15:00:00', '2025-03-05 09:00:00', 'Campeonato Mundial Esgrima: Juan Pérez vs Marco Rossi', 5);
+(5, false, false, '2025-06-14 15:00:00', '2025-03-05 09:00:00', 'Campeonato Mundial Esgrima: Juan Pérez vs Marco Rossi', 5);
 
 INSERT INTO EVENTO_ETIQUETAS (EVENTO_ID, ETIQUETAS) VALUES
-(13, 'Esgrima'), (13, 'Campeonato Mundial'), (13, 'Individual'), (13, 'Deportes'), (13, 'Espada');
+(5, 'Esgrima'), (5, 'Campeonato Mundial'), (5, 'Individual'), (5, 'Deportes'), (5, 'Espada');
 
 INSERT INTO VARIABLE (ID, NOMBRE, NUMERICO, RESOLUCION, ID_EVENTO) VALUES
-(341, 'ToquesJuanPerez', TRUE, NULL, 13),
-(342, 'ToquesMarcoRossi', TRUE, NULL, 13),
-(343, 'PenalizacionesJuanPerez', TRUE, NULL, 13),
-(344, 'PenalizacionesMarcoRossi', TRUE, NULL, 13),
-(345, 'ParadasJuanPerez', TRUE, NULL, 13),
-(346, 'ParadasMarcoRossi', TRUE, NULL, 13),
-(347, 'TiemposMuertosJuanPerez', TRUE, NULL, 13),
-(348, 'TiemposMuertos-MarcoRossi', TRUE, NULL, 13),
-(349, 'PuntosRonda1JuanPerez', TRUE, NULL, 13),
-(350, 'PuntosRonda1MarcoRossi', TRUE, NULL, 13),
-(351, 'PuntosRonda2JuanPerez', TRUE, NULL, 13),
-(352, 'PuntosRonda2MarcoRossi', TRUE, NULL, 13),
-(353, 'PuntosRonda3JuanPerez', TRUE, NULL, 13),
-(354, 'PuntosRonda3MarcoRossi', TRUE, NULL, 13),
-(355, 'Ganador', FALSE, NULL, 13),
-(356, 'Empate', FALSE, NULL, 13),
-(357, 'VictoriaPorPuntos', FALSE, NULL, 13),
-(358, 'VictoriaPorRetiro', FALSE, NULL, 13),
-(359, 'UltimoEnAnotar', FALSE, NULL, 13),
-(360, 'TipoVictoria', FALSE, NULL, 13);
+(341, 'ToquesJuanPerez', TRUE, NULL, 5),
+(342, 'ToquesMarcoRossi', TRUE, NULL, 5),
+(343, 'PenalizacionesJuanPerez', TRUE, NULL, 5),
+(344, 'PenalizacionesMarcoRossi', TRUE, NULL, 5),
+(345, 'ParadasJuanPerez', TRUE, NULL, 5),
+(346, 'ParadasMarcoRossi', TRUE, NULL, 5),
+(347, 'TiemposMuertosJuanPerez', TRUE, NULL, 5),
+(348, 'TiemposMuertos-MarcoRossi', TRUE, NULL, 5),
+(349, 'PuntosRonda1JuanPerez', TRUE, NULL, 5),
+(350, 'PuntosRonda1MarcoRossi', TRUE, NULL, 5),
+(351, 'PuntosRonda2JuanPerez', TRUE, NULL, 5),
+(352, 'PuntosRonda2MarcoRossi', TRUE, NULL, 5),
+(353, 'PuntosRonda3JuanPerez', TRUE, NULL, 5),
+(354, 'PuntosRonda3MarcoRossi', TRUE, NULL, 5),
+(355, 'Ganador', FALSE, NULL, 5),
+(356, 'Empate', FALSE, NULL, 5),
+(357, 'VictoriaPorPuntos', FALSE, NULL, 5),
+(358, 'VictoriaPorRetiro', FALSE, NULL, 5),
+(359, 'UltimoEnAnotar', FALSE, NULL, 5),
+(360, 'TipoVictoria', FALSE, NULL, 5);
 
 
 -- TENIS
@@ -727,46 +707,13 @@ INSERT INTO VARIABLE (ID, NOMBRE, NUMERICO, RESOLUCION, ID_EVENTO) VALUES
 (499, 'EquipoConMejorPorcentajeDePrecision', FALSE, NULL, 12),
 (500, 'GanadorFinal', FALSE, NULL, 12);
 
+
+
 --ROCKET LEAGUE
 INSERT INTO EVENTO (ID, CANCELADO, DETERMINADO, FECHA_CIERRE, FECHA_CREACION, NOMBRE, SECCION_ID) VALUES
 (12, false, false, '2025-07-28 18:00:00', '2025-05-22 12:00:00', 'RLCS World Championship Final: Team BDS vs Gen.G Mobil1 Racing', 12);
 
-(12, false, false, '2025-07-28 18:00:00', '2025-05-22 12:00:00', 'RLCS World Championship Final: Team BDS vs Gen.G Mobil1 Racing', 12);
-
 INSERT INTO EVENTO_ETIQUETAS (EVENTO_ID, ETIQUETAS) VALUES
-(12, 'Esports'), (12, 'Rocket League'), (12, 'RLCS'), (12, 'Final'), (12, 'Team BDS'), (12, 'Gen.G Mobil1');
-
-INSERT INTO VARIABLE (ID, NOMBRE, NUMERICO, RESOLUCION, ID_EVENTO) VALUES
-(501, 'GolesTeamBDS', TRUE, NULL, 12),
-(502, 'GolesGenGMobil1', TRUE, NULL, 12),
-(503, 'PrimerEquipoEnMarcar', FALSE, NULL, 12),
-(504, 'TirosAPuertaTeamBDS', TRUE, NULL, 12),
-(505, 'TirosAPuertaGenGMobil1', TRUE, NULL, 12),
-(506, 'DemolicionesTeamBDS', TRUE, NULL, 12),
-(507, 'DemolicionesGenGMobil1', TRUE, NULL, 12),
-(508, 'TurbosTeamBDS', TRUE, NULL, 12),
-(509, 'TurbosGenGMobil1', TRUE, NULL, 12),
-(510, 'PrimerAnotador', FALSE, NULL, 12),
-(511, 'PrimerGoleador', FALSE, NULL, 12),
-(512, 'MVP', FALSE, NULL, 12),
-(513, 'JuegosGanadosTeamBDS', TRUE, NULL, 12),
-(514, 'JuegosGanadosGenGMobil1', TRUE, NULL, 12),
-(515, 'NumTiemposExtras', TRUE, NULL, 12),
-(516, 'SalvadasTeamBDS', TRUE, NULL, 12),
-(517, 'SalvadasGenGMobil1', TRUE, NULL, 12),
-(518, 'AsistenciasTeamBDS', TRUE, NULL, 12),
-(519, 'AsistenciasGenGMobil1', TRUE, NULL, 12),
-(520, 'DuracionDelJuego', TRUE, NULL, 12);
-
---Insert para prueba determinar evento
-INSERT INTO EVENTO (ID, CANCELADO, DETERMINADO, FECHA_CIERRE, FECHA_CREACION, NOMBRE, SECCION_ID) VALUES
-(5, FALSE, FALSE, '2025-04-03 15:00:00', '2025-01-02 08:00:00', 'Campeonato Mundial de Esgrima', 5);
-
-INSERT INTO VARIABLE (ID, NOMBRE, NUMERICO, RESOLUCION, ID_EVENTO) VALUES
-(701, 'ToquesJugA', TRUE, NULL, 5),
-(702, 'ToquesJugB', TRUE, NULL, 5),
-(703, 'PenalizacionesJugA', TRUE, NULL, 5),
-(704, 'PenalizacionesJugB', TRUE, NULL, 5);
 (12, 'Esports'), (12, 'Rocket League'), (12, 'RLCS'), (12, 'Final'), (12, 'Team BDS'), (12, 'Gen.G Mobil1');
 
 INSERT INTO VARIABLE (ID, NOMBRE, NUMERICO, RESOLUCION, ID_EVENTO) VALUES
@@ -795,81 +742,68 @@ INSERT INTO VARIABLE (ID, NOMBRE, NUMERICO, RESOLUCION, ID_EVENTO) VALUES
 
 -- INSERT FORMULA_APUESTA con FECHA_CREACION
 INSERT INTO FORMULA_APUESTA (ID, DINERO_AFAVOR, DINERO_EN_CONTRA, FORMULA, NOMBRE, RESULTADO, CREADOR_ID, EVENTO_ID, FECHA_CREACION) VALUES
-(1, 2000, 1500, 'GolesCeltaDeVigo > GolesOsasuna', 'Gana Celta de Vigo', 'INDETERMINADO', 1, 1, '2025-05-22 12:00:00'),
-(2, 700, 5000, 'CornersOsasuna > CornersCeltaDeVigo', 'Más corners Osasuna', 'INDETERMINADO', 1, 1, '2025-05-22 12:00:00'),
-(3, 3500, 2200, 'TriplesLosAngelesLakers > TriplesBostonCeltics', 'Más triples Lakers', 'INDETERMINADO', 2, 2, '2025-05-22 12:00:00'),
-(4, 700, 900, 'PuntosBostonCeltics > PuntosLosAngelesLakers', 'Gana Boston Celtics', 'INDETERMINADO', 2, 2, '2025-05-22 12:00:00');
-INSERT INTO FORMULA_APUESTA 
-    (ID, DINERO_AFAVOR, DINERO_EN_CONTRA, FORMULA, NOMBRE, RESULTADO, CREADOR_ID, EVENTO_ID, FECHA_CREACION)
-VALUES
-(500, 3000, 2000, 'ToquesJugA > 2', 'Toques', 'INDETERMINADO', 1, 5, '2025-03-22 14:53:00');
-
-INSERT INTO APUESTA (ID, CANTIDAD, A_FAVOR, APOSTADOR_ID, FORMULA, FECHA_CREACION) VALUES
-(700, 5000, TRUE, 2, 500, '2025-03-22T14:53:00+01:00'),
-(701, 3000, FALSE, 2, 500, '2025-03-22T14:53:00+01:00');
-
--- COPIADO PEGADO DEL ANTERIOR IMPORT.SQL:
-
--- INSERT FORMULA_APUESTA con FECHA_CREACION
-INSERT INTO FORMULA_APUESTA 
-    (ID, DINERO_AFAVOR, DINERO_EN_CONTRA, FORMULA, NOMBRE, RESULTADO, CREADOR_ID, EVENTO_ID, FECHA_CREACION)
-VALUES
-(1, 5000, 0, 'GolesCeltaDeVigo > GolesOsasuna', 'Gana Celta de Vigo', 'INDETERMINADO', 1, 1, '2025-05-22 12:00:00'),
-(2, 0, 3000, 'CornersOsasuna > CornersCeltaDeVigo', 'Más corners Osasuna', 'INDETERMINADO', 1, 1, '2025-05-22 12:00:00'),
-(3, 7505, 0, 'TriplesLosAngelesLakers > TriplesBostonCeltics', 'Más triples Lakers', 'INDETERMINADO', 2, 2, '2025-05-22 12:00:00'),
-(4, 0, 2000, 'PuntosBostonCeltics > PuntosLosAngelesLakers', 'Gana Boston Celtics', 'INDETERMINADO', 2, 2, '2025-05-22 12:00:00');
+(1, 5000, 3000, 'GolesCeltaDeVigo > GolesOsasuna', 'Gana Celta de Vigo', 'INDETERMINADO', 1, 1, '2025-05-22 12:00:00'),
+(2, 0, 0, 'CornersOsasuna > CornersCeltaDeVigo', 'Más corners Osasuna', 'INDETERMINADO', 1, 1, '2025-05-22 12:00:00'),
+(3, 0, 0, 'TriplesLosAngelesLakers > TriplesBostonCeltics', 'Más triples Lakers', 'INDETERMINADO', 2, 2, '2025-05-22 12:00:00'),
+(4, 0, 0, 'PuntosBostonCeltics > PuntosLosAngelesLakers', 'Gana Boston Celtics', 'INDETERMINADO', 2, 2, '2025-05-22 12:00:00');
 
 -- INSERT APUESTA con FECHA_CREACION en formato OffsetDateTime
 INSERT INTO APUESTA (ID, CANTIDAD, A_FAVOR, APOSTADOR_ID, FORMULA, FECHA_CREACION) VALUES
-(1, 2000, TRUE, 1, 1, '2025-05-22 15:00:00'),
-(2, 1500, FALSE, 2, 1, '2025-05-22 16:00:00'),
-(3, 5000, FALSE, 1, 2, '2025-05-22 17:00:00'),
-(4, 700, TRUE, 2, 2, '2025-05-22 15:30:00'),
-(5, 3500, TRUE, 1, 3, '2025-05-22 16:30:00'),
-(6, 2200, FALSE, 2, 3, '2025-05-22 17:30:00'),
-(7, 700, FALSE, 1, 4, '2025-05-22 18:00:00'),
-(8, 900, TRUE, 2, 4, '2025-05-22 19:00:00');
 (1, 5000, TRUE, 1, 1, '2025-03-22T14:53:00+01:00'),
 (2, 3000, FALSE, 2, 2, '2025-03-22T14:53:00+01:00'),
 (3, 7505, TRUE, 3, 3, '2025-03-22T14:53:00+01:00'),
 (4, 2000, FALSE, 4, 4, '2025-03-22T14:53:00+01:00'),
-(5, 500, FALSE, 3, 1, '2025-03-22T14:53:00+01:00'),
-(6, 800, TRUE, 4, 2, '2025-03-22T14:53:00+01:00'),
-(7, 1050, FALSE, 1, 3, '2025-03-22T14:53:00+01:00'),
-(8, 234, TRUE, 2, 4, '2025-03-22T14:53:00+01:00');
-
+(5, 10000, TRUE, 11, 5, '2025-03-22T14:53:00+01:00'),
+(6, 4500, TRUE, 6, 6, '2025-03-22T14:53:00+01:00'),
+(7, 6000, FALSE, 7, 7, '2025-03-22T14:53:00+01:00'),
+(9, 9000, FALSE, 9, 9, '2025-03-22T14:53:00+01:00'),
+(10, 1500, TRUE, 10, 10, '2025-03-22T14:53:00+01:00'),
+(11, 12000, FALSE, 11, 11, '2025-03-22T14:53:00+01:00'),
+(12, 3500, TRUE, 12, 12, '2025-03-22T14:53:00+01:00'),
+(13, 40000, FALSE, 12, 12, '2025-03-22T14:53:00+01:00'),
+(14, 35000, FALSE, 12, 12, '2025-03-22T14:53:00+01:00'),
+(15, 1500, TRUE, 12, 12, '2025-03-22T14:53:00+01:00'),
+(16, 3000, FALSE, 11, 5, '2025-03-22T14:53:00+01:00');
 
 
 INSERT INTO PARTICIPACION_CHAT (EVENTO_ID, ULTIMA_VISITA, USUARIO_ID) VALUES
-(1, '2025-05-03 09:30:00', 1),
-(1, '2025-05-03 10:45:00', 2),
-(1, '2025-05-03 12:15:00', 3),
-(1, '2025-05-04 13:30:00', 4),
-(2, '2025-03-03 18:15:00', 1),
-(2, '2025-03-03 19:30:00', 2),
-(2, '1000-01-01 00:00:00', 3),
-(2, '2025-03-03 16:30:00', 4);
+(4, '1000-01-01 00:00:00', 11),
+(8, '1000-01-01 00:00:00', 11),
+(11, '1000-01-01 00:00:00', 11),
+(4, '1000-01-01 00:00:00', 12),
+(8, '1000-01-01 00:00:00', 12),
+(11, '1000-01-01 00:00:00', 12);
 
 INSERT INTO MENSAJE (ENABLED, FECHA_ENVIO, ID, ID_EVENTO, REMITENTE, CONTENIDO) VALUES
-(1, '2025-05-03 08:15:00', 1, 1, 1, 'Buenos Dias'),
-(1, '2025-05-03 09:30:00', 2, 1, 1, 'Que dia es el partido?'),
-(1, '2025-05-03 10:45:00', 3, 1, 2, 'Creo que es el 10 de junio'),
-(1, '2025-05-03 11:00:00', 4, 1, 3, 'En teoria si'),
-(1, '2025-05-03 12:15:00', 5, 1, 3, 'si no lo retrasan'),
-(1, '2025-05-04 13:30:00', 6, 1, 4, 'o lo cancelan'),
-
-(1, '2025-03-02 14:00:00', 7, 2, 4, 'Mensaje 1'),
-(1, '2025-03-02 15:15:00', 8, 2, 4, 'Mensaje 2'),
-(1, '2025-03-03 16:30:00', 9, 2, 4, 'Mensaje 3'),
-(1, '2025-03-03 17:00:00', 10, 2, 1, 'Mensaje 4'),
-(1, '2025-03-03 18:15:00', 11, 2, 1, 'Mensaje 5'),
-(1, '2025-03-03 19:30:00', 12, 2, 2, 'Mensaje 6');
+(1, '2025-05-03 08:15:00', 1, 4, 11, 'Mensaje enviado por el usuario 11 en el evento 4'),
+(1, '2025-05-03 09:30:00', 2, 8, 11, 'Mensaje enviado por el usuario 11 en el evento 8'),
+(1, '2025-05-03 10:45:00', 3, 11, 11, 'Mensaje enviado por el usuario 11 en el evento 11'),
+(1, '2025-05-03 11:00:00', 4, 4, 12, 'Mensaje enviado por el usuario 12 en el evento 4'),
+(1, '2025-05-03 12:15:00', 5, 8, 12, 'Mensaje enviado por el usuario 12 en el evento 8'),
+(1, '2025-05-03 13:30:00', 6, 11, 12, 'Mensaje enviado por el usuario 12 en el evento 11'),
+(1, '2025-03-02 14:00:00', 7, 4, 11, 'Mensaje enviado por el usuario 11 en el evento 4'),
+(1, '2025-03-02 15:15:00', 8, 8, 11, 'Mensaje enviado por el usuario 11 en el evento 8'),
+(1, '2025-03-02 16:30:00', 9, 11, 11, 'Mensaje enviado por el usuario 11 en el evento 11'),
+(1, '2025-03-02 17:00:00', 10, 4, 12, 'Mensaje enviado por el usuario 12 en el evento 4'),
+(1, '2025-03-02 18:15:00', 11, 8, 12, 'Mensaje enviado por el usuario 12 en el evento 8'),
+(1, '2025-03-02 19:30:00', 12, 11, 12, 'Mensaje enviado por el usuario 12 en el evento 11');
 
 INSERT INTO REPORTE (RESUELTO, FECHA_ENVIO, FECHA_RESOLUCION, ID, ID_MENSAJE, ID_REPORTADOR, MOTIVO)
 VALUES 
-(FALSE, '2025-05-04 15:30:00', NULL, 1, 6, 2, 'Es demasiado pesimista :(('),
-(FALSE, '2025-03-03 19:30:00', NULL, 2, 9, 3, 'Es un bot solo sabe decir Mensaje 1,2,3...'),
-(FALSE, '2025-05-03 19:30:00', NULL, 3, 12, 4, 'Me cae muy mal. Expulsadlo porfa');
+(FALSE, '2025-05-01', NULL, 1, 1, 2, 'Contenido ofensivo en el mensaje'),
+(FALSE, '2025-05-02', NULL, 2, 2, 3, 'Spam repetitivo detectado'),
+(TRUE, '2025-04-28', '2025-05-03', 3, 3, 4, 'Manipulación de resultados en mensaje'),
+(TRUE, '2025-04-20', '2025-04-22', 4, 4, 5, 'Lenguaje inapropiado'),
+(FALSE, '2025-05-03', NULL, 5, 5, 2, 'Incitación al odio'),
+(TRUE, '2025-04-15', '2025-04-18', 6, 6, 6, 'Publicidad no solicitada'),
+(FALSE, '2025-05-04', NULL, 7, 7, 3, 'Amenazas en el mensaje'),
+(TRUE, '2025-04-10', '2025-04-12', 8, 8, 7, 'Suplantación de identidad'),
+(FALSE, '2025-05-04', NULL, 9, 9, 4, 'Contenido falso'),
+(FALSE, '2025-05-04', NULL, 10, 10, 5, 'Contenido explícito sin aviso'),
+(TRUE, '2025-04-01', '2025-04-05', 11, 11, 8, 'Violación de normas comunitarias'),
+(TRUE, '2025-03-28', '2025-03-30', 12, 12, 9, 'Abuso verbal en conversación');
+
+
 
 -- start id numbering from a value that is larger than any assigned above
 ALTER SEQUENCE "PUBLIC"."GEN" RESTART WITH 1024;

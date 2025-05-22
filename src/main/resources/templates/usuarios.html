@@ -68,8 +68,8 @@
                     <td th:text="${usuario.dineroDisponible}"></td>
                     <td th:text="${usuario.roles}"></td>              
                     <td>
-                        <span th:if="${usuario.expulsadoHasta != NULL}" th:text="${#temporals.format(usuario.expulsadoHasta, 'dd-MM-yyyy')}"></span>
-                        <span th:if="${usuario.expulsadoHasta == NULL}">No ha sido expulsado</span>
+                        <span th:if="${usuario.expulsadoHasta != NULL and !usuario.expulsadoHasta.isBefore(T(java.time.OffsetDateTime).now())}" th:text="${#temporals.format(usuario.expulsadoHasta, 'dd-MM-yyyy')}"></span>
+                        <span th:if="${usuario.expulsadoHasta == null or usuario.expulsadoHasta.isBefore(T(java.time.OffsetDateTime).now())}">No ha sido expulsado</span>
                     </td>
                     <td>
                         <div class="dropdown">

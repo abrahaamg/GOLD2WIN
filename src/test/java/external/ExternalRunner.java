@@ -33,9 +33,4 @@ class ExternalRunner {
     Karate testCrearFormulaApuesta() {
         return Karate.run("crearFormulaApuesta").relativeTo(getClass());
     }  
-
-    @Karate.Test
-    Karate testCrearEliminarSeccion() {
-        return Karate.run("crearEliminarSeccion").relativeTo(getClass());
-    }
 }

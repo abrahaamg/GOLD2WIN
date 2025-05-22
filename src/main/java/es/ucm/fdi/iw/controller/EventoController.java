@@ -42,6 +42,7 @@ import java.util.stream.Collectors;
 
 import java.util.Map;
 
+//Controlador para la zona de crear apuestas
 @Controller
 @RequestMapping("evento")
 public class EventoController {
@@ -56,6 +57,141 @@ public class EventoController {
         for (String name : new String[] { "u", "url", "ws", "topics" }) {
             model.addAttribute(name, session.getAttribute(name));
         }
+    }
+
+    @GetMapping("{id}/apostar")
+    public String apostar(@PathVariable long id, Model model, HttpSession session) throws JsonProcessingException {
+        Evento eventoSel = entityManager.find(Evento.class, id);
+        User usuario = entityManager.find(User.class, ((User) session.getAttribute("u")).getId());
+
+        if (eventoSel == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Evento no encontrado");
+        }
+
+        if (eventoSel.isCancelado()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Evento cancelado");
+        }
+
+        if (eventoSel.getFechaCierre().isBefore(OffsetDateTime.now())) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Evento cerrado para apuestas");
+        }
+
+        Map<String, Object> informacionEvento = new HashMap<>();
+        informacionEvento.put("idEvento", eventoSel.getId());
+        informacionEvento.put("nombreEvento", eventoSel.getNombre());
+
+        boolean pertenece = !entityManager.createNamedQuery("User.estaEnChat", ParticipacionChat.class)
+                .setParameter("user", usuario)
+                .setParameter("evento", eventoSel)
+                .getResultList().isEmpty();
+
+        model.addAttribute("suscrito", pertenece);
+        model.addAttribute("evento", informacionEvento);
+
+        return "crearApuesta";
+    }
+
+    @GetMapping(path = "/{id}/apostar/cargarMas", produces = "application/json")
+    @Transactional
+    @ResponseBody
+    public Map<String, Object> cargarApuestas(
+            @PathVariable long id,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime fechaInicio, // necesito
+                                                                                                          // indicar el
+                                                                                                          // formato en
+                                                                                                          // que viene
+                                                                                                          // la
+                                                                                                          // fecha
+            @RequestParam int offset) {
+
+        Evento evento = entityManager.find(Evento.class, id);
+        TypedQuery<FormulaApuesta> query;
+        String queryEventos = "SELECT e FROM FormulaApuesta e WHERE e.fechaCreacion < :inicio AND e.evento.id = :id ORDER BY e.fechaCreacion ASC, e.id ASC";
+        boolean hayMasFormulas = false;
+
+        if (evento == null)
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Evento no encontrado");
+
+        query = entityManager.createQuery(queryEventos, FormulaApuesta.class);
+        query.setParameter("id", id);
+        query.setParameter("inicio", fechaInicio);
+        query.setMaxResults(11);
+        query.setFirstResult(offset);
+        List<FormulaApuesta> formulas = query.getResultList();
+
+        if (formulas.size() == 11) {
+            hayMasFormulas = true;
+            formulas.remove(10);
+        }
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("formulas", formulas.stream().map(Transferable::toTransfer).collect(Collectors.toList()));
+        response.put("hayMasFormulas", hayMasFormulas);
+
+        return response;
+    }
+
+    @GetMapping(path = "/{id}/apostar/buscar", produces = "application/json")
+    @Transactional
+    @ResponseBody
+    public Map<String, Object> buscarApuestas(
+            @PathVariable long id,
+            @RequestParam String busqueda,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime fechaInicio,
+            @RequestParam int offset) {
+
+        boolean hayMasFormulas = false;
+        Evento evento = entityManager.find(Evento.class, id);
+
+        if (evento == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Evento no encontrado");
+        }
+
+        if (evento.isCancelado()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Evento cancelado");
+        }
+
+        if (evento.getFechaCierre().isBefore(OffsetDateTime.now())) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Evento cerrado para apuestas");
+        }
+
+        String queryEventos = "SELECT e FROM FormulaApuesta e WHERE e.fechaCreacion < :inicio AND e.evento.id = :id AND ((LOWER(e.nombre) LIKE LOWER(:busqueda)) OR (LOWER(e.formula) LIKE LOWER(:busqueda))) ORDER BY e.fechaCreacion ASC, e.id ASC";
+        TypedQuery<FormulaApuesta> query = entityManager.createQuery(queryEventos, FormulaApuesta.class);
+
+        query.setParameter("id", id);
+        query.setParameter("busqueda", "%" + busqueda + "%");
+        query.setParameter("inicio", fechaInicio);
+        query.setMaxResults(11);
+        query.setFirstResult(offset);
+
+        List<FormulaApuesta> formulas = query.getResultList();
+
+        if (formulas.size() == 11) {
+            hayMasFormulas = true;
+            formulas.remove(10);
+        }
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("formulas", formulas.stream().map(Transferable::toTransfer).collect(Collectors.toList()));
+        response.put("hayMasFormulas", hayMasFormulas);
+
+        return response;
+    }
+
+    @GetMapping(path = "{id}/getVariables", produces = "application/json")
+    @ResponseBody
+    public Map<String, Object> getVariables(@PathVariable long id, Model model, HttpSession session) {
+        Evento eventoSel = entityManager.find(Evento.class, id);
+        Map<String, Object> response = new HashMap<>();
+
+        if (eventoSel == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Evento no encontrado");
+        }
+
+        response.put("variables",
+                eventoSel.getVariables().stream().map(Variable::getNombre).collect(Collectors.toList()));
+
+        return response;
     }
 
     @PostMapping("/apostar")
@@ -136,7 +272,7 @@ public class EventoController {
             jsonDinero = mapper.writeValueAsString(mensajeDinero);
             jsonCuota = mapper.writeValueAsString(mensajeCuota);
             messagingTemplate.convertAndSend("/user/" + u.getUsername() + "/queue/updates", jsonDinero);
-            messagingTemplate.convertAndSend("/topic/chats/" + formula.getEvento().getId() , jsonCuota);
+            messagingTemplate.convertAndSend("/topic/chats/" + formula.getEvento().getId(), jsonCuota);
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
@@ -144,7 +280,7 @@ public class EventoController {
         return "OK";
     }
 
-    @PostMapping(path = "/{id}/crearFormula" , produces = "application/json")
+    @PostMapping(path = "/{id}/crearFormula", produces = "application/json")
     @Transactional
     @ResponseBody
     public Map<String, Object> crearFormula(
@@ -173,22 +309,22 @@ public class EventoController {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Evento cerrado para apuestas");
         }
 
-        if (cantidad < 0){
+        if (cantidad < 0) {
             response.put("status", "ERROR-CANTIDAD");
             return response;
         }
 
-        if (cantidad > u.getDineroDisponible()){
+        if (cantidad > u.getDineroDisponible()) {
             response.put("status", "ERROR-CANTIDAD");
             return response;
         }
 
-        if (titulo.equals("")){
+        if (titulo.equals("")) {
             response.put("status", "ERROR-TITULO");
             return response;
         }
 
-        if (!FormulaApuesta.formulaValida(formula, evento)){
+        if (!FormulaApuesta.formulaValida(formula, evento)) {
             response.put("status", "ERROR-FORMULA");
             return response;
         }
@@ -240,142 +376,7 @@ public class EventoController {
         }
 
         response.put("status", "OK");
-        response.put("formula",nuevaFormula.toTransfer());
-        
-        return response;
-    }
-
-    @GetMapping(path = "/{id}/apostar/buscar", produces = "application/json")
-    @Transactional
-    @ResponseBody
-    public Map<String, Object> buscarApuestas(
-            @PathVariable long id,
-            @RequestParam String busqueda,
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime fechaInicio,
-            @RequestParam int offset) {
-
-        boolean hayMasFormulas = false;
-        Evento evento = entityManager.find(Evento.class, id);
-
-        if (evento == null) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Evento no encontrado");
-        }
-
-        if (evento.isCancelado()) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Evento cancelado");
-        }
-
-        if (evento.getFechaCierre().isBefore(OffsetDateTime.now())) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Evento cerrado para apuestas");
-        }
-
-        String queryEventos = "SELECT e FROM FormulaApuesta e WHERE e.fechaCreacion < :inicio AND e.evento.id = :id AND ((LOWER(e.nombre) LIKE LOWER(:busqueda)) OR (LOWER(e.formula) LIKE LOWER(:busqueda))) ORDER BY e.fechaCreacion ASC, e.id ASC";
-        TypedQuery<FormulaApuesta> query = entityManager.createQuery(queryEventos, FormulaApuesta.class);
-
-        query.setParameter("id", id);
-        query.setParameter("busqueda", "%" + busqueda + "%");
-        query.setParameter("inicio", fechaInicio);
-        query.setMaxResults(11);
-        query.setFirstResult(offset);
-
-        List<FormulaApuesta> formulas = query.getResultList();
-
-        if (formulas.size() == 11) {
-            hayMasFormulas = true;
-            formulas.remove(10);
-        }
-
-        Map<String, Object> response = new HashMap<>();
-        response.put("formulas", formulas.stream().map(Transferable::toTransfer).collect(Collectors.toList()));
-        response.put("hayMasFormulas", hayMasFormulas);
-
-        return response;
-    }
-
-    @GetMapping(path = "/{id}/apostar/cargarMas", produces = "application/json")
-    @Transactional
-    @ResponseBody
-    public Map<String, Object> cargarApuestas(
-            @PathVariable long id,
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime fechaInicio, // necesito
-                                                                                                          // indicar el
-                                                                                                          // formato en
-                                                                                                          // que viene
-                                                                                                          // la
-                                                                                                          // fecha
-            @RequestParam int offset) {
-
-        Evento evento = entityManager.find(Evento.class, id);
-        TypedQuery<FormulaApuesta> query;
-        String queryEventos = "SELECT e FROM FormulaApuesta e WHERE e.fechaCreacion < :inicio AND e.evento.id = :id ORDER BY e.fechaCreacion ASC, e.id ASC";
-        boolean hayMasFormulas = false;
-
-        if (evento == null)
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Evento no encontrado");
-
-        query = entityManager.createQuery(queryEventos, FormulaApuesta.class);
-        query.setParameter("id", id);
-        query.setParameter("inicio", fechaInicio);
-        query.setMaxResults(11);
-        query.setFirstResult(offset);
-        List<FormulaApuesta> formulas = query.getResultList();
-
-        if (formulas.size() == 11) {
-            hayMasFormulas = true;
-            formulas.remove(10);
-        }
-
-        Map<String, Object> response = new HashMap<>();
-        response.put("formulas", formulas.stream().map(Transferable::toTransfer).collect(Collectors.toList()));
-        response.put("hayMasFormulas", hayMasFormulas);
-
-        return response;
-    }
-
-    @GetMapping("{id}/apostar")
-    public String apostar(@PathVariable long id, Model model, HttpSession session) throws JsonProcessingException {
-        Evento eventoSel = entityManager.find(Evento.class, id);
-        User usuario = entityManager.find(User.class, ((User) session.getAttribute("u")).getId());
-
-        if (eventoSel == null) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Evento no encontrado");
-        }
-
-        if (eventoSel.isCancelado()) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Evento cancelado");
-        }
-
-        if (eventoSel.getFechaCierre().isBefore(OffsetDateTime.now())) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Evento cerrado para apuestas");
-        }
-
-        Map<String, Object> informacionEvento = new HashMap<>();
-        informacionEvento.put("idEvento", eventoSel.getId());
-        informacionEvento.put("nombreEvento", eventoSel.getNombre());
-
-        boolean pertenece = !entityManager.createNamedQuery("User.estaEnChat", ParticipacionChat.class)
-                .setParameter("user", usuario)
-                .setParameter("evento", eventoSel)
-                .getResultList().isEmpty();
-
-        
-        model.addAttribute("suscrito", pertenece);
-        model.addAttribute("evento",informacionEvento);
-
-        return "crearApuesta";
-    }
-
-    @GetMapping(path = "{id}/getVariables", produces = "application/json")
-    @ResponseBody
-    public Map<String, Object> getVariables(@PathVariable long id, Model model, HttpSession session) {
-        Evento eventoSel = entityManager.find(Evento.class, id);
-        Map<String, Object> response = new HashMap<>();
-
-        if (eventoSel == null) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Evento no encontrado");
-        }
-        
-        response.put("variables", eventoSel.getVariables().stream().map(Variable::getNombre).collect(Collectors.toList()));
+        response.put("formula", nuevaFormula.toTransfer());
 
         return response;
     }
