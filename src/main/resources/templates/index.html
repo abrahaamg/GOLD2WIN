@@ -8,17 +8,17 @@
 </head>
 
 <body class="d-flex flex-column h-100">
-    <header th:replace="fragments/nav.html :: nav('deportes')"></header>
+    <header th:replace="fragments/nav :: nav('deportes')"></header>
 
     <main class="d-flex flex-grow-1 overflow-hidden">
-        <nav th:replace="fragments/navSecciones.html :: navSecciones(${secciones}, ${selectedSeccion})"></nav>
+        <nav th:replace="fragments/navSecciones :: navSecciones(${secciones}, ${selectedSeccion})"></nav>
         
         <form style="display: none;" id="datos">
             <input type="hidden" id="seccionId" name="seccionId" th:value="${selectedSeccion}">
         </form>
 
         <div class="d-flex flex-column w-100 ps-4">
-            <nav th:replace="fragments/navSeccionescomprimido.html :: navSeccionescomprimido(${secciones}, ${selectedSeccion})"></nav>
+            <nav th:replace="fragments/navComprimidoSecciones :: navSeccionescomprimido(${secciones}, ${selectedSeccion})"></nav>
             <div class="pe-4 d-flex justify-content-center">
                 <div class="barraBuscador mt-4 ">
                     <svg viewBox="0 0 24 24" aria-hidden="true" class="iconoBuscador">
